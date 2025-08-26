@@ -3,15 +3,17 @@
 import { useEffect, useState } from "react";
 import { BsSun } from "react-icons/bs";
 import { RxMoon } from "react-icons/rx";
-import { IoMenuOutline } from "react-icons/io5";
-import { IoMdHome } from "react-icons/io";
-import { FaFireAlt } from "react-icons/fa";
-import { IoIosContact } from "react-icons/io";
+import { IoHomeSharp } from "react-icons/io5";
+import { FaUserFriends } from "react-icons/fa";
+import { MdEmojiEvents } from "react-icons/md";
+import { IoNotifications } from "react-icons/io5";
+import { AiOutlineMessage } from "react-icons/ai";
+import { FaCaretDown } from "react-icons/fa";
+import { IoMdSearch } from "react-icons/io";
+import Image from "next/image";
 
 export default function Navbar() {
   const [isDark, setIsDark] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Sync theme on mount
   useEffect(() => {
@@ -42,100 +44,74 @@ export default function Navbar() {
     }
   };
 
-  // Listen to scroll position
-  useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 0);
-    };
-    window.addEventListener("scroll", onScroll);
-
-    // Cleanup
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
     <nav
       className={`
-        fixed top-0 left-0 w-full z-50 bg-base-100/70 dark:bg-base-400/50 md:bg-white/50 md:dark:bg-base-500/50 backdrop-blur-sm 
-        ${
-          scrolled
-            ? ""
-            : " md:bg-transparent md:backdrop-blur-none dark:md:bg-transparent"
-        }
-            ${isMenuOpen ? "border-b-1 md:border-b-0 border-base-400/10" : ""}
-        dark:text-base-100 text-base-500 flex flex-col justify-center items-center py-4 md:py-6
+        fixed top-0 left-0 w-full z-40 bg-white dark:bg-base-500 shadow-md
+        dark:text-base-100 text-base-500 flex justify-center items-center pt-1 gap-20
       `}
     >
-      <div className="hidden md:w-2/3 lg:w-1/2 md:flex justify-between items-center">
-        <div className="flex-1 flex flex-row gap-6">
-          <div className="text-base-500/70 dark:text-base-100 hover:text-base-500 dark:hover:text-white cursor-pointer hover:border-base-500 dark:hover:border-base-100 border-b border-transparent">
-            home
-          </div>
-          <div className="text-base-500/70 dark:text-base-100 hover:text-base-500 dark:hover:text-white cursor-pointer hover:border-base-500 dark:hover:border-base-100 border-b border-transparent">
-            menu
-          </div>
-          <div className="text-base-500/70 dark:text-base-100 hover:text-base-500 dark:hover:text-white cursor-pointer hover:border-base-500 dark:hover:border-base-100 border-b border-transparent">
-            menu
+      <div className="flex gap-2 items-center mb-1">
+        <div className="p-2 font-bold text-base-400 rounded-md cursor-pointer">
+          TeamUp-Space
+        </div>
+        <div className="flex gap-2 px-2 w-72 border border-base-300 rounded-full py-1.5 items-center">
+          <IoMdSearch />
+          <input
+            type="text"
+            placeholder="Search"
+            className="bg-transparent focus:outline-none w-full text-sm"
+          />
+        </div>
+      </div>
+      <div className="hidden md:flex justify-center items-center">
+        <div className="hidden lg:flex flex-col py-2 border-b-2 cursor-pointer items-center px-6">
+          <IoHomeSharp className="text-xl text-base-500" />
+          <div className="text-sm  text-base-400">Home</div>
+        </div>
+        <div className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500">
+          <FaUserFriends className="text-xl" />
+          <div className="text-sm">Friends</div>
+        </div>
+        <div className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500">
+          <MdEmojiEvents className="text-xl " />
+          <div className="text-sm  ">Events</div>
+        </div>
+        <div className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500">
+          <AiOutlineMessage className="text-xl " />
+          <div className="text-sm  ">Messages</div>
+        </div>
+        <div className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500">
+          <IoNotifications className="text-xl " />
+          <div className="text-sm  ">Notification</div>
+        </div>
+        <div className="flex flex-col border-b-2 border-b-white items-center px-8 border-r border-r-base-200 ">
+          <div className="flex flex-col px-4 pt-1 hover:bg-black/10 cursor-pointer items-center rounded-md">
+            <Image
+              src={"/golang.webp"}
+              width={100}
+              height={100}
+              alt="profile-pic"
+              style={{ objectFit: "cover" }}
+              className="rounded-full h-7 w-7"
+            />
+            <div className="flex items-center">
+              <div className="text-sm  text-base-400">Me</div>
+              <FaCaretDown className="text-base-400" />
+            </div>
           </div>
         </div>
-
         <button
           onClick={toggleTheme}
           aria-label="Toggle Dark Mode"
-          className="p-2 cursor-pointer hover:bg-black/10 dark:hover:bg-white/10 rounded-md"
+          className="p-2 cursor-pointer hover:bg-black/10 dark:hover:bg-white/10 rounded-md mb-1 ml-8"
         >
           {isDark ? (
-            <BsSun className="text-amber-400" />
+            <BsSun className="text-amber-400 text-xl" />
           ) : (
-            <RxMoon className="text-indigo-500" />
+            <RxMoon className="text-indigo-500 text-xl" />
           )}
         </button>
-      </div>
-      <div className="w-[90vw] md:hidden flex justify-between items-center">
-        <div
-          className="flex flex-row gap-2 items-center cursor-pointer p-2 rounded-md hover:bg-black/10 dark:hover:bg-white/10"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          <IoMenuOutline />
-          <div>Menu</div>
-        </div>
-        <div className="flex-1 flex flex-row justify-end items-center gap-2">
-          <button
-            role="switch"
-            aria-checked={isDark}
-            onClick={toggleTheme}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
-              isDark ? "bg-base-400" : "bg-gray-300"
-            }`}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
-                isDark ? "translate-x-6" : "translate-x-1"
-              }`}
-            />
-          </button>
-          <div className="text-base-500/50 dark:text-base-100 text-sm">
-            Dark Mode
-          </div>
-        </div>
-      </div>
-      <div
-        className={`${
-          isMenuOpen ? "max-h-72" : "max-h-0"
-        } ease-in-out duration-300 transition-all overflow-hidden md:hidden flex flex-col gap-4 w-full`}
-      >
-        <div className="flex flex-row items-center gap-2 py-2 w-full text-base-500 dark:text-base-100 hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer">
-          <IoMdHome />
-          Home
-        </div>
-        <div className="flex flex-row items-center gap-2 py-2 w-full text-base-500 dark:text-base-100 hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer">
-          <FaFireAlt />
-          Projects
-        </div>
-        <div className="flex flex-row items-center gap-2 py-2 w-full text-base-500 dark:text-base-100 hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer">
-          <IoIosContact />
-          Contact
-        </div>
       </div>
     </nav>
   );
