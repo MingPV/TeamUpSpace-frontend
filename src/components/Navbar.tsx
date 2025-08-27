@@ -18,10 +18,10 @@ export default function Navbar() {
     <nav
       className={`
         fixed top-0 left-0 w-full z-40 bg-white dark:bg-base-500 shadow-md
-        dark:text-base-100 text-base-500 flex justify-between sm:justify-center items-center pt-1 gap-20
+        dark:text-base-100 text-base-500 flex justify-between sm:justify-center items-center gap-20
       `}
     >
-      <div className="flex gap-2 items-center mb-1 px-2 ">
+      <div className="flex gap-2 items-center px-2 ">
         <div className="p-2 font-bold text-base-400 rounded-md cursor-pointer">
           TeamUp-Space
         </div>
@@ -34,7 +34,7 @@ export default function Navbar() {
           />
         </div>
       </div>
-      <div className="flex flex-row justify-center items-center ">
+      <div className="flex flex-row justify-center items-center">
         <div className="hidden lg:flex flex-col py-2 border-b-2 cursor-pointer items-center px-6">
           <IoHomeSharp className="text-xl text-base-500" />
           <div className="text-sm  text-base-400">Home</div>
@@ -72,7 +72,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div className="flex flex-col py-2  cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500 scale-60">
+        <div className="flex flex-col items-center px-2 text-base-400/70 hover:text-base-500 scale-60">
           <Switch />
         </div>
 

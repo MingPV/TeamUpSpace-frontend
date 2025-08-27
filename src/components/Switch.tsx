@@ -32,7 +32,7 @@ const Switch = () => {
     }
   };
   return (
-    <label className="inline-flex items-center relative">
+    <label className="inline-flex items-center relative cursor-pointer">
       <input
         type="checkbox"
         className="peer hidden"

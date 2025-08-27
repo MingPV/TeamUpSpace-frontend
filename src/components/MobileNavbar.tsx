@@ -14,11 +14,11 @@ export default function MobileNav() {
   const toggleSidebar = () => setIsOpen((prev) => !prev);
 
   return (
-    <div>
+    <div className="">
       {/* Toggle button */}
       <div
         onClick={toggleSidebar}
-        className="p-2 cursor-pointer hover:bg-black/10 dark:hover:bg-white/10 rounded-md mb-1 ml-4 flex items-center justify-center text-2xl"
+        className="p-2  hover:bg-black/10 dark:hover:bg-white/10 rounded-md ml-4 flex items-center justify-center text-2xl"
       >
         <span
           className={`transition-transform duration-300 ${
@@ -35,7 +35,7 @@ export default function MobileNav() {
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="p-6 flex flex-col gap-4" onClick={toggleSidebar}>
+        <div className="p-6 flex flex-col gap-4 " onClick={toggleSidebar}>
           <div className="flex w-full items-end justify-end">
             {isOpen ? <RxCross1 /> : <GiHamburgerMenu />}
           </div>

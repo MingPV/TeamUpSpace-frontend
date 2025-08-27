@@ -6,7 +6,7 @@ import IncomingEventCard from "./IncomingEventCard";
 
 export default function HomeRight() {
   return (
-    <div className="w-full flex flex-col gap-2 md:mb-4 md:mt-2 lg:mb-0">
+    <div className="w-full flex flex-col gap-2 md:mb-4 md:mt-2 lg:mb-0 lg:mt-0">
       <div className="hidden lg:flex w-4/5 flex-col rounded-lg bg-white">
         <div className="flex flex-col mx-5 my-3 gap-5">
           <div className="flex justify-between items-center">
