@@ -10,7 +10,7 @@ import { FaCaretDown } from "react-icons/fa";
 import { IoMdSearch } from "react-icons/io";
 import Image from "next/image";
 import MobileNav from "./MobileNavbar";
-import Switch from "./switch";
+import Switch from "./Switch";
 export default function Navbar() {
   const [isDark, setIsDark] = useState(false);
 
