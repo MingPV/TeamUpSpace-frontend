@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
 import { IoHomeSharp } from "react-icons/io5";
 import { FaUserFriends } from "react-icons/fa";
 import { MdEmojiEvents } from "react-icons/md";
@@ -11,8 +11,18 @@ import { IoMdSearch } from "react-icons/io";
 import Image from "next/image";
 import MobileNav from "./MobileNavbar";
 import Switch from "./Switch";
-export default function Navbar() {
-  const [isDark, setIsDark] = useState(false);
+import { useState } from "react";
+import Link from "next/link";
+import { signOut } from "@/app/api/auth";
+
+export default function Navbar({ user }: { user: any }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    signOut().then(() => {
+      window.location.href = "/sign-in";
+    });
+  };
 
   return (
     <nav
@@ -55,21 +65,54 @@ export default function Navbar() {
           <IoNotifications className="text-xl " />
           <div className="text-sm  ">Notification</div>
         </div>
-        <div className="hidden lg:flex flex-col border-b-2 border-b-white items-center px-8 border-r border-r-base-200 ">
-          <div className="flex flex-col px-0 md:px-4 pt-1 hover:bg-black/10 cursor-pointer items-center rounded-md">
-            <Image
-              src={"/golang.webp"}
-              width={100}
-              height={100}
-              alt="profile-pic"
-              style={{ objectFit: "cover" }}
-              className="rounded-full h-7 w-7"
-            />
-            <div className="flex items-center">
-              <div className="text-sm  text-base-400">Me</div>
-              <FaCaretDown className="text-base-400" />
+        <div className="hidden lg:flex flex-col border-b-2 border-b-white items-center px-8 border-r border-r-base-200 relative">
+          {user ? (
+            <div className="flex flex-col px-0 md:px-4 items-center rounded-md">
+              <div
+                className="flex flex-col items-center px-4 pt-1 rounded-md hover:bg-black/10 cursor-pointer"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                <Image
+                  src={"/golang.webp"}
+                  width={100}
+                  height={100}
+                  alt="profile-pic"
+                  style={{ objectFit: "cover" }}
+                  className="rounded-full h-7 w-7"
+                />
+                <div className="flex items-center">
+                  <div className="text-sm text-base-400">Me</div>
+                  <FaCaretDown className="text-base-400 ml-1" />
+                </div>
+              </div>
+              {/* Dropdown */}
+              <div
+                className={`absolute top-14 right-0 min-w-[160px] bg-white dark:bg-base-500 shadow-lg rounded-md border border-base-200 opacity-0 ${
+                  isMenuOpen ? "opacity-100" : null
+                } transition-opacity z-50`}
+              >
+                <div className="flex flex-col py-2">
+                  <Link
+                    className="px-4 py-2 text-base-400 hover:bg-black/5 cursor-pointer"
+                    href={"/profile"}
+                  >
+                    Profile
+                  </Link>
+                  <div className="px-4 py-2 text-base-400 hover:bg-black/5 cursor-pointer">
+                    Saved Events
+                  </div>
+                  <div
+                    className="px-4 py-2 text-red-500 hover:bg-black/5 cursor-pointer"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="opacity-0 h-8">|</div>
+          )}
         </div>
 
         <div className="flex flex-col items-center px-2 text-base-400/70 hover:text-base-500 scale-60">

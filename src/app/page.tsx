@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import HomeLeft from "@/components/HomeLeft";
@@ -6,17 +7,53 @@ import Navbar from "@/components/Navbar";
 import PostBox from "@/components/PostBox";
 import PostCreateBox from "@/components/PostCreateBox";
 import { IoCaretDownSharp } from "react-icons/io5";
+import { fetchUserInfo } from "./api/auth";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const checkUserLoggedIn = async () => {
+      try {
+        const response = await fetchUserInfo();
+        if (response && response.ok) {
+          const userInfo = await response.json();
+          setUser(userInfo);
+          console.log(userInfo);
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    checkUserLoggedIn();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <>
+        <div className="w-screen h-screen flex justify-center items-center text-base-400 font-bold">
+          Loading . . .
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
-      <Navbar />
+      <Navbar user={user} />
       <div className="flex justify-center w-full md:flex-col-reverse lg:flex-row mt-20">
         <div className="hidden lg:flex flex-col lg:w-[25vw]">
-          <HomeLeft />
+          <HomeLeft user={user} />
         </div>
         <div className="flex flex-col md:w-full lg:w-[45vw] px-8">
-          <PostCreateBox />
+          <PostCreateBox user={user} />
           <div className="flex flex-row items-center my-2">
             <div className="flex-1 border-b border-base-300"></div>
             <div className="flex text-xs gap-1 pl-2 cursor-pointer">

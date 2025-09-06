@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React from "react";
 import Image from "next/image";
 
-export default function PostCreateBox() {
+export default function PostCreateBox({ user }: { user: any }) {
+  console.log(user);
   return (
     <div className="bg-white p-4 flex flex-col w-full rounded-lg">
       <div className="flex gap-4">
         <Image
-          src={"/golang.webp"}
+          src={user?.profile?.profile_url || "/golang.webp"}
           width={100}
           height={100}
           alt="profile-pic"
