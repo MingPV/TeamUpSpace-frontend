@@ -52,12 +52,13 @@ export default function Home() {
         const existingUser = await getUserByUsername(username);
         if (existingUser.username) {
           setIsUsernameValid(false);
+          setError("Username is already in use");
         } else {
           setIsUsernameValid(true);
         }
       } catch (err) {
         console.error("Error checking username", err);
-        setIsUsernameValid(true);
+        setIsUsernameValid(false);
       } finally {
         setCheckingUsername(false);
       }
@@ -92,13 +93,15 @@ export default function Home() {
         const existingUser = await getUserByEmail(email);
         console.log(existingUser);
         if (existingUser.email) {
+          setError("Email is already in use");
           setIsEmailValid(false);
+          return;
         } else {
           setIsEmailValid(true);
         }
       } catch (err) {
         console.error("Error checking email", err);
-        setIsEmailValid(true);
+        setIsEmailValid(false);
       } finally {
         setCheckingEmail(false);
       }
@@ -120,13 +123,32 @@ export default function Home() {
   }, [password, repeatPassword]);
 
   const handleSignUp = async () => {
+    if (!email || !username || !password || !repeatPassword) {
+      setError("Please fill in all fields");
+      return;
+    }
+    if (error) {
+      return;
+    }
+    if (!isEmailValid) {
+      setError("Email is not valid");
+      return;
+    }
+    if (!isUsernameValid) {
+      setError("Username is not valid");
+      return;
+    }
+
     setLoading(true);
     setError("");
     const profile: Profile = {
       display_name: username,
     };
     try {
-      await signUp(email, password, profile);
+      const res = await signUp(email, password, username, profile);
+      if (res.error) {
+        setError("Something went wrong, please try again");
+      }
       console.log("Sign up successful");
       router.push("/sign-in");
     } catch (err: any) {

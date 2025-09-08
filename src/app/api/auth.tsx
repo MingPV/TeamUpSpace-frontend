@@ -43,11 +43,12 @@ export function isEmail(emailOrUsername: string): boolean {
 export async function signUp(
   email: string,
   password: string,
+  username: string,
   profile: Profile
 ) {
   return fetchApi("/api/v1/auth/signup", {
     method: "POST",
-    body: JSON.stringify({ email, password, profile }),
+    body: JSON.stringify({ email, username, password, profile }),
   });
 }
 

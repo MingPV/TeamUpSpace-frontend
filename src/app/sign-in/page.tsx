@@ -21,6 +21,9 @@ export default function Home() {
     setError("");
     try {
       const res = await signIn(emailOrUsername, password);
+      if (res.error) {
+        setError("Something went wrong, please try again");
+      }
       console.log(res);
       console.log("Sign in successful");
       //redirect with reload browser
