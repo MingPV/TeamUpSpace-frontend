@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   }
 
   // Forward request to your Go backend
-  const response = await fetch("http://localhost:8080/api/userservice/me", {
+  const response = await fetch("http://localhost:8080/api/v1/me", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

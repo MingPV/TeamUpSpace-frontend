@@ -20,7 +20,8 @@ export default function Home() {
     setLoading(true);
     setError("");
     try {
-      await signIn(emailOrUsername, password);
+      const res = await signIn(emailOrUsername, password);
+      console.log(res);
       console.log("Sign in successful");
       //redirect with reload browser
       window.location.href = "/";

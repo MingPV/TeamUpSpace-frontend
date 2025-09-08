@@ -20,12 +20,12 @@ async function fetchApi(path: string, options: RequestInit = {}) {
 // Sign In
 export async function signIn(emailOrUsername: string, password: string) {
   if (isEmail(emailOrUsername)) {
-    return fetchApi("/api/userservice/auth/signin", {
+    return fetchApi("/api/v1/auth/signin", {
       method: "POST",
       body: JSON.stringify({ email: emailOrUsername, password }),
     });
   } else {
-    return fetchApi("/api/userservice/auth/signin/username", {
+    return fetchApi("/api/v1/auth/signin/username", {
       method: "POST",
       body: JSON.stringify({ username: emailOrUsername, password }),
     });
@@ -45,7 +45,7 @@ export async function signUp(
   password: string,
   profile: Profile
 ) {
-  return fetchApi("/api/userservice/auth/signup", {
+  return fetchApi("/api/v1/auth/signup", {
     method: "POST",
     body: JSON.stringify({ email, password, profile }),
   });
@@ -54,7 +54,7 @@ export async function signUp(
 // Sign Out
 export async function signOut() {
   // If your API expects authentication token (cookie or header)
-  return fetchApi("/api/userservice/auth/signout", {
+  return fetchApi("/api/v1/auth/signout", {
     method: "POST",
   });
 }
@@ -66,16 +66,16 @@ export async function fetchUserInfo() {
 
 // checking username unique
 export async function getUserByUsername(username: string) {
-  return fetchApi(`/api/userservice/users/username/${username}`);
+  return fetchApi(`/api/v1/users/username/${username}`);
 }
 
 // checking email unique
 export async function getUserByEmail(email: string) {
-  return fetchApi(`/api/userservice/users/email/${email}`);
+  return fetchApi(`/api/v1/users/email/${email}`);
 }
 
 // login with google
 export async function signInWithGoogle() {
   // Redirect to backend Google OAuth endpoint
-  window.location.href = `${API_GATEWAY_URL}/api/userservice/auth/google/login`;
+  window.location.href = `${API_GATEWAY_URL}/api/v1/auth/google/login`;
 }
