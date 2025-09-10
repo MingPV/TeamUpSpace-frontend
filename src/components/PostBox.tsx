@@ -37,7 +37,7 @@ export default function PostBox() {
               className="rounded-full h-14 w-14 cursor-pointer hover:opacity-80"
             />
             <div className="flex flex-1 flex-col">
-              <div className="font-bold cursor-pointer hover:underline underline-offset-2">
+              <div className="font-bold cursor-pointer hover:underline underline-offset-2 w-fit">
                 Example Name
               </div>
               <div className="text-xs">4 hours ago</div>

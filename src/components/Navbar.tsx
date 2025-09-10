@@ -14,9 +14,12 @@ import Switch from "./Switch";
 import { useState } from "react";
 import Link from "next/link";
 import { signOut } from "@/app/api/auth";
+import { useRouter } from "next/navigation";
 
 export default function Navbar({ user }: { user: any }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const router = useRouter();
 
   const handleLogout = () => {
     signOut().then(() => {
@@ -32,7 +35,10 @@ export default function Navbar({ user }: { user: any }) {
       `}
     >
       <div className="flex gap-2 items-center px-2 ">
-        <div className="p-2 font-bold text-base-400 rounded-md cursor-pointer">
+        <div
+          className="p-2 font-bold text-base-400 rounded-md cursor-pointer"
+          onClick={() => router.push("/")}
+        >
           TeamUp-Space
         </div>
         <div className="hidden sm:flex gap-2 px-2 w-72 border border-base-300 rounded-full py-1.5 items-center">

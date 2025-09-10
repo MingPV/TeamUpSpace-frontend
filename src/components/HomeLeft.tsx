@@ -138,7 +138,7 @@ export default function HomeLeft({ user }: { user: any }) {
           <div className="flex gap-2 items-center">
             <FaBookmark />
             <div className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer">
-              Saved Events
+              Saved Events (9)
             </div>
           </div>
           <div className="flex gap-2 items-center">
@@ -151,6 +151,11 @@ export default function HomeLeft({ user }: { user: any }) {
             <MdEmojiEvents />
             <div className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer">
               Events
+            </div>
+          </div>
+          <div className="flex gap-2 items-center justify-center bg-amber-800 hover:bg-amber-900 cursor-pointer py-2 rounded-sm">
+            <div className="text-sm font-bold text-white">
+              Check Team Requests (0)
             </div>
           </div>
         </div>
