@@ -22,14 +22,15 @@ export default function Home() {
     try {
       const res = await signIn(emailOrUsername, password);
       if (res.error) {
-        setError("Something went wrong, please try again");
+        setError("Invalid email/username or password");
+        return;
       }
       console.log(res);
       console.log("Sign in successful");
       //redirect with reload browser
       window.location.href = "/";
     } catch (err: any) {
-      setError("Invalid email/username or password");
+      setError("Something went wrong, please try again");
     } finally {
       setLoading(false);
     }
