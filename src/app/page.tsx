@@ -9,6 +9,7 @@ import PostCreateBox from "@/components/PostCreateBox";
 import { IoCaretDownSharp } from "react-icons/io5";
 import { fetchUserInfo } from "./api/auth";
 import { useEffect, useState } from "react";
+import LoadingHomeLeft from "@/components/LoadingHomeLeft";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -35,22 +36,12 @@ export default function Home() {
     checkUserLoggedIn();
   }, []);
 
-  if (isLoading) {
-    return (
-      <>
-        <div className="w-screen h-screen flex justify-center items-center text-base-400 font-bold">
-          Loading . . .
-        </div>
-      </>
-    );
-  }
-
   return (
     <>
       <Navbar user={user} />
       <div className="flex justify-center w-full md:flex-col-reverse lg:flex-row mt-20">
         <div className="hidden lg:flex flex-col lg:w-[25vw]">
-          <HomeLeft user={user} />
+          {isLoading ? <LoadingHomeLeft /> : <HomeLeft user={user} />}
         </div>
         <div className="flex flex-col md:w-full lg:w-[45vw] px-8">
           <PostCreateBox user={user} />

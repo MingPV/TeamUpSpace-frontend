@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import HomeLeft from "@/components/HomeLeft";
-import HomeRight from "@/components/HomeRight";
 import Navbar from "@/components/Navbar";
-import PostBox from "@/components/PostBox";
-import PostCreateBox from "@/components/PostCreateBox";
-import { IoCaretDownSharp } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import EventList from "@/components/EventList";
 import { IoMdSearch } from "react-icons/io";
@@ -18,16 +13,19 @@ import { fetchAllEvents } from "../api/event";
 export default function Home() {
   const [isLoadingEvent, setIsLoadingEvent] = useState(true);
   const [events, setEvents] = useState<Event[]>([]);
+  const [isFilterOpen, setIsFilterOpen] = useState(true);
 
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     //load cookie "token" to get user info
     const fetchUserInfo = async () => {
+      console.log("fetch user info from cookie");
       try {
         const token = document.cookie
           .split("; ")
           .find((row) => row.startsWith("token="));
+        console.log("token", token);
         if (!token) {
           setUser(null);
           return;
@@ -83,7 +81,10 @@ export default function Home() {
                 <IoMdSearch className="text-3xl rounded-full text-base-400" />
               </div>
             </div>
-            <div className="bg-white px-6 py-2 text-center rounded-md flex flex-row items-center gap-2 font-bold text-base-400/80 border-[1px] border-base-300/50 hover:bg-black/5 cursor-pointer">
+            <div
+              className="bg-white px-6 py-2 text-center rounded-md flex flex-row items-center gap-2 font-bold text-base-400/80 border-[1px] border-base-300/50 hover:bg-black/5 cursor-pointer"
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+            >
               <FaFilter className="text-lg text-amber-800/50" />
               Filter
             </div>
@@ -92,10 +93,18 @@ export default function Home() {
             </div>
           </div>
           <div className="flex justify-center w-full flex-row gap-6">
-            <div className="flex flex-col md:w-full lg:w-[60vw]">
+            <div
+              className={`flex flex-col md:w-full ${
+                isFilterOpen ? "lg:w-[60vw]" : "lg:w-[80vw]"
+              }`}
+            >
               <EventList events={events} />
             </div>
-            <div className="hidden md:flex flex-row md:w-full lg:w-[20vw]">
+            <div
+              className={`flex flex-row md:w-full lg:w-[20vw] ${
+                isFilterOpen ? "" : "hidden"
+              }`}
+            >
               <div className="bg-white w-full pl-6 pr-2 py-6 flex flex-col gap-12 rounded-sm h-fit sticky top-20 shadow-md">
                 {/* Filter by A */}
                 <div className="flex flex-col">

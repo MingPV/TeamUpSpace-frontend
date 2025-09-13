@@ -56,17 +56,23 @@ export default function Navbar({ user }: { user: any }) {
         </div>
       </div>
       <div className="flex flex-row justify-center items-center">
-        <div className="hidden lg:flex flex-col py-2 border-b-2 cursor-pointer items-center px-6">
-          <IoHomeSharp className="text-xl text-base-500" />
-          <div className="text-sm  text-base-400">Home</div>
+        <div
+          className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
+          onClick={() => router.push("/")}
+        >
+          <IoHomeSharp className="text-xl " />
+          <div className="text-sm  ">Home</div>
         </div>
         <div className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500">
           <FaUserFriends className="text-xl" />
           <div className="text-sm">Friends</div>
         </div>
-        <div className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500">
-          <MdEmojiEvents className="text-xl " />
-          <div className="text-sm  ">Events</div>
+        <div
+          className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
+          onClick={() => router.push("/event")}
+        >
+          <MdEmojiEvents className="text-xl" />
+          <div className="text-sm ">Events</div>
         </div>
         <div className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500">
           <AiOutlineMessage className="text-xl " />
