@@ -1,16 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import Image from "next/image";
-import { FaBookmark } from "react-icons/fa";
-import { FaUserFriends } from "react-icons/fa";
-import { MdEmojiEvents } from "react-icons/md";
 import { FaPencilAlt } from "react-icons/fa";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 export default function ProfileTop({ user }: { user: any }) {
-  const router = useRouter();
-
   if (!user) {
     return <div>not found</div>;
   }

@@ -11,12 +11,13 @@ import { IoMdSearch } from "react-icons/io";
 import Image from "next/image";
 import MobileNav from "./MobileNavbar";
 import Switch from "./Switch";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { signOut } from "@/app/api/auth";
 import { useRouter } from "next/navigation";
 
 export default function Navbar({ user }: { user: any }) {
+  const [userInfo, setUserInfo] = useState(user);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const router = useRouter();
@@ -26,6 +27,10 @@ export default function Navbar({ user }: { user: any }) {
       window.location.href = "/sign-in";
     });
   };
+
+  useEffect(() => {
+    setUserInfo(user);
+  }, [user]);
 
   return (
     <nav
@@ -72,7 +77,7 @@ export default function Navbar({ user }: { user: any }) {
           <div className="text-sm  ">Notification</div>
         </div>
         <div className="hidden lg:flex flex-col border-b-2 border-b-white items-center px-8 border-r border-r-base-200 relative">
-          {user ? (
+          {userInfo ? (
             <div className="flex flex-col px-0 md:px-4 items-center rounded-md">
               <div
                 className="flex flex-col items-center px-4 pt-1 rounded-md hover:bg-black/10 cursor-pointer"
@@ -93,8 +98,8 @@ export default function Navbar({ user }: { user: any }) {
               </div>
               {/* Dropdown */}
               <div
-                className={`absolute top-14 right-0 min-w-[160px] bg-white dark:bg-base-500 shadow-lg rounded-md border border-base-200 opacity-0 ${
-                  isMenuOpen ? "opacity-100" : null
+                className={`absolute top-14 right-0 min-w-[160px] bg-white dark:bg-base-500 shadow-lg rounded-md border border-base-200 ${
+                  isMenuOpen ? "" : "hidden"
                 } transition-opacity z-50`}
               >
                 <div className="flex flex-col py-2">

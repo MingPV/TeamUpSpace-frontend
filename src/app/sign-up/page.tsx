@@ -245,7 +245,7 @@ export default function Home() {
               ) : null}
             </div>
             <input
-              className="p-4 items-center border-[1px] border-base-300 rounded-md"
+              className="p-4 items-center border-[1px] border-base-300 rounded-md focus:outline-none focus:ring-0"
               type="password"
               placeholder="Password"
               value={password}
@@ -253,7 +253,7 @@ export default function Home() {
               disabled={loading}
             />
             <input
-              className="p-4 items-center border-[1px] border-base-300 rounded-md"
+              className="p-4 items-center border-[1px] border-base-300 rounded-md focus:outline-none focus:ring-0"
               type="password"
               placeholder="RepeatPassword"
               value={repeatPassword}
