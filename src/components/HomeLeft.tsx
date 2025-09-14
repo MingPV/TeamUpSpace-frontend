@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import Image from "next/image";
 import { FaBookmark } from "react-icons/fa";
@@ -8,7 +7,10 @@ import { FaPencilAlt } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export default function HomeLeft({ user }: { user: any }) {
+import { useUser } from "@/context/UserContext";
+
+export default function HomeLeft() {
+  const { user } = useUser();
   const router = useRouter();
 
   if (!user) {
@@ -101,10 +103,10 @@ export default function HomeLeft({ user }: { user: any }) {
             ) : (
               <div className="text-xl font-bold opacity-50">Unknown</div>
             )}
-            {user?.profile?.faculty ? (
-              <div className="text-sm">{user.profile.faculty}</div>
+            {user?.profile?.major ? (
+              <div className="text-sm">{user.profile.major}</div>
             ) : (
-              <div className="text-sm opacity-50">faculty not set</div>
+              <div className="text-sm opacity-50">major not set</div>
             )}
             {user?.profile?.location ? (
               <div className="text-sm text-base-400">

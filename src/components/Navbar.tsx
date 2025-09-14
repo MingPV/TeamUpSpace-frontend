@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
 import { IoHomeSharp } from "react-icons/io5";
@@ -14,23 +14,52 @@ import Switch from "./Switch";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { signOut } from "@/app/api/auth";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useUser } from "@/context/UserContext";
 
-export default function Navbar({ user }: { user: any }) {
-  const [userInfo, setUserInfo] = useState(user);
+export default function Navbar() {
+  const path = usePathname();
+  const { user, logout, setUser } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   const router = useRouter();
 
   const handleLogout = () => {
+    logout();
     signOut().then(() => {
       window.location.href = "/sign-in";
     });
   };
 
+  if (path === "/sign-in" || path === "/sign-up") {
+    return null;
+  }
+
   useEffect(() => {
-    setUserInfo(user);
-  }, [user]);
+    const fetchUserInfo = async () => {
+      console.log("fetch user info from cookie");
+      try {
+        const token = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("token="));
+        console.log("token", token);
+        if (!token) {
+          setUser(undefined);
+          return;
+        } else {
+          // token is jwtsecret
+          const userInfo = JSON.parse(atob(token.split(".")[1]));
+          setUser(userInfo.user_info);
+        }
+      } catch (error) {
+        setUser(undefined);
+      } finally {
+        // setIsLoadingEvent(false);
+      }
+    };
+    if (!user) {
+      fetchUserInfo();
+    }
+  }, [setUser, user]);
 
   return (
     <nav
@@ -83,7 +112,7 @@ export default function Navbar({ user }: { user: any }) {
           <div className="text-sm  ">Notification</div>
         </div>
         <div className="hidden lg:flex flex-col border-b-2 border-b-white items-center px-8 border-r border-r-base-200 relative">
-          {userInfo ? (
+          {user ? (
             <div className="flex flex-col px-0 md:px-4 items-center rounded-md">
               <div
                 className="flex flex-col items-center px-4 pt-1 rounded-md hover:bg-black/10 cursor-pointer"

@@ -4,6 +4,8 @@ export interface Profile {
   description?: string;
   age?: number;
   university?: string;
+  major?: string;
+  location?: string;
   year?: number;
   is_graduated?: boolean;
   profile_url?: string;

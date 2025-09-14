@@ -9,12 +9,16 @@ import { useState } from "react";
 import { signIn } from "../api/auth";
 import { FaHandPointLeft } from "react-icons/fa6";
 import { signInWithGoogle } from "../api/auth";
+import { useUser } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const { setUser } = useUser();
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleSignIn = async () => {
     setLoading(true);
@@ -27,8 +31,10 @@ export default function Home() {
       }
       console.log(res);
       console.log("Sign in successful");
+      setUser(res.user); // Update user context
+      router.push("/");
       //redirect with reload browser
-      window.location.href = "/";
+      // window.location.href = "/";
     } catch (err: any) {
       setError("Something went wrong, please try again");
     } finally {

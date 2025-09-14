@@ -3,7 +3,6 @@
 
 import HomeLeft from "@/components/HomeLeft";
 import HomeRight from "@/components/HomeRight";
-import Navbar from "@/components/Navbar";
 import PostBox from "@/components/PostBox";
 import PostCreateBox from "@/components/PostCreateBox";
 import { IoCaretDownSharp } from "react-icons/io5";
@@ -11,37 +10,39 @@ import { fetchUserInfo } from "./api/auth";
 import { useEffect, useState } from "react";
 import LoadingHomeLeft from "@/components/LoadingHomeLeft";
 
-export default function Home() {
-  const [isLoading, setIsLoading] = useState(true);
+import { useUser } from "@/context/UserContext";
 
-  const [user, setUser] = useState(null);
+export default function Home() {
+  // const [isLoading, setIsLoading] = useState(true);
+
+  const { user, setUser } = useUser();
 
   useEffect(() => {
-    const checkUserLoggedIn = async () => {
-      try {
-        const response = await fetchUserInfo();
-        if (response && response.ok) {
-          const userInfo = await response.json();
-          setUser(userInfo);
-          console.log(userInfo);
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        setUser(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    checkUserLoggedIn();
+    // const checkUserLoggedIn = async () => {
+    //   try {
+    //     const response = await fetchUserInfo();
+    //     if (response && response.ok) {
+    //       const userInfo = await response.json();
+    //       setUser(userInfo);
+    //       console.log(userInfo);
+    //     } else {
+    //       setUser(null);
+    //     }
+    //   } catch (error) {
+    //     setUser(null);
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
+    // };
+    // checkUserLoggedIn();
   }, []);
 
   return (
     <>
-      <Navbar user={user} />
       <div className="flex justify-center w-full md:flex-col-reverse lg:flex-row mt-20">
         <div className="hidden lg:flex flex-col lg:w-[25vw]">
-          {isLoading ? <LoadingHomeLeft /> : <HomeLeft user={user} />}
+          {/* {isLoading ? <LoadingHomeLeft /> : <HomeLeft user={user} />} */}
+          <HomeLeft />
         </div>
         <div className="flex flex-col md:w-full lg:w-[45vw] px-8">
           <PostCreateBox user={user} />

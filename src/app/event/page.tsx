@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import Navbar from "@/components/Navbar";
 import { useEffect, useState } from "react";
 import EventList from "@/components/EventList";
 import { IoMdSearch } from "react-icons/io";
@@ -63,7 +62,6 @@ export default function Home() {
 
   return (
     <>
-      <Navbar user={user} />
       <div className="mt-20 flex flex-col w-full items-center">
         <div className="w-[80vw] flex flex-col gap-4">
           <div className="flex flex-row gap-4 items-center">

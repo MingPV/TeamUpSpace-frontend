@@ -1,17 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import HomeLeft from "@/components/HomeLeft";
-import HomeRight from "@/components/HomeRight";
-import Navbar from "@/components/Navbar";
 import PostBox from "@/components/PostBox";
-import PostCreateBox from "@/components/PostCreateBox";
-import { IoCaretDownSharp } from "react-icons/io5";
-import { fetchUserInfo } from "../../api/auth";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ProfileTop from "@/components/ProfileTop";
+import { getUserByUsername } from "@/app/api/auth";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -21,23 +15,22 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    const checkUserLoggedIn = async () => {
+    const loadUserByUsername = async () => {
+      const username = window.location.pathname.split("/").pop();
+      if (!username) {
+        router.push("/profile");
+        return;
+      }
       try {
-        const response = await fetchUserInfo();
-        if (response && response.ok) {
-          const userInfo = await response.json();
-          setUser(userInfo);
-          console.log(userInfo);
-        } else {
-          setUser(null);
-        }
+        const response = await getUserByUsername(username);
+        setUser(response);
       } catch (error) {
-        setUser(null);
+        router.push("/not-found");
       } finally {
         setIsLoading(false);
       }
     };
-    checkUserLoggedIn();
+    loadUserByUsername();
   }, []);
 
   if (isLoading) {
@@ -52,7 +45,6 @@ export default function Home() {
 
   return (
     <>
-      <Navbar user={user} />
       <div className="flex flex-col items-center w-full mt-20">
         <div className="w-[90vw] lg:w-[70vw]">
           <ProfileTop user={user} />
