@@ -26,14 +26,14 @@ export default function PostCreateBox({ user }: { user: User | undefined }) {
     <>
       {isPostBoxOpen && (
         <div
-          className="w-screen h-screen bg-black/50 fixed z-45 top-0 left-0"
+          className="w-screen h-screen bg-black/50 fixed z-48 top-0 left-0"
           onClick={() => {
             setIsPostBoxOpen(false);
           }}
         ></div>
       )}
       <div
-        className={`fixed w-[32vw] h-[75vh] bg-white z-50 top-[5vh] right-[1vw] flex flex-col rounded-xl overflow-scroll ${
+        className={`fixed w-[32vw] h-[75vh] bg-white z-49 top-[5vh] right-[1vw] flex flex-col rounded-xl overflow-scroll ${
           isPostBoxOpen && isEnableTeamRequest ? "block" : "hidden"
         }`}
       >
