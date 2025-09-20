@@ -74,16 +74,6 @@ export default function ChatList() {
                 </div>
                 {/* My message */}
                 <div className="flex flex-row-reverse gap-2 items-end">
-                  <div>
-                    <Image
-                      src={"/golang.webp"}
-                      width={200}
-                      height={200}
-                      alt="profile-pic"
-                      style={{ objectFit: "cover" }}
-                      className="rounded-full h-8 w-8"
-                    />
-                  </div>
                   <div className="text-base-400 flex flex-col">
                     <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
                       <div className="text-sm">Hi mingming</div>
