@@ -21,7 +21,7 @@ export default function ChatList() {
               className="w-1/3 bg-white h-full flex flex-col rounded-t-md shadow-md shadow-base-400/30 border-[1px] border-base-300/50"
             >
               <div className="w-full flex flex-row justify-between items-center py-2 px-3 border-b-[1px] border-b-base-300/30">
-                <div className="flex flex-row gap-3 items-center">
+                <div className="flex flex-row gap-3 items-center cursor-pointer hover:bg-black/5 p-1 rounded-md">
                   <Image
                     src={"/golang.webp"}
                     width={200}
@@ -60,11 +60,13 @@ export default function ChatList() {
                       height={200}
                       alt="profile-pic"
                       style={{ objectFit: "cover" }}
-                      className="rounded-full h-8 w-8"
+                      className="rounded-full h-8 w-8 cursor-pointer hover:opacity-90"
                     />
                   </div>
                   <div className="text-base-400 flex flex-col">
-                    <div className="text-xs ml-2 text-base-400">MingPV</div>
+                    <div className="text-xs ml-2 text-base-400 cursor-default">
+                      MingPV
+                    </div>
                     <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
                       <div className="text-sm">Hi mingming</div>
                     </div>
@@ -103,7 +105,7 @@ export default function ChatList() {
                   }}
                 />
 
-                <div className="mt-1.5">
+                <div className="mt-1.5 cursor-pointer">
                   <IoSend className="text-xl text-amber-800" />
                 </div>
               </div>
