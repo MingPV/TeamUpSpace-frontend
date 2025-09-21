@@ -155,7 +155,10 @@ export default function HomeLeft() {
               Events
             </div>
           </div>
-          <div className="flex gap-2 items-center justify-center bg-amber-800 hover:bg-amber-900 cursor-pointer py-2 rounded-sm">
+          <div
+            className="flex gap-2 items-center justify-center bg-amber-800 hover:bg-amber-900 cursor-pointer py-2 rounded-sm"
+            onClick={() => router.push("/request")}
+          >
             <div className="text-sm font-bold text-white">
               Check Team Requests (0)
             </div>
