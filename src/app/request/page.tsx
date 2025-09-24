@@ -1,17 +1,46 @@
+"use client";
+
 import React from "react";
 import { MdLocalPostOffice } from "react-icons/md";
 import { MdNavigateNext } from "react-icons/md";
 import { MdNavigateBefore } from "react-icons/md";
 import Image from "next/image";
 import RequestCard from "@/components/RequestCard";
+import { useState } from "react";
 
-export default function page() {
+export default function Request() {
+  const [isComingRequest, setIsComingRequest] = useState(true);
+
   return (
     <div className="w-full h-screen flex flex-col">
       <div className="mt-20 ml-10 bg-white w-[70vw] h-[80vh] rounded-lg flex flex-col shadow-md">
-        <div className="w-full text-2xl ml-10 mt-6 font-rollingStone text-base-400 flex flex-row items-center gap-2">
-          <MdLocalPostOffice className="mb-1" />
-          Team Requests ( 4 )
+        <div className="w-full pl-10 pt-6 flex flex-row items-center justify-between">
+          <div className="flex flex-row gap-2 text-2xl font-rollingStone text-base-400">
+            <MdLocalPostOffice className="mb-1" />
+            Team Requests ( 4 )
+          </div>
+          <div className="flex flex-row bg-base-100 rounded-full p-1 mr-4">
+            <div
+              className={`px-4 py-2 ${
+                isComingRequest
+                  ? "text-white bg-amber-800"
+                  : "text-base-300 bg-transparent"
+              } font-rollingStone flex justify-center items-center rounded-full cursor-pointer select-none`}
+              onClick={() => setIsComingRequest(true)}
+            >
+              coming request
+            </div>
+            <div
+              className={`px-4 py-2 ${
+                isComingRequest
+                  ? "text-base-300 bg-transparent"
+                  : "text-white bg-amber-800"
+              } font-rollingStone flex justify-center items-center rounded-full cursor-pointer select-none`}
+              onClick={() => setIsComingRequest(false)}
+            >
+              my request
+            </div>
+          </div>
         </div>
 
         <div className="px-4 mt-6 h-full pb-4">
