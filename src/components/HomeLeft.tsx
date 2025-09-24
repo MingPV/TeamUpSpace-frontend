@@ -43,19 +43,28 @@ export default function HomeLeft() {
           <div className="flex flex-col m-5 gap-5">
             <div className="flex gap-2 items-center">
               <FaBookmark />
-              <div className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer">
+              <div
+                className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer"
+                onClick={() => router.push("/sign-in")}
+              >
                 Saved Events
               </div>
             </div>
             <div className="flex gap-2 items-center">
               <FaUserFriends />
-              <div className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer">
+              <div
+                className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer"
+                onClick={() => router.push("/sign-in")}
+              >
                 Friends
               </div>
             </div>
             <div className="flex gap-2 items-center">
               <MdEmojiEvents />
-              <div className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer">
+              <div
+                className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer"
+                onClick={() => router.push("/event")}
+              >
                 Events
               </div>
             </div>
@@ -139,19 +148,28 @@ export default function HomeLeft() {
         <div className="flex flex-col m-5 gap-5">
           <div className="flex gap-2 items-center">
             <FaBookmark />
-            <div className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer">
+            <div
+              className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer"
+              onClick={() => router.push("/event/saved")}
+            >
               Saved Events (9)
             </div>
           </div>
           <div className="flex gap-2 items-center">
             <FaUserFriends />
-            <div className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer">
+            <div
+              className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer"
+              onClick={() => router.push("/friend")}
+            >
               Friends
             </div>
           </div>
           <div className="flex gap-2 items-center">
             <MdEmojiEvents />
-            <div className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer">
+            <div
+              className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer"
+              onClick={() => router.push("/event")}
+            >
               Events
             </div>
           </div>

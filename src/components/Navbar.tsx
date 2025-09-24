@@ -168,7 +168,10 @@ export default function Navbar() {
                     >
                       Profile
                     </Link>
-                    <div className="px-4 py-2 text-base-400 hover:bg-black/5 cursor-pointer">
+                    <div
+                      className="px-4 py-2 text-base-400 hover:bg-black/5 cursor-pointer"
+                      onClick={() => router.push("/event/saved")}
+                    >
                       Saved Events
                     </div>
                     <div
