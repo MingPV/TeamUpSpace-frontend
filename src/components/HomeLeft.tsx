@@ -159,7 +159,7 @@ export default function HomeLeft() {
             <FaUserFriends />
             <div
               className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer"
-              onClick={() => router.push("/friend")}
+              onClick={() => router.push("/friend-group")}
             >
               Friends
             </div>

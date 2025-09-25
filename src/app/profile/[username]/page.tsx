@@ -24,6 +24,9 @@ export default function Home() {
       try {
         const response = await getUserByUsername(username);
         setUser(response);
+        if (response.error) {
+          router.push("/not-found");
+        }
       } catch (error) {
         router.push("/not-found");
       } finally {

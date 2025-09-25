@@ -103,7 +103,7 @@ export default function Navbar() {
           </div>
           <div
             className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
-            onClick={() => router.push("/friend")}
+            onClick={() => router.push("/friend-group")}
           >
             <FaUserFriends className="text-xl" />
             <div className="text-sm select-none">Friends</div>
@@ -200,7 +200,7 @@ export default function Navbar() {
       <div
         className={`fixed w-[25%] h-[90%] right-3 bottom-0 bg-white z-40 rounded-t-md border-[1px] border-base-300/50  transition-all duration-300 flex flex-col shadow-lg shadow-base-400/30 ${
           isChatOpen ? "max-h-full" : "max-h-14"
-        } ${path == "/friend" ? "hidden" : ""}  `}
+        } ${path == "/chat" ? "hidden" : ""}  `}
       >
         <div
           className="flex flex-row justify-between w-full items-center my-3 cursor-pointer border-b-[1px] border-base-300/30 pb-4"

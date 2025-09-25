@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { FaUserFriends } from "react-icons/fa";
 import { IoMdSearch } from "react-icons/io";
 import ChatDisplay from "@/components/ChatDisplay";
+import { RxCross2 } from "react-icons/rx";
 
 export default function FriendPage() {
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
@@ -179,7 +180,17 @@ export default function FriendPage() {
             </div>
           </div>
           {isAddFriendOpen ? (
-            <div className="w-[62vw] h-full ml-4 bg-white rounded-lg shadow-md flex flex-col items-center justify-center">
+            <div className="w-[62vw] h-full ml-4 bg-white rounded-lg shadow-md flex flex-col items-center justify-center relative">
+              <div
+                className="absolute flex flex-row gap-2 items-center right-6 top-6 font-bold px-3 py-2 rounded-md text-base-400 bg-base-200 transition-all duration-300 select-none cursor-pointer hover:bg-amber-800 hover:text-white"
+                onClick={() => {
+                  setIsAddFriendOpen(false);
+                  setIsCreateGroupOpen(false);
+                }}
+              >
+                <RxCross2 className="text-2xl" />
+                Exit Add Friend
+              </div>
               <div className="flex flex-col gap-2 p-8 bg-black/5 rounded-md mb-12">
                 <div className="font-rollingStone text-xl text-amber-800/80 cursor-default select-none">
                   Find user by username & Add Friend
@@ -197,7 +208,17 @@ export default function FriendPage() {
             </div>
           ) : null}
           {isCreateGroupOpen ? (
-            <div className="w-[62vw] h-full ml-4 bg-white rounded-lg shadow-md flex flex-col items-center justify-center">
+            <div className="w-[62vw] h-full ml-4 bg-white rounded-lg shadow-md flex flex-col items-center justify-center relative">
+              <div
+                className="absolute flex flex-row gap-2 items-center right-6 top-6 font-bold px-3 py-2 rounded-md text-base-400 bg-base-200 transition-all duration-300 select-none cursor-pointer hover:bg-amber-800 hover:text-white"
+                onClick={() => {
+                  setIsAddFriendOpen(false);
+                  setIsCreateGroupOpen(false);
+                }}
+              >
+                <RxCross2 className="text-2xl" />
+                Exit Create Group
+              </div>
               <div className="flex flex-col gap-2 p-8 bg-black/5 rounded-md mb-12">
                 <div className="font-rollingStone text-xl text-amber-800/80 cursor-default select-none">
                   Create a new group & Invite friends
