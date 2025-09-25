@@ -27,7 +27,7 @@ export default function PostBox() {
     <>
       <PostModal isOpen={isOpenComment} onClose={() => setIsOpenComment(false)}>
         <div className="bg-white px-4 pt-4 pb-1 flex flex-col w-full rounded-lg">
-          <div className="flex gap-4 mb-3">
+          <div className="flex gap-3 mb-3">
             <Image
               src={"/golang.webp"}
               width={100}
