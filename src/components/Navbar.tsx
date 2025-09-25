@@ -73,7 +73,7 @@ export default function Navbar() {
       <nav
         className={`
         fixed top-0 left-0 w-full z-40 bg-white dark:bg-base-500 shadow-md
-        dark:text-base-100 text-base-500 flex justify-between sm:justify-center items-center gap-20
+        dark:text-base-100 text-base-500 flex justify-between sm:justify-center items-center gap-20 select-none
       `}
       >
         <div className="flex gap-2 items-center px-2 ">
