@@ -3,11 +3,16 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
 import { useState } from "react";
+import { Chatroom } from "@/app/types/chatroom";
 
 type ChatCardProps = {
   chat?: any;
   chatDisplays?: any[];
   setChatDisplays?: React.Dispatch<React.SetStateAction<any[]>>;
+  setCurrentChatroom: React.Dispatch<
+    React.SetStateAction<Chatroom | undefined>
+  >;
+  chatInfo: Chatroom;
 };
 
 export default function ChatCard(chatList: ChatCardProps) {
@@ -15,6 +20,9 @@ export default function ChatCard(chatList: ChatCardProps) {
 
   const handleChatClick = () => {
     console.log("chatlist", chatList.chatDisplays);
+    console.log(chatList.chatInfo?.roomId);
+
+    chatList.setCurrentChatroom(chatList.chatInfo);
     if (chatList.setChatDisplays && chatList.chatDisplays) {
       if (!chatList.chatDisplays.includes(chat)) {
         let newChatDisplays = [];
@@ -58,12 +66,14 @@ export default function ChatCard(chatList: ChatCardProps) {
       <div className="flex-1 flex flex-col mr-4">
         <div className="flex flex-row justify-between items-center">
           <div className="flex flex-row gap-2">
-            <div className="font-bold text-sm tetx-base-400">{"MingPV"}</div>
+            <div className="font-bold text-sm tetx-base-400">
+              {chatList.chatInfo?.roomName ?? "null"}
+            </div>
           </div>
           <div className="text-base-400 text-sm mr-2">Sep 13</div>
         </div>
         <div className="text-base-400/70 text-sm mb-2 w-[82%]">
-          hello mingmingpv, I am interested in your money {chat}.
+          {chatList.chatDisplays && chatList.chatDisplays[0]}
         </div>
       </div>
     </div>

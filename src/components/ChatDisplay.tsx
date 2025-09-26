@@ -1,21 +1,87 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { BsFillPersonPlusFill } from "react-icons/bs";
 import { FaUserFriends } from "react-icons/fa";
 import Image from "next/image";
 import { IoSend } from "react-icons/io5";
 import { IoMdMenu, IoMdSearch } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
+import { Chatroom } from "@/app/types/chatroom";
 
-export default function ChatDisplay() {
+//chat streaming
+import { useRoomChat } from "@/components/chatroom";
+import { useUser } from "@/context/UserContext";
+import { use, useState, useRef, useEffect } from "react";
+import { ChatMessage } from "@/app/types/chatroom";
+
+export default function ChatDisplay({
+  chatroom,
+}: {
+  chatroom: Chatroom | undefined;
+}) {
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const roomId = String(chatroom?.roomId);
+
+  const { connected, events, send } = useRoomChat(roomId);
+
+  const [inputMessage, setInputMessage] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [displayMessages, setDisplayMessages] = useState<ChatMessage[]>([]);
+  const [userId, setUserId] = useState<string | undefined>("");
+  const { user } = useUser();
+  //get all members --> create mapping user_id to display_name -->
+
+  useEffect(() => {
+    if (user) {
+      setUserId(user.id);
+    }
+  }, [user]);
+
+  function mapPayloadToMessage(payload: any): ChatMessage | null {
+    if (!payload?.Payload?.Delivered) return null;
+
+    const d = payload.Payload.Delivered;
+    return {
+      id: d.id,
+      text: d.text,
+      sender: d.sender_id,
+      timestamp: new Date(d.created_at_unix * 1000).toISOString(),
+    };
+  }
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (events.length > 0) {
+      const last = events[events.length - 1];
+      const msg = mapPayloadToMessage(last);
+
+      if (msg) {
+        setDisplayMessages((prev) => [...prev, msg]);
+      }
+    }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [events]);
+
+  const handleSend = (msg: string) => {
+    if (msg.trim() && connected) {
+      send(msg, userId ?? "Test");
+      setInputMessage("");
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend(inputMessage);
+    }
+  };
 
   return (
     <div className="w-[62vw] ml-4 bg-white rounded-lg shadow-md flex flex-col h-full">
       <div className="w-full py-6 pl-8 text-2xl flex flex-row gap-2 items-center text-base-400 font-bold cursor-defaul border-b-[1px] border-base-300/20">
-        <div className="cursor-default select-none">BananaGroup</div>
+        <div className="cursor-default select-none">{chatroom?.roomName}</div>
 
         <span className="flex flex-row gap-2 items-center p-1 px-3 bg-base-200 rounded-full select-none">
           <div className="text-base font-bold text-base-400/70 cursor-default">
@@ -588,202 +654,62 @@ export default function ChatDisplay() {
             <div className="w-full flex items-center justify-center text-xs text-base-300">
               Aug 12
             </div>
-            {/* Other messages */}
-            <div className="flex flex-row gap-3 items-end">
-              <div>
-                <Image
-                  src={"/golang.webp"}
-                  width={200}
-                  height={200}
-                  alt="profile-pic"
-                  style={{ objectFit: "cover" }}
-                  className="rounded-full h-10 w-10 cursor-pointer hover:opacity-90"
-                />
-              </div>
-              <div className="text-base-400 flex flex-col">
-                <div className="text-xs ml-2 text-base-400 cursor-default">
-                  MingPV
+            {displayMessages.map((msg) =>
+              msg.sender === userId ? (
+                // My message
+                <div
+                  key={msg.id}
+                  className="flex flex-row-reverse gap-2 items-end"
+                >
+                  <div className="text-base-400 flex flex-col">
+                    <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
+                      <div className="text-base">{msg.text}</div>
+                      <span className="text-xs opacity-70 block">
+                        {new Date(msg.timestamp).toLocaleTimeString()}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
+              ) : (
+                // Other messages
+                <div key={msg.id} className="flex flex-row gap-3 items-end">
+                  <div>
+                    <Image
+                      src={"/golang.webp"} // Replace with actual sender profile image
+                      width={200}
+                      height={200}
+                      alt="profile-pic"
+                      style={{ objectFit: "cover" }}
+                      className="rounded-full h-10 w-10 cursor-pointer hover:opacity-90"
+                    />
+                  </div>
+                  <div className="text-base-400 flex flex-col">
+                    <div className="text-xs ml-2 text-base-400 cursor-default">
+                      {msg.sender || "User"} {/* Replace with sender name */}
+                    </div>
+                    <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
+                      <div className="text-base">{msg.text}</div>
+                      <span className="text-xs opacity-70 block">
+                        {new Date(msg.timestamp).toLocaleTimeString()}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingming</div>
-                </div>
-              </div>
-            </div>
-            {/* My message */}
-            <div className="flex flex-row-reverse gap-2 items-end">
-              <div className="text-base-400 flex flex-col">
-                <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                  <div className="text-base">Hi mingmingLast</div>
-                </div>
-              </div>
-            </div>
+              )
+            )}
+
+            <div ref={messagesEndRef} />
           </div>
+
           <div className="w-full p-2 pb-3 h-auto max-h-[40vh] border-t-[1px] border-base-300/30 flex flex-row gap-2 items-start">
             <textarea
               className="flex-1 h-full min-h-20 max-h-full pl-3 py-1 ring-0 focus:outline-none resize-none leading-relaxed overflow-hidden border-[1px] border-base-300/40 rounded-xl bg-base-200/30 placeholder:text-base-300 text-base-400 overflow-y-scroll"
               placeholder="Write a message..."
+              value={inputMessage}
+              onKeyPress={handleKeyPress}
               rows={1}
               onChange={(e) => {
+                setInputMessage(e.target.value);
                 const textarea = e.target;
 
                 // auto resize
@@ -792,9 +718,12 @@ export default function ChatDisplay() {
               }}
             />
 
-            <div className="mt-1.5 cursor-pointer">
+            <button
+              className="mt-1.5 cursor-pointer"
+              onClick={() => handleSend(inputMessage)}
+            >
               <IoSend className="text-xl text-amber-800" />
-            </div>
+            </button>
           </div>
         </div>
       )}

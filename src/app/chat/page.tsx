@@ -1,16 +1,75 @@
 "use client";
 
 import ChatCard from "@/components/ChatCard";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaUserFriends } from "react-icons/fa";
 import { IoMdSearch } from "react-icons/io";
 import ChatDisplay from "@/components/ChatDisplay";
 import { RxCross2 } from "react-icons/rx";
-
+import { useUser } from "@/context/UserContext";
+//api
+import { createChatGroup, getAllGroupsByUserId } from "../api/chatroom";
+import { Chatroom } from "../types/chatroom";
 export default function FriendPage() {
+  const { user } = useUser();
+
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("chat");
+  const [groupName, setGroupName] = useState("");
+  const [loadingCreateGroup, setLoadingCreateGroup] = useState(false);
+  const [loadingGroup, setLoadingGroup] = useState(false);
+  const [error, setError] = useState("");
+  const [groups, setGroups] = useState<Chatroom[] | undefined>();
+  const [currentChatRoom, setCurrentChatRoom] = useState<
+    Chatroom | undefined
+  >();
+
+  useEffect(() => {
+    console.log("chatroom", currentChatRoom);
+  }, [currentChatRoom, setCurrentChatRoom]);
+
+  useEffect(() => {
+    const fetchGroups = async () => {
+      setLoadingGroup(true);
+      setError("");
+      try {
+        console.log("usersuers", user);
+        const res = await getAllGroupsByUserId(user);
+        if (res.error) {
+          setError("failed to load groups, please try again");
+          return;
+        }
+        setGroups(res);
+        console.log("loading groups successful");
+      } catch (err: any) {
+        setError("Something went wrong, please try again");
+      } finally {
+        setLoadingGroup(false);
+      }
+    };
+
+    fetchGroups();
+  }, [user]);
+
+  const handleCreateChatroom = async () => {
+    setLoadingCreateGroup(true);
+    setError("");
+    try {
+      const res = await createChatGroup(groupName, user);
+      if (res.error) {
+        setError("create chatroom group is not successful, please try again");
+        return;
+      }
+      console.log("create chatroom group successful.");
+      console.log(res);
+    } catch (err: any) {
+      setError("Something went wrong, please try again");
+    } finally {
+      setLoadingCreateGroup(false);
+      setGroupName("");
+    }
+  };
 
   return (
     <>
@@ -98,86 +157,56 @@ export default function FriendPage() {
                 </div>
               </div>
             </div>
-            <div className="w-full flex flex-col overflow-y-scroll px-2">
-              <ChatCard
-                chat={"chat1"}
-                chatDisplays={undefined}
-                setChatDisplays={undefined}
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <ChatCard
-                chat={"chat2"}
-                chatDisplays={undefined}
-                setChatDisplays={undefined}
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <ChatCard
-                chat={"chat3"}
-                chatDisplays={undefined}
-                setChatDisplays={undefined}
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <ChatCard
-                chat={"chat4"}
-                chatDisplays={undefined}
-                setChatDisplays={undefined}
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <ChatCard
-                chat={"chat5"}
-                chatDisplays={undefined}
-                setChatDisplays={undefined}
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <ChatCard
-                chat={"chat6"}
-                chatDisplays={undefined}
-                setChatDisplays={undefined}
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <ChatCard
-                chat={"chat7"}
-                chatDisplays={undefined}
-                setChatDisplays={undefined}
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <ChatCard
-                chat={"chat8"}
-                chatDisplays={undefined}
-                setChatDisplays={undefined}
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <ChatCard
-                chat={"chat9"}
-                chatDisplays={undefined}
-                setChatDisplays={undefined}
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <ChatCard
-                chat={"chat10"}
-                chatDisplays={undefined}
-                setChatDisplays={undefined}
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <ChatCard
-                chat={"chat11"}
-                chatDisplays={undefined}
-                setChatDisplays={undefined}
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <ChatCard
-                chat={"chat12"}
-                chatDisplays={undefined}
-                setChatDisplays={undefined}
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <ChatCard
-                chat={"chat13"}
-                chatDisplays={undefined}
-                setChatDisplays={undefined}
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-            </div>
+            {selectedTab == "chat" && (
+              <div className="w-full flex flex-col overflow-y-hidden px-2">
+                <ChatCard
+                  chat={"chat1"}
+                  chatDisplays={undefined}
+                  setChatDisplays={undefined}
+                  setCurrentChatroom={setCurrentChatRoom}
+                  chatInfo={{
+                    roomId: 12,
+                    roomName: "Chat Test Room",
+                    isGroup: true,
+                  }}
+                />
+
+                <div className="border-b-[1px] border-b-base-300/50"></div>
+              </div>
+            )}
+            {selectedTab == "friend" && (
+              <div className="w-full flex flex-col overflow-y-hidden px-2">
+                <ChatCard
+                  chat={"chat1"}
+                  chatDisplays={undefined}
+                  setChatDisplays={undefined}
+                  setCurrentChatroom={setCurrentChatRoom}
+                  chatInfo={{
+                    roomId: 12,
+                    roomName: "Friend test room",
+                    isGroup: true,
+                  }}
+                />
+
+                <div className="border-b-[1px] border-b-base-300/50"></div>
+              </div>
+            )}
+            {selectedTab === "group" &&
+              groups?.map((g, index) => (
+                <div
+                  key={index}
+                  className="w-full flex flex-col overflow-y-scroll px-2 border-b-[1px] border-b-base-300/50"
+                >
+                  <ChatCard
+                    chat={"chat1"}
+                    chatDisplays={undefined}
+                    setChatDisplays={undefined}
+                    setCurrentChatroom={setCurrentChatRoom}
+                    chatInfo={g}
+                  />
+                </div>
+              ))}
+            {/* <div className="border-b-[1px] border-b-base-300/50"></div> */}
           </div>
           {isAddFriendOpen ? (
             <div className="w-[62vw] h-full ml-4 bg-white rounded-lg shadow-md flex flex-col items-center justify-center relative">
@@ -227,10 +256,16 @@ export default function FriendPage() {
                   <input
                     className="p-2 pl-4 flex-1 border rounded-md border-base-300/50 focus:outline-amber-800 bg-white font-bold placeholder:font-medium"
                     placeholder="group name"
+                    value={groupName}
+                    onChange={(e) => setGroupName(e.target.value)}
                   />
-                  <div className="font-bold px-3 py-2 rounded-md text-base-400 bg-base-200 transition-all duration-300 select-none cursor-pointer hover:bg-amber-800 hover:text-white">
-                    Create
-                  </div>
+
+                  <button
+                    className="font-bold px-3 py-2 rounded-md text-base-400 bg-base-200 transition-all duration-300 select-none cursor-pointer hover:bg-amber-800 hover:text-white"
+                    onClick={handleCreateChatroom}
+                  >
+                    {loadingCreateGroup ? "creating" : "create"}
+                  </button>
                 </div>
               </div>
             </div>
@@ -240,7 +275,7 @@ export default function FriendPage() {
               isAddFriendOpen || isCreateGroupOpen ? "hidden" : "block"
             } h-full`}
           >
-            <ChatDisplay />
+            <ChatDisplay chatroom={currentChatRoom} />
           </div>
         </div>
       </div>

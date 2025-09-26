@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { fetchUserInfo } from "@/app/api/auth";
 import { useRoomChat } from "@/components/chatroom";
+import { useUser } from "@/context/UserContext";
 import { use, useState, useRef, useEffect } from "react";
 
 type ChatMessage = {
@@ -29,26 +29,32 @@ export default function Page({
   const [inputMessage, setInputMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [displayMessages, setDisplayMessages] = useState<ChatMessage[]>([]);
-  const [user, setUser] = useState(); //TODO: set user id
-  // const [user, setUser] = useState(() => crypto.randomUUID());
+  const [userId, setUserId] = useState<string | undefined>("");
+  const { user } = useUser(); //TODO: set user id
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetchUserInfo();
-        console.log("user", response);
-        if (response && response.ok) {
-          const userInfo = await response.json();
-          setUser(userInfo);
-          console.log(userInfo);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
+    if (user) {
+      setUserId(user.id);
+    }
+  }, [user]);
 
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetchUserInfo();
+  //       console.log("user", response);
+  //       if (response && response.ok) {
+  //         const userInfo = await response.json();
+  //         setUser(userInfo);
+  //         console.log(userInfo);
+  //       }
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
 
   function mapPayloadToMessage(payload: any): ChatMessage | null {
     if (!payload?.Payload?.Delivered) return null;
@@ -77,7 +83,7 @@ export default function Page({
 
   const handleSend = (msg: string) => {
     if (msg.trim() && connected) {
-      send(msg, user ?? "test");
+      send(msg, userId ?? "Test");
       setInputMessage("");
     }
   };
@@ -97,7 +103,7 @@ export default function Page({
       <div className="bg-white shadow-sm border-b p-4">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Chat Room: {roomId}</h1>
-          <p>user : {user}</p>
+          <p>user : {userId ?? "Test"}</p>
           <div className="flex items-center gap-2">
             <span
               className={`px-2 py-1 rounded text-sm ${
@@ -136,12 +142,12 @@ export default function Page({
           <div
             key={msg.id}
             className={`flex ${
-              msg.sender === user ? "justify-end" : "justify-start"
+              msg.sender === userId ? "justify-end" : "justify-start"
             }`}
           >
             <div
               className={`max-w-xs px-3 py-2 rounded-lg shadow ${
-                msg.sender === "10000000-0000-0000-000000000000"
+                msg.sender === userId
                   ? "bg-blue-600 text-white rounded-br-none"
                   : "bg-gray-200 text-black rounded-bl-none"
               }`}
