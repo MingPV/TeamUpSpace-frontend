@@ -18,13 +18,13 @@ export default function RecommendedFriendCard2() {
         </div>
         <div className="text-xs">A Computer Engineering Student</div>
         <div className="flex flex-row gap-2">
-          <div className="px-4 py-1 border border-base-300 rounded-full w-fit mt-2  cursor-pointer hover:bg-black/10 hover:border-base-400">
+          <div className="px-4 py-1 border border-base-300 rounded-full w-fit h-fit mt-2  cursor-pointer hover:bg-black/10 hover:border-base-400">
             <div className="flex flex-row gap-2 justify-center items-center font-bold text-base-400">
               <div>+</div>
               <div>Follow</div>
             </div>
           </div>
-          <div className="px-4 py-1 rounded-full w-fit mt-2  cursor-pointer bg-base-200 hover:bg-base-300">
+          <div className="px-4 py-1 rounded-full w-fit h-fit mt-2  cursor-pointer bg-base-200 hover:bg-base-300">
             <div className="flex flex-row gap-2 justify-center items-center font-bold text-base-400">
               <div>Add Friend</div>
             </div>

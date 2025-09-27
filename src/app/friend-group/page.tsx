@@ -9,6 +9,7 @@ import FriendRequestCard from "@/components/FriendRequestCard";
 import RecommendedFriendCard2 from "@/components/RecommendedFriendCard2";
 import { ImCross } from "react-icons/im";
 import { RxCross2 } from "react-icons/rx";
+import GroupInviteCard from "@/components/GroupInviteCard";
 
 export default function FriendPage() {
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
@@ -262,26 +263,26 @@ export default function FriendPage() {
             <div className="border-r-[1px] border-r-base-300/30 h-[90%] mt-[5%]"></div>
             <div className="flex-1 flex flex-col items-center gap-4">
               <div className="mt-6 font-rollingStone text-xl text-amber-900">
-                Recommended Friends
+                Group Invite
               </div>
               <div className="flex flex-col gap-4 overflow-y-scroll w-full items-center">
-                <div className="px-4 py-4 bg-black/5 rounded-md w-[90%]">
-                  <RecommendedFriendCard2 />
+                <div className="bg-black/5 rounded-md w-[90%]">
+                  <GroupInviteCard />
                 </div>
-                <div className="px-4 py-4 bg-black/5 rounded-md w-[90%]">
-                  <RecommendedFriendCard2 />
+                <div className="bg-black/5 rounded-md w-[90%]">
+                  <GroupInviteCard />
                 </div>
-                <div className="px-4 py-4 bg-black/5 rounded-md w-[90%]">
-                  <RecommendedFriendCard2 />
+                <div className="bg-black/5 rounded-md w-[90%]">
+                  <GroupInviteCard />
                 </div>
-                <div className="px-4 py-4 bg-black/5 rounded-md w-[90%]">
-                  <RecommendedFriendCard2 />
+                <div className="bg-black/5 rounded-md w-[90%]">
+                  <GroupInviteCard />
                 </div>
-                <div className="px-4 py-4 bg-black/5 rounded-md w-[90%]">
-                  <RecommendedFriendCard2 />
+                <div className="bg-black/5 rounded-md w-[90%]">
+                  <GroupInviteCard />
                 </div>
-                <div className="px-4 py-4 bg-black/5 rounded-md w-[90%]">
-                  <RecommendedFriendCard2 />
+                <div className="bg-black/5 rounded-md w-[90%]">
+                  <GroupInviteCard />
                 </div>
               </div>
             </div>
