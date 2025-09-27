@@ -8,45 +8,25 @@ import { FaFilter } from "react-icons/fa";
 import { FaBookmark } from "react-icons/fa";
 import { Event } from "../types/event";
 import { fetchAllEvents } from "../api/event";
+import { fetchUserInfo } from "../api/auth";
+import { useUser } from "@/context/UserContext";
 
 export default function Home() {
   const [isLoadingEvent, setIsLoadingEvent] = useState(true);
   const [events, setEvents] = useState<Event[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(true);
 
-  const [user, setUser] = useState(null);
+  const { user, setUser } = useUser();
+
+  // const [user, setUser] = useState(null);
 
   useEffect(() => {
-    //load cookie "token" to get user info
-    const fetchUserInfo = async () => {
-      console.log("fetch user info from cookie");
-      try {
-        const token = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("token="));
-        console.log("token", token);
-        if (!token) {
-          setUser(null);
-          return;
-        } else {
-          // token is jwtsecret
-          const userInfo = JSON.parse(atob(token.split(".")[1]));
-          setUser(userInfo);
-          console.log(userInfo);
-        }
-      } catch (error) {
-        setUser(null);
-      } finally {
-        setIsLoadingEvent(false);
-      }
-    };
     const loadAllEvents = async () => {
       setIsLoadingEvent(true);
       const events = await fetchAllEvents();
       setEvents(events);
       setIsLoadingEvent(false);
     };
-    fetchUserInfo();
     loadAllEvents();
   }, []);
 

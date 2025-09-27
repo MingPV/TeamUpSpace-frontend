@@ -13,7 +13,7 @@ import MobileNav from "./MobileNavbar";
 import Switch from "./Switch";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { signOut } from "@/app/api/auth";
+import { fetchUserInfo, signOut } from "@/app/api/auth";
 import { usePathname, useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 import { FaChevronUp } from "react-icons/fa";
@@ -38,20 +38,13 @@ export default function Navbar() {
   };
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      console.log("fetch user info from cookie");
+    const loadUserInfo = async () => {
       try {
-        const token = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("token="));
-        console.log("token", token);
-        if (!token) {
-          setUser(undefined);
-          return;
-        } else {
-          // token is jwtsecret
-          const userInfo = JSON.parse(atob(token.split(".")[1]));
-          setUser(userInfo.user_info);
+        // token is jwtsecret
+        const res = await fetchUserInfo();
+        if (res.ok) {
+          const userInfo = await res.json();
+          setUser(userInfo);
         }
       } catch (error) {
         setUser(undefined);
@@ -60,7 +53,7 @@ export default function Navbar() {
       }
     };
     if (!user) {
-      fetchUserInfo();
+      loadUserInfo();
     }
   }, [setUser, user]);
 
