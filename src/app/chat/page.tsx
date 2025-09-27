@@ -8,7 +8,11 @@ import ChatDisplay from "@/components/ChatDisplay";
 import { RxCross2 } from "react-icons/rx";
 import { useUser } from "@/context/UserContext";
 //api
-import { createChatGroup, getAllGroupsByUserId } from "../api/chatroom";
+import {
+  createChatGroup,
+  getAllFriendChatroomsByUserId,
+  getAllGroupsByUserId,
+} from "../api/chatroom";
 import { Chatroom } from "../types/chatroom";
 export default function FriendPage() {
   const { user } = useUser();
@@ -21,27 +25,24 @@ export default function FriendPage() {
   const [loadingGroup, setLoadingGroup] = useState(false);
   const [error, setError] = useState("");
   const [groups, setGroups] = useState<Chatroom[] | undefined>();
+  const [friends, setFriends] = useState<Chatroom[] | undefined>();
   const [currentChatRoom, setCurrentChatRoom] = useState<
     Chatroom | undefined
   >();
 
   useEffect(() => {
-    console.log("chatroom", currentChatRoom);
-  }, [currentChatRoom, setCurrentChatRoom]);
-
-  useEffect(() => {
-    const fetchGroups = async () => {
+    const fetchChatrooms = async () => {
       setLoadingGroup(true);
       setError("");
       try {
-        console.log("usersuers", user);
-        const res = await getAllGroupsByUserId(user);
-        if (res.error) {
-          setError("failed to load groups, please try again");
+        const groups = await getAllGroupsByUserId(user);
+        const friends = await getAllFriendChatroomsByUserId(user);
+        if (groups.error) {
+          setError("failed to load chatrooms, please try again");
           return;
         }
-        setGroups(res);
-        console.log("loading groups successful");
+        setGroups(groups);
+        setFriends(friends);
       } catch (err: any) {
         setError("Something went wrong, please try again");
       } finally {
@@ -49,8 +50,8 @@ export default function FriendPage() {
       }
     };
 
-    fetchGroups();
-  }, [user]);
+    fetchChatrooms();
+  }, [user, loadingCreateGroup]);
 
   const handleCreateChatroom = async () => {
     setLoadingCreateGroup(true);
@@ -61,8 +62,6 @@ export default function FriendPage() {
         setError("create chatroom group is not successful, please try again");
         return;
       }
-      console.log("create chatroom group successful.");
-      console.log(res);
     } catch (err: any) {
       setError("Something went wrong, please try again");
     } finally {
@@ -174,23 +173,22 @@ export default function FriendPage() {
                 <div className="border-b-[1px] border-b-base-300/50"></div>
               </div>
             )}
-            {selectedTab == "friend" && (
-              <div className="w-full flex flex-col overflow-y-hidden px-2">
-                <ChatCard
-                  chat={"chat1"}
-                  chatDisplays={undefined}
-                  setChatDisplays={undefined}
-                  setCurrentChatroom={setCurrentChatRoom}
-                  chatInfo={{
-                    roomId: 12,
-                    roomName: "Friend test room",
-                    isGroup: true,
-                  }}
-                />
 
-                <div className="border-b-[1px] border-b-base-300/50"></div>
-              </div>
-            )}
+            {selectedTab === "friend" &&
+              friends?.map((g, index) => (
+                <div
+                  key={index}
+                  className="w-full flex flex-col overflow-y-scroll px-2 border-b-[1px] border-b-base-300/50"
+                >
+                  <ChatCard
+                    chat={"chat1"}
+                    chatDisplays={undefined}
+                    setChatDisplays={undefined}
+                    setCurrentChatroom={setCurrentChatRoom}
+                    chatInfo={g}
+                  />
+                </div>
+              ))}
             {selectedTab === "group" &&
               groups?.map((g, index) => (
                 <div

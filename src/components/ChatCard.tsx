@@ -4,6 +4,9 @@ import React, { useEffect } from "react";
 import Image from "next/image";
 import { useState } from "react";
 import { Chatroom } from "@/app/types/chatroom";
+import { getAllMessages } from "@/app/api/chatroom";
+import { ChatMessage } from "@/app/types/chatroom";
+import { usePathname } from "next/navigation";
 
 type ChatCardProps = {
   chat?: any;
@@ -17,12 +20,27 @@ type ChatCardProps = {
 
 export default function ChatCard(chatList: ChatCardProps) {
   const [chat, setChat] = useState<any>(chatList.chat);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const pathname = usePathname();
+  const ischatPage = pathname.includes("/chat");
 
+  const fetchChatHistory = async () => {
+    const res = await getAllMessages(String(chatList.chatInfo.roomId));
+    setMessages(res);
+  };
+  function formatDateToMonthDay(dateString: string) {
+    const date = new Date(dateString);
+
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+  }
   const handleChatClick = () => {
-    console.log("chatlist", chatList.chatDisplays);
-    console.log(chatList.chatInfo?.roomId);
+    if (ischatPage) {
+      chatList.setCurrentChatroom(chatList.chatInfo);
+    }
 
-    chatList.setCurrentChatroom(chatList.chatInfo);
     if (chatList.setChatDisplays && chatList.chatDisplays) {
       if (!chatList.chatDisplays.includes(chat)) {
         let newChatDisplays = [];
@@ -70,7 +88,7 @@ export default function ChatCard(chatList: ChatCardProps) {
               {chatList.chatInfo?.roomName ?? "null"}
             </div>
           </div>
-          <div className="text-base-400 text-sm mr-2">Sep 13</div>
+          <div className="text-base-400 text-sm mr-2">{"date 00"}</div>
         </div>
         <div className="text-base-400/70 text-sm mb-2 w-[82%]">
           {chatList.chatDisplays && chatList.chatDisplays[0]}

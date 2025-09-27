@@ -67,3 +67,7 @@ export async function signInWithGoogle() {
   // Redirect to backend Google OAuth endpoint
   window.location.href = `${API_GATEWAY_URL}/api/v1/auth/google/login`;
 }
+
+export async function getUserByUserId(userId: string) {
+  return fetchApi(`/api/v1/users/${userId}`);
+}
