@@ -4,10 +4,10 @@ export interface User {
   id: string; // UUID as string
   email: string;
   username: string;
-  isAdmin: boolean;
-  isBan: boolean;
-  banUntil?: string; // ISO date string
-  createdAt: string; // ISO date string
-  updatedAt: string; // ISO date string
+  is_admin: boolean;
+  is_ban: boolean;
+  ban_until?: string; // ISO date string
+  created_at: string; // ISO date string
+  updated_at: string; // ISO date string
   profile: Profile; // Optional Profile object
 }
