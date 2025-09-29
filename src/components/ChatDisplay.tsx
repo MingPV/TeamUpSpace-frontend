@@ -259,7 +259,7 @@ export default function ChatDisplay({
                       <div className="px-2 py-1 border-[1px] border-base-300/30 rounded-md font-bold text-amber-800 select-none cursor-default">
                         {id == chatroom?.owner ? "Owner" : "Member"}
                       </div>
-                      {id !== chatroom?.owner && (
+                      {id !== chatroom?.owner && userId === chatroom?.owner && (
                         <button
                           onClick={() => handleDeleteMember(member.id)}
                           className="p-1 border-[1px] h-fit border-base-300/30 rounded-md font-bold text-red-600 hover:bg-red-700 hover:text-white cursor-pointer"
@@ -275,9 +275,12 @@ export default function ChatDisplay({
           </div>
           <div className="w-2/6 flex justify-end items-end mb-12 pr-10">
             <div className="flex flex-row gap-2">
-              <div className="px-4 py-2 bg-red-700 text-white font-bold rounded-md cursor-pointer hover:bg-red-800">
+              <button
+                onClick={() => handleDeleteMember(members.get(userId)?.id ?? 0)}
+                className="px-4 py-2 bg-red-700 text-white font-bold rounded-md cursor-pointer hover:bg-red-800"
+              >
                 Leave Group
-              </div>
+              </button>
             </div>
           </div>
         </div>
