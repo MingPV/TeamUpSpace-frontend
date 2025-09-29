@@ -2,23 +2,23 @@
 "use client";
 import React, { useEffect } from "react";
 import Image from "next/image";
+import { Friend } from "@/app/types/friend";
 import { useState } from "react";
 import { Chatroom } from "@/app/types/chatroom";
 import { getAllMessages } from "@/app/api/chatroom";
 import { ChatMessage } from "@/app/types/chatroom";
 import { usePathname } from "next/navigation";
+import { useChatroom } from "@/context/ChatroomContext";
 
 type ChatCardProps = {
   chat?: any;
   chatDisplays?: any[];
   setChatDisplays?: React.Dispatch<React.SetStateAction<any[]>>;
-  setCurrentChatroom: React.Dispatch<
-    React.SetStateAction<Chatroom | undefined>
-  >;
   chatInfo: Chatroom;
 };
 
 export default function ChatCard(chatList: ChatCardProps) {
+  const { setSelectedChatroom } = useChatroom();
   const [chat, setChat] = useState<any>(chatList.chat);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const pathname = usePathname();
@@ -38,7 +38,7 @@ export default function ChatCard(chatList: ChatCardProps) {
   }
   const handleChatClick = () => {
     if (ischatPage) {
-      chatList.setCurrentChatroom(chatList.chatInfo);
+      setSelectedChatroom(chatList.chatInfo);
     }
 
     if (chatList.setChatDisplays && chatList.chatDisplays) {

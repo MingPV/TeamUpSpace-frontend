@@ -38,6 +38,7 @@ export async function getAllGroupsByUserId(user: any) {
       owner: group.chatroom.owner,
       updatedAt: group.chatroom.updatedAt,
     }));
+  console.log(adaptedGroups);
   return adaptedGroups;
 }
 
@@ -66,6 +67,7 @@ export async function getAllFriendChatroomsByUserId(user: any) {
         };
       })
   );
+  console.log(adaptedChatrooms);
 
   return adaptedChatrooms;
 }

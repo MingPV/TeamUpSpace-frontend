@@ -16,25 +16,24 @@ import {
   cancelInvite,
   deleteMember,
 } from "@/app/api/chatroom";
-import { Friend } from "@/app/types/friend";
-import { getAllFriendsByUserId } from "@/app/api/friend";
 
 //chat streaming
 import { useRoomChat } from "@/components/chatroom";
 import { useUser } from "@/context/UserContext";
 import { use, useState, useRef, useEffect } from "react";
 import { ChatMessage, Member } from "@/app/types/chatroom";
+import { useChatroom } from "@/context/ChatroomContext";
 
 export default function ChatDisplay({
   chatroom,
 }: {
-  chatroom: Chatroom | undefined;
+  chatroom: Chatroom | null;
 }) {
+  const { friends } = useUser();
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const roomId = String(chatroom?.roomId);
   const [members, setMembers] = useState<Map<string, Member>>(new Map());
-  const [friends, setFriends] = useState<Friend[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [searchFriend, setSearchFriend] = useState<string>("");
   const [invitees, setInvitees] = useState<string[]>([]);
@@ -46,14 +45,8 @@ export default function ChatDisplay({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [displayMessages, setDisplayMessages] = useState<ChatMessage[]>([]);
   const [userId, setUserId] = useState<string>("");
-  const [loadingInvite, setLoadingInvite] = useState<boolean>(false);
-  const [loadingSendInvite, setLoadingSendInvite] = useState<boolean>(false);
   const { user } = useUser();
   const invitedSet = new Set(invitedMembers.map((m) => m.inviteToId));
-
-  const [roomName, setRoomName] = useState<string | undefined>(
-    chatroom?.roomName
-  );
 
   useEffect(() => {
     setIsInviteOpen(false);
@@ -61,12 +54,10 @@ export default function ChatDisplay({
   }, [chatroom]);
 
   const fetchInviteData = async () => {
-    const [friendsRes, invitedRes, memberRes] = await Promise.all([
-      getAllFriendsByUserId(userId),
+    const [invitedRes, memberRes] = await Promise.all([
       getAllInvitedMembersByRoomId(roomId),
       getAllMembersInGroup(roomId),
     ]);
-    setFriends(friendsRes);
     setInvitedMembers(invitedRes);
     const membersMap = new Map<string, Member>(
       memberRes.map((m: Member) => [m.userId, m])
@@ -78,9 +69,7 @@ export default function ChatDisplay({
   const handleClickInviteMember = () => {
     setIsInviteOpen(!isInviteOpen);
     setIsMenuOpen(false);
-    setLoadingInvite(true);
     fetchInviteData();
-    setLoadingInvite(false);
   };
 
   const handleClickInvite = (id: string) =>
@@ -89,16 +78,11 @@ export default function ChatDisplay({
     );
 
   const handleClickSendInvites = async () => {
-    setLoadingSendInvite(true);
     try {
       await createInviteMembers(roomId, userId, invitees);
       setInvitees([]);
-      setLoadingInvite(true);
       await fetchInviteData();
-      setLoadingInvite(false);
-    } finally {
-      setLoadingSendInvite(false);
-    }
+    } catch {}
   };
 
   const handleDeleteMember = async (id: number) => {
@@ -113,9 +97,7 @@ export default function ChatDisplay({
   const handleCancelInvite = async (id: number) => {
     try {
       await cancelInvite(id);
-      setLoadingInvite(true);
       await fetchInviteData();
-      setLoadingInvite(false);
     } catch {}
   };
 

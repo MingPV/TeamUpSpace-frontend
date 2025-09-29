@@ -3,8 +3,11 @@ import { getUserByUserId, getUserByUsername } from "./auth";
 import { fetchApi } from "./utils";
 const BASE_URL = "/api/v1";
 
-export async function getAllFriendsByUserId(userId: string) {
-  const allFriends = await fetchApi(`${BASE_URL}/friends/${userId}`);
+export async function getAllFriendsByUserId(user: any) {
+  console.log(`${BASE_URL}/friends/${user.id}`);
+  const allFriends = await fetchApi(`${BASE_URL}/friends/${user?.id}`, {
+    method: "GET",
+  });
 
   const adaptedFriends = await Promise.all(
     allFriends.friends.map(async (friend: any) => {
@@ -35,10 +38,10 @@ export async function addFriend(username: string, userId: string) {
   return;
 }
 
-async function findMutualFriendsCount(userId: string, friendId: string) {
-  const myFriends = await getAllFriendsByUserId(userId);
+async function findMutualFriendsCount(user: any, friendId: string) {
+  const myFriends = await getAllFriendsByUserId(user);
   const myFriendIds = myFriends.map((f) => f.friendId);
-  const otherfriends = await getAllFriendsByUserId(friendId);
+  const otherfriends = await getAllFriendsByUserId({ id: friendId });
   const otherfriendIds = otherfriends.map((f) => f.friendId);
   const intersectCount = myFriendIds.filter((x) =>
     otherfriendIds.includes(x)
@@ -47,8 +50,8 @@ async function findMutualFriendsCount(userId: string, friendId: string) {
   return intersectCount;
 }
 
-export async function getAllFriendRequests(userId: string) {
-  const requests = await fetchApi(`${BASE_URL}/friends/requested/${userId}`, {
+export async function getAllFriendRequests(user: any) {
+  const requests = await fetchApi(`${BASE_URL}/friends/requested/${user.id}`, {
     method: "GET",
   });
 
@@ -56,7 +59,7 @@ export async function getAllFriendRequests(userId: string) {
 
   for (const request of requests.friends) {
     const info = await getUserByUserId(request.friendId); // sequential call
-    const count = await findMutualFriendsCount(userId, request.friendId);
+    const count = await findMutualFriendsCount(user, request.friendId);
 
     adaptedRequests.push({
       id: request.id,

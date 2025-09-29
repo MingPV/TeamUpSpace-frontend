@@ -1,19 +1,18 @@
 import React from "react";
 import Image from "next/image";
 import { FriendRequest } from "@/app/types/friend";
+import { useUser } from "@/context/UserContext";
 import { acceptFriendRequest, deleteFriend } from "@/app/api/friend";
 export default function FriendRequestCard({
   friendRequest,
-  onAction,
 }: {
   friendRequest: FriendRequest;
-  onAction: () => void;
 }) {
+  const { acceptFriend, denyFriend } = useUser();
   const handleAcceptFriend = async () => {
     try {
-      await acceptFriendRequest(friendRequest.id);
+      await acceptFriend(friendRequest.id);
       console.log("accepted!", friendRequest.id);
-      onAction();
     } catch (err) {
       console.error("Failed to accept friend:", err);
     }
@@ -21,9 +20,8 @@ export default function FriendRequestCard({
 
   const handleDenyFriend = async () => {
     try {
-      await deleteFriend(friendRequest.id);
+      await denyFriend(friendRequest.id);
       console.log("deleted!", friendRequest.id);
-      onAction();
     } catch (err) {
       console.error("Failed to delete friend:", err);
     }

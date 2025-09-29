@@ -15,60 +15,27 @@ import {
 } from "../api/chatroom";
 import { Chatroom } from "../types/chatroom";
 import { addFriend } from "../api/friend";
+import { useChatroom } from "@/context/ChatroomContext";
 export default function FriendPage() {
   const { user } = useUser();
+  const { groups, friendChatrooms, createChatroom } = useChatroom();
+  const { selectedChatroom, setSelectedChatroom } = useChatroom();
 
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("chat");
   const [groupName, setGroupName] = useState("");
-  const [loadingCreateGroup, setLoadingCreateGroup] = useState(false);
-  const [loadingGroup, setLoadingGroup] = useState(false);
   const [error, setError] = useState("");
   const [searchFriend, setSearchFriend] = useState<string>("");
-  const [groups, setGroups] = useState<Chatroom[] | undefined>();
-  const [friends, setFriends] = useState<Chatroom[] | undefined>();
   const [addFriendByUsername, setAddFriendByUsername] = useState<string>("");
-  const [currentChatRoom, setCurrentChatRoom] = useState<
-    Chatroom | undefined
-  >();
-
-  useEffect(() => {
-    const fetchChatrooms = async () => {
-      setLoadingGroup(true);
-      setError("");
-      try {
-        const groups = await getAllGroupsByUserId(user);
-        const friends = await getAllFriendChatroomsByUserId(user);
-        if (groups.error) {
-          setError("failed to load chatrooms, please try again");
-          return;
-        }
-        setGroups(groups);
-        setFriends(friends);
-      } catch (err: any) {
-        setError("Something went wrong, please try again");
-      } finally {
-        setLoadingGroup(false);
-      }
-    };
-
-    fetchChatrooms();
-  }, [user, loadingCreateGroup]);
 
   const handleCreateChatroom = async () => {
-    setLoadingCreateGroup(true);
     setError("");
     try {
-      const res = await createChatGroup(groupName, user);
-      if (res.error) {
-        setError("create chatroom group is not successful, please try again");
-        return;
-      }
+      const res = await createChatroom(groupName);
     } catch (err: any) {
       setError("Something went wrong, please try again");
     } finally {
-      setLoadingCreateGroup(false);
       setGroupName("");
     }
   };
@@ -171,7 +138,6 @@ export default function FriendPage() {
                   chat={"chat1"}
                   chatDisplays={undefined}
                   setChatDisplays={undefined}
-                  setCurrentChatroom={setCurrentChatRoom}
                   chatInfo={{
                     roomId: 12,
                     roomName: "Chat Test Room",
@@ -184,7 +150,7 @@ export default function FriendPage() {
             )}
 
             {selectedTab === "friend" &&
-              friends
+              friendChatrooms
                 ?.filter((friend) =>
                   (friend.roomName ?? "").includes(searchFriend)
                 )
@@ -197,7 +163,6 @@ export default function FriendPage() {
                       chat={"chat1"}
                       chatDisplays={undefined}
                       setChatDisplays={undefined}
-                      setCurrentChatroom={setCurrentChatRoom}
                       chatInfo={friend}
                     />
                   </div>
@@ -216,7 +181,6 @@ export default function FriendPage() {
                       chat={"chat1"}
                       chatDisplays={undefined}
                       setChatDisplays={undefined}
-                      setCurrentChatroom={setCurrentChatRoom}
                       chatInfo={g}
                     />
                   </div>
@@ -284,7 +248,7 @@ export default function FriendPage() {
                     className="font-bold px-3 py-2 rounded-md text-base-400 bg-base-200 transition-all duration-300 select-none cursor-pointer hover:bg-amber-800 hover:text-white"
                     onClick={handleCreateChatroom}
                   >
-                    {loadingCreateGroup ? "creating" : "create"}
+                    create
                   </button>
                 </div>
               </div>
@@ -295,7 +259,7 @@ export default function FriendPage() {
               isAddFriendOpen || isCreateGroupOpen ? "hidden" : "block"
             } h-full`}
           >
-            <ChatDisplay chatroom={currentChatRoom} />
+            <ChatDisplay chatroom={selectedChatroom} />
           </div>
         </div>
       </div>

@@ -14,39 +14,20 @@ import { addFriend, getAllFriendRequests } from "../api/friend";
 import { useUser } from "@/context/UserContext";
 import { createChatGroup } from "../api/chatroom";
 import { FriendRequest } from "../types/friend";
+import { useChatroom } from "@/context/ChatroomContext";
 export default function FriendPage() {
-  const { user } = useUser();
+  const { user, friends, friendRequests } = useUser();
+
+  const { createChatroom } = useChatroom();
+
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("friend");
   const [addFriendByUsername, setAddFriendByUsername] = useState<string>("");
   const [addGroup, setAddGroup] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
-  const [loadingCreateGroup, setLoadingCreateGroup] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
-  const [isClickAcceptOrDeny, setIsClickAcceptOrDeny] =
-    useState<boolean>(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const requests = await getAllFriendRequests(userId);
-        setFriendRequests(requests);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (userId) {
-      fetchData();
-    } else {
-      setLoading(true);
-    }
-  }, [userId, isClickAcceptOrDeny]);
 
   useEffect(() => {
     setUserId(user?.id ?? "");
@@ -58,18 +39,12 @@ export default function FriendPage() {
   };
 
   const handleCreateChatroom = async () => {
-    setLoadingCreateGroup(true);
     setError("");
     try {
-      const res = await createChatGroup(addGroup, user);
-      if (res.error) {
-        setError("create chatroom group is not successful, please try again");
-        return;
-      }
+      const res = await createChatroom(addGroup);
     } catch (err: any) {
       setError("Something went wrong, please try again");
     } finally {
-      setLoadingCreateGroup(false);
       setAddGroup("");
     }
   };
@@ -313,10 +288,7 @@ export default function FriendPage() {
                     key={request.id}
                     className="bg-black/5 rounded-md w-[90%]"
                   >
-                    <FriendRequestCard
-                      friendRequest={request}
-                      onAction={() => setIsClickAcceptOrDeny((prev) => !prev)}
-                    />
+                    <FriendRequestCard friendRequest={request} />
                   </div>
                 ))}
               </div>
