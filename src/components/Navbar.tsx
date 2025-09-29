@@ -98,14 +98,14 @@ export default function Navbar() {
             <>
               <div
                 className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
-                onClick={() => router.push("/report")}
+                onClick={() => router.push("/admin-manage/report")}
               >
                 <FaUserFriends className="text-xl" />
                 <div className="text-sm select-none">Reports</div>
               </div>
               <div
                 className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
-                onClick={() => router.push("/event-manage")}
+                onClick={() => router.push("/admin-manage/event")}
               >
                 <MdEmojiEvents className="text-xl" />
                 <div className="text-sm select-none">Manage Event</div>
