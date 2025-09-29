@@ -6,12 +6,15 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { Chatroom } from "@/app/types/chatroom";
+import { Chatroom, ChatroomInvite } from "@/app/types/chatroom";
 import { Friend } from "@/app/types/friend";
 import {
   getAllFriendChatroomsByUserId,
   getAllGroupsByUserId,
   createChatGroup,
+  getAllGroupInvites,
+  acceptGroupInvite,
+  denyGroupInvite,
 } from "@/app/api/chatroom";
 import { useUser } from "./UserContext";
 
@@ -24,6 +27,11 @@ interface ChatroomContextType {
   groups: Chatroom[];
   createChatroom: (roomName: string) => Promise<void>;
   refreshGroups: () => Promise<void>;
+
+  //groupInvite
+  groupInvites: ChatroomInvite[];
+  acceptInvite: (id: string) => Promise<void>;
+  denyInvite: (id: string) => Promise<void>;
 
   //friendgroup
   friendChatrooms: Chatroom[];
@@ -44,6 +52,7 @@ export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
   const [groups, setGroups] = useState<Chatroom[]>([]);
 
   const [friendChatrooms, setFriendChatrooms] = useState<Chatroom[]>([]);
+  const [groupInvites, setGroupInvites] = useState<ChatroomInvite[]>([]);
 
   //groups
   const refreshGroups = async (): Promise<void> => {
@@ -61,11 +70,31 @@ export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
     setFriendChatrooms(res);
   };
 
+  const refreshGroupInvites = async (): Promise<void> => {
+    const res = await getAllGroupInvites(user);
+    console.log("response", res);
+    setGroupInvites(res);
+  };
+
+  const acceptInvite = async (id: string): Promise<void> => {
+    await acceptGroupInvite(id);
+    refreshGroups();
+    refreshGroupInvites();
+  };
+
+  const denyInvite = async (id: string): Promise<void> => {
+    await denyGroupInvite(id);
+    refreshGroupInvites();
+  };
+
   useEffect(() => {
     if (user?.id) {
       console.log("call this function", user.id);
       refreshGroups();
       refreshFriendChatrooms();
+      refreshGroupInvites();
+      console.log("groupInvites", groupInvites);
+      console.log(groups);
     }
   }, [user?.id]);
 
@@ -79,6 +108,9 @@ export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
         refreshGroups,
         friendChatrooms,
         refreshFriendChatrooms,
+        groupInvites,
+        acceptInvite,
+        denyInvite,
       }}
     >
       {children}

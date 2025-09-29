@@ -23,6 +23,7 @@ import { useUser } from "@/context/UserContext";
 import { use, useState, useRef, useEffect } from "react";
 import { ChatMessage, Member } from "@/app/types/chatroom";
 import { useChatroom } from "@/context/ChatroomContext";
+import { Profile } from "@/app/types/profile";
 
 export default function ChatDisplay({
   chatroom,
@@ -30,27 +31,29 @@ export default function ChatDisplay({
   chatroom: Chatroom | null;
 }) {
   const { friends } = useUser();
+  const { selectedChatroom } = useChatroom();
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const roomId = String(chatroom?.roomId);
+  const roomId = String(chatroom?.id);
   const [members, setMembers] = useState<Map<string, Member>>(new Map());
   const [loading, setLoading] = useState<boolean>(false);
   const [searchFriend, setSearchFriend] = useState<string>("");
   const [invitees, setInvitees] = useState<string[]>([]);
   const [invitedMembers, setInvitedMembers] = useState<InviteTo[]>([]);
   //chat streaming
-  const { connected, events, send } = useRoomChat(roomId);
+  const { connected, events, send } = useRoomChat(selectedChatroom?.id ?? "0");
 
   const [inputMessage, setInputMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [displayMessages, setDisplayMessages] = useState<ChatMessage[]>([]);
   const [userId, setUserId] = useState<string>("");
   const { user } = useUser();
-  const invitedSet = new Set(invitedMembers.map((m) => m.inviteToId));
+  const invitedSet = new Set(invitedMembers.map((m) => m.invitee.user_id));
 
   useEffect(() => {
     setIsInviteOpen(false);
     setIsMenuOpen(false);
+    console.log(chatroom);
   }, [chatroom]);
 
   const fetchInviteData = async () => {
@@ -60,7 +63,7 @@ export default function ChatDisplay({
     ]);
     setInvitedMembers(invitedRes);
     const membersMap = new Map<string, Member>(
-      memberRes.map((m: Member) => [m.userId, m])
+      memberRes.map((m: Member) => [m.profile.user_id ?? "", m])
     );
 
     setMembers(membersMap);
@@ -112,9 +115,8 @@ export default function ChatDisplay({
         ]);
 
         const membersMap = new Map<string, Member>(
-          members.map((m: Member) => [m.userId, m])
+          members.map((m: Member) => [m.profile.user_id ?? "", m])
         );
-
         setDisplayMessages(messages);
         setMembers(membersMap);
       } catch (err) {
@@ -227,7 +229,7 @@ export default function ChatDisplay({
                     className="w-full p-2 border-[1px] border-base-300/30 rounded-md flex flex-row items-center gap-3 px-3"
                   >
                     <Image
-                      src={member.profileUrl}
+                      src={member.profile.profile_url ?? "/golang.webp"}
                       width={200}
                       height={200}
                       alt="profile-pic"
@@ -235,7 +237,7 @@ export default function ChatDisplay({
                       className="rounded-full h-10 w-10 cursor-pointer hover:opacity-90"
                     />
                     <div className="font-bold text-base-400 hover:underline underline-offset-2 cursor-pointer">
-                      {member.displayName}
+                      {member.profile.display_name}
                     </div>
                     <div className="flex-1 flex gap-2 justify-end">
                       <div className="px-2 py-1 border-[1px] border-base-300/30 rounded-md font-bold text-amber-800 select-none cursor-default">
@@ -281,7 +283,7 @@ export default function ChatDisplay({
                     className="w-full p-2 border-[1px] border-base-300/30 rounded-md flex flex-row items-center gap-3 px-3"
                   >
                     <Image
-                      src={member.profileUrl}
+                      src={member.profile.profile_url ?? "/golang.webp"}
                       width={200}
                       height={200}
                       alt="profile-pic"
@@ -289,7 +291,7 @@ export default function ChatDisplay({
                       className="rounded-full h-10 w-10 cursor-pointer hover:opacity-90"
                     />
                     <div className="font-bold text-base-400 hover:underline underline-offset-2 cursor-pointer">
-                      {member.displayName}
+                      {member.profile.display_name}
                     </div>
                     <div className="flex-1 flex gap-2 justify-end">
                       <div className="px-2 py-1 border-[1px] border-base-300/30 rounded-md font-bold text-amber-800 select-none cursor-default">
@@ -301,11 +303,11 @@ export default function ChatDisplay({
                 {/* friend */}
                 {invitedMembers.map((invite) => (
                   <div
-                    key={invite.inviteToId}
+                    key={invite.invitee.user_id}
                     className="w-full p-2 border-[1px] border-base-300/30 rounded-md flex flex-row items-center gap-3 px-3"
                   >
                     <Image
-                      src={invite.profileUrl}
+                      src={invite.invitee.profile_url ?? "/golang.webp"}
                       width={200}
                       height={200}
                       alt="profile-pic"
@@ -313,7 +315,7 @@ export default function ChatDisplay({
                       className="rounded-full h-10 w-10 cursor-pointer hover:opacity-90"
                     />
                     <div className="font-bold text-base-400 hover:underline underline-offset-2 cursor-pointer">
-                      {invite.displayName}
+                      {invite.invitee.display_name}
                     </div>
                     <div className="flex-1 flex justify-end">
                       <button
@@ -435,7 +437,8 @@ export default function ChatDisplay({
                     </div>
                     <div className="text-base-400 flex flex-col">
                       <div className="text-xs ml-2 text-base-400 cursor-default">
-                        {members.get(msg.sender)?.displayName || "User"}{" "}
+                        {members.get(msg.sender)?.profile.display_name ||
+                          "User"}{" "}
                         {/* Replace with sender name */}
                       </div>
                       <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">

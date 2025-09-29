@@ -29,6 +29,12 @@ export default function FriendPage() {
   const [searchFriend, setSearchFriend] = useState<string>("");
   const [addFriendByUsername, setAddFriendByUsername] = useState<string>("");
 
+  console.log(friendChatrooms);
+  useEffect(() => {
+    setIsAddFriendOpen(false);
+    setIsCreateGroupOpen(false);
+  }, [selectedChatroom]);
+
   const handleCreateChatroom = async () => {
     setError("");
     try {
@@ -42,6 +48,7 @@ export default function FriendPage() {
 
   const handleClickAddFriend = async () => {
     await addFriend(addFriendByUsername, user?.id ?? "");
+    setAddFriendByUsername("");
   };
 
   return (
@@ -139,7 +146,7 @@ export default function FriendPage() {
                   chatDisplays={undefined}
                   setChatDisplays={undefined}
                   chatInfo={{
-                    roomId: 12,
+                    id: "12",
                     roomName: "Chat Test Room",
                     isGroup: true,
                   }}

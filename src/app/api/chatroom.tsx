@@ -33,7 +33,7 @@ export async function getAllGroupsByUserId(user: any) {
     .filter((group: any) => group.chatroom.isGroup === true)
     .map((group: any) => ({
       roomName: group.chatroom.roomName,
-      roomId: group.roomId,
+      id: group.roomId,
       isGroup: group.chatroom.isGroup,
       owner: group.chatroom.owner,
       updatedAt: group.chatroom.updatedAt,
@@ -56,12 +56,12 @@ export async function getAllFriendChatroomsByUserId(user: any) {
       .map(async (group: any) => {
         const members = await getAllMembersInGroup(group.roomId);
 
-        const otherMember = members.find((m: any) => m.userId !== user.id);
+        const otherMember = members.find((m: any) => m.profile.id !== user.id);
+        console.log(otherMember);
 
         return {
-          roomName:
-            otherMember?.displayName || otherMember?.userId || "Unknown",
-          roomId: group.roomId,
+          roomName: otherMember?.profile.display_name || "Unknown",
+          id: group.roomId,
           isGroup: group.chatroom.isGroup,
           updatedAt: group.chatroom.updatedAt,
         };
@@ -93,20 +93,17 @@ export async function getAllMembersInGroup(roomId: string) {
   const allMembers = await fetchApi(`${BASE_URL}/roommembers/room/${roomId}`, {
     method: "GET",
   });
-
+  console.log(`${BASE_URL}/roommembers/room/${roomId}`);
   const adaptedMembers = await Promise.all(
     allMembers.members.map(async (member: any) => {
       const info = await getUserByUserId(member.userId);
       return {
         id: member.id,
-        userId: member.userId,
-        username: info.username,
-        displayName: info.profile.display_name,
-        profileUrl: info.profile.profile_url,
+        profile: info.profile,
       };
     })
   );
-
+  console.log(adaptedMembers);
   return adaptedMembers;
 }
 
@@ -137,10 +134,7 @@ export async function getAllInvitedMembersByRoomId(roomId: string) {
       const info = await getUserByUserId(invite.inviteTo);
       return {
         id: Number(invite.id),
-        inviteToId: invite.inviteTo,
-        username: invite.username,
-        displayName: info.profile.display_name,
-        profileUrl: info.profile.profile_url,
+        invitee: info.profile,
       };
     })
   );
@@ -161,5 +155,53 @@ export async function deleteMember(id: number) {
     method: "DELETE",
   });
 
+  return;
+}
+
+async function getRoomInfoById(id: string) {
+  const res = await fetchApi(`${BASE_URL}/chatrooms/${id}`);
+  return res;
+}
+
+export async function getAllGroupInvites(user: any) {
+  const allInvites = await fetchApi(
+    `${BASE_URL}/roominvite/inviteto/${user.id}`,
+    {
+      method: "GET",
+    }
+  );
+
+  console.log(allInvites);
+
+  const adaptedAllInvites = await Promise.all(
+    allInvites.invites.map(async (invite: any) => {
+      const info = await getUserByUserId(invite.inviteTo);
+      const room = await getRoomInfoById(invite.roomId);
+      return {
+        id: invite.id,
+        room: room.chatroom,
+        sender: info.profile,
+        createdAt: invite.createdAt,
+        members: await getAllMembersInGroup(invite.roomId),
+      };
+    })
+  );
+
+  return adaptedAllInvites;
+}
+
+export async function acceptGroupInvite(id: string) {
+  console.log("call accept gropu invite", id);
+  await fetchApi(`${BASE_URL}/roominvite/accepted/${id}`, {
+    method: "PATCH",
+  });
+  return;
+}
+
+export async function denyGroupInvite(id: string) {
+  console.log("call deny group invite", id);
+  await fetchApi(`${BASE_URL}/roominvite/${id}`, {
+    method: "DELETE",
+  });
   return;
 }

@@ -18,7 +18,7 @@ import { useChatroom } from "@/context/ChatroomContext";
 export default function FriendPage() {
   const { user, friends, friendRequests } = useUser();
 
-  const { createChatroom } = useChatroom();
+  const { createChatroom, groupInvites } = useChatroom();
 
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
@@ -28,6 +28,7 @@ export default function FriendPage() {
   const [userId, setUserId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  console.log(groupInvites);
 
   useEffect(() => {
     setUserId(user?.id ?? "");
@@ -299,24 +300,14 @@ export default function FriendPage() {
                 Group Invite
               </div>
               <div className="flex flex-col gap-4 overflow-y-scroll w-full items-center">
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <GroupInviteCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <GroupInviteCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <GroupInviteCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <GroupInviteCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <GroupInviteCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <GroupInviteCard />
-                </div>
+                {groupInvites.map((invite) => (
+                  <div
+                    key={invite.id}
+                    className="bg-black/5 rounded-md w-[90%]"
+                  >
+                    <GroupInviteCard groupInvite={invite} />
+                  </div>
+                ))}
               </div>
             </div>
           </div>

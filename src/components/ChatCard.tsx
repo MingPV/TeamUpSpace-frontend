@@ -25,7 +25,7 @@ export default function ChatCard(chatList: ChatCardProps) {
   const ischatPage = pathname.includes("/chat");
 
   const fetchChatHistory = async () => {
-    const res = await getAllMessages(String(chatList.chatInfo.roomId));
+    const res = await getAllMessages(String(chatList.chatInfo.id));
     setMessages(res);
   };
   function formatDateToMonthDay(dateString: string) {
@@ -38,6 +38,8 @@ export default function ChatCard(chatList: ChatCardProps) {
   }
   const handleChatClick = () => {
     if (ischatPage) {
+      console.log(chatList.chatInfo);
+      console.log("click");
       setSelectedChatroom(chatList.chatInfo);
     }
 

@@ -12,7 +12,6 @@ export default function FriendRequestCard({
   const handleAcceptFriend = async () => {
     try {
       await acceptFriend(friendRequest.id);
-      console.log("accepted!", friendRequest.id);
     } catch (err) {
       console.error("Failed to accept friend:", err);
     }
@@ -21,7 +20,6 @@ export default function FriendRequestCard({
   const handleDenyFriend = async () => {
     try {
       await denyFriend(friendRequest.id);
-      console.log("deleted!", friendRequest.id);
     } catch (err) {
       console.error("Failed to delete friend:", err);
     }

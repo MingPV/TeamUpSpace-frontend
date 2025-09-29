@@ -1,5 +1,7 @@
+import { Profile } from "./profile";
+
 export interface Chatroom {
-  roomId: number;
+  id: string;
   roomName: string;
   isGroup?: boolean;
   owner?: string;
@@ -16,16 +18,18 @@ export interface ChatMessage {
 
 export interface Member {
   id: number; //room_member_id
-  userId: string;
-  username: string;
-  displayName: string;
-  profileUrl: string;
+  profile: Profile;
 }
 
 export interface InviteTo {
   id: number; //room_member_id
-  inviteToId: string;
-  username: string;
-  displayName: string;
-  profileUrl: string;
+  invitee: Profile;
+}
+
+export interface ChatroomInvite {
+  id: string;
+  room: Chatroom;
+  sender: Profile;
+  createdAt: string;
+  members: Member[];
 }
