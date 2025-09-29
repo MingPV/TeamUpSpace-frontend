@@ -12,9 +12,10 @@ export default function EventList({ events }: EventListProps) {
   const [eventList, setEventList] = useState<Event[] | undefined>(events);
 
   const mockEvent: Event = {
-    id: 1,
+    id: 0,
     eventName: "Mock Event",
     eventDescription: "This is a mock event for testing purposes.",
+    mainImageUrl: "/golang.webp",
   };
 
   useEffect(() => {
