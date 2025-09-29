@@ -1,7 +1,33 @@
 import React from "react";
 import Image from "next/image";
+import { FriendRequest } from "@/app/types/friend";
+import { acceptFriendRequest, deleteFriend } from "@/app/api/friend";
+export default function FriendRequestCard({
+  friendRequest,
+  onAction,
+}: {
+  friendRequest: FriendRequest;
+  onAction: () => void;
+}) {
+  const handleAcceptFriend = async () => {
+    try {
+      await acceptFriendRequest(friendRequest.id);
+      console.log("accepted!", friendRequest.id);
+      onAction();
+    } catch (err) {
+      console.error("Failed to accept friend:", err);
+    }
+  };
 
-export default function FriendRequestCard() {
+  const handleDenyFriend = async () => {
+    try {
+      await deleteFriend(friendRequest.id);
+      console.log("deleted!", friendRequest.id);
+      onAction();
+    } catch (err) {
+      console.error("Failed to delete friend:", err);
+    }
+  };
   return (
     <div className="w-full my-2 flex flex-col gap-2">
       <div className="flex flex-row w-full gap-4 mx-2 p-2 rounded-md items-center">
@@ -16,19 +42,27 @@ export default function FriendRequestCard() {
         <div className="flex-1 flex flex-col mr-4">
           <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row gap-2">
-              <div className="font-bold">{"MingPV"}</div>
+              <div className="font-bold">{friendRequest?.friendUsername}</div>
               <div>sent friend request.</div>
             </div>
-            <div className="text-base-400 text-sm mr-2">3d</div>
+            <div className="text-base-400 text-sm mr-2">{}</div>
           </div>
-          <div className="text-base-400/70 text-sm mb-2">5 mutual friends</div>
+          <div className="text-base-400/70 text-sm mb-2">
+            {friendRequest?.mutualFriendCount} mutual friends
+          </div>
           <div className="flex flex-row gap-4 w-full items-center justify-center">
-            <div className="p-1.5 w-full bg-base-100 cursor-pointer hover:bg-base-200 rounded-md text-center font-bold text-base-400">
+            <button
+              onClick={handleAcceptFriend}
+              className="p-1.5 w-full bg-base-100 cursor-pointer hover:bg-base-200 rounded-md text-center font-bold text-base-400"
+            >
               Accept
-            </div>
-            <div className="p-1.5 w-full bg-base-100 cursor-pointer hover:bg-base-200 rounded-md text-center font-bold text-base-400">
+            </button>
+            <button
+              onClick={handleDenyFriend}
+              className="p-1.5 w-full bg-base-100 cursor-pointer hover:bg-base-200 rounded-md text-center font-bold text-base-400"
+            >
               Deny
-            </div>
+            </button>
           </div>
         </div>
       </div>

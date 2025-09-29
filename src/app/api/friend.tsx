@@ -1,20 +1,15 @@
+import { FriendRequest } from "../types/friend";
 import { getUserByUserId, getUserByUsername } from "./auth";
 import { fetchApi } from "./utils";
-import { useUser } from "@/context/UserContext";
 const BASE_URL = "/api/v1";
 
 export async function getAllFriendsByUserId(userId: string) {
-  console.log("call fetchAllFriendsByUserId");
-
   const allFriends = await fetchApi(`${BASE_URL}/friends/${userId}`);
-
-  console.log("allfriends", allFriends);
 
   const adaptedFriends = await Promise.all(
     allFriends.friends.map(async (friend: any) => {
       const info = await getUserByUserId(friend.friendId);
 
-      console.log(info);
       return {
         id: friend.id,
         friendId: friend.friendId,
@@ -36,7 +31,55 @@ export async function addFriend(username: string, userId: string) {
       status: "pending",
     }),
   });
-  console.log(addedFriend);
 
+  return;
+}
+
+async function findMutualFriendsCount(userId: string, friendId: string) {
+  const myFriends = await getAllFriendsByUserId(userId);
+  const myFriendIds = myFriends.map((f) => f.friendId);
+  const otherfriends = await getAllFriendsByUserId(friendId);
+  const otherfriendIds = otherfriends.map((f) => f.friendId);
+  const intersectCount = myFriendIds.filter((x) =>
+    otherfriendIds.includes(x)
+  ).length;
+
+  return intersectCount;
+}
+
+export async function getAllFriendRequests(userId: string) {
+  const requests = await fetchApi(`${BASE_URL}/friends/requested/${userId}`, {
+    method: "GET",
+  });
+
+  const adaptedRequests: FriendRequest[] = [];
+
+  for (const request of requests.friends) {
+    const info = await getUserByUserId(request.friendId); // sequential call
+    const count = await findMutualFriendsCount(userId, request.friendId);
+
+    adaptedRequests.push({
+      id: request.id,
+      friendId: request.friendId,
+      friendUsername: info.profile.display_name,
+      createdAt: request.createdAt,
+      mutualFriendCount: count,
+    });
+  }
+
+  return adaptedRequests;
+}
+
+export async function acceptFriendRequest(id: string) {
+  await fetchApi(`${BASE_URL}/friends/accepted/${id}`, {
+    method: "PATCH",
+  });
+  return;
+}
+
+export async function deleteFriend(id: string) {
+  await fetchApi(`${BASE_URL}/friends/${id}`, {
+    method: "DELETE",
+  });
   return;
 }

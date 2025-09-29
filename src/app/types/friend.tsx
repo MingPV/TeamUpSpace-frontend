@@ -5,3 +5,11 @@ export interface Friend {
   displayName: string;
   profileUrl: string;
 }
+
+export interface FriendRequest {
+  id: string;
+  friendId: string;
+  friendUsername: string;
+  mutualFriendCount?: number;
+  createdAt: string;
+}

@@ -10,10 +10,10 @@ import RecommendedFriendCard2 from "@/components/RecommendedFriendCard2";
 import { ImCross } from "react-icons/im";
 import { RxCross2 } from "react-icons/rx";
 import GroupInviteCard from "@/components/GroupInviteCard";
-import { addFriend } from "../api/friend";
+import { addFriend, getAllFriendRequests } from "../api/friend";
 import { useUser } from "@/context/UserContext";
 import { createChatGroup } from "../api/chatroom";
-
+import { FriendRequest } from "../types/friend";
 export default function FriendPage() {
   const { user } = useUser();
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
@@ -23,7 +23,30 @@ export default function FriendPage() {
   const [addGroup, setAddGroup] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
   const [loadingCreateGroup, setLoadingCreateGroup] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
+  const [isClickAcceptOrDeny, setIsClickAcceptOrDeny] =
+    useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const requests = await getAllFriendRequests(userId);
+        setFriendRequests(requests);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (userId) {
+      fetchData();
+    } else {
+      setLoading(true);
+    }
+  }, [userId, isClickAcceptOrDeny]);
 
   useEffect(() => {
     setUserId(user?.id ?? "");
@@ -285,24 +308,17 @@ export default function FriendPage() {
                 Friend Request
               </div>
               <div className="flex flex-col gap-4 overflow-y-scroll w-full items-center">
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <FriendRequestCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <FriendRequestCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <FriendRequestCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <FriendRequestCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <FriendRequestCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <FriendRequestCard />
-                </div>
+                {friendRequests?.map((request) => (
+                  <div
+                    key={request.id}
+                    className="bg-black/5 rounded-md w-[90%]"
+                  >
+                    <FriendRequestCard
+                      friendRequest={request}
+                      onAction={() => setIsClickAcceptOrDeny((prev) => !prev)}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
             <div className="border-r-[1px] border-r-base-300/30 h-[90%] mt-[5%]"></div>
