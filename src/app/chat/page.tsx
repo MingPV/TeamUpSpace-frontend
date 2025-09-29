@@ -24,6 +24,7 @@ export default function FriendPage() {
   const [loadingCreateGroup, setLoadingCreateGroup] = useState(false);
   const [loadingGroup, setLoadingGroup] = useState(false);
   const [error, setError] = useState("");
+  const [searchFriend, setSearchFriend] = useState<string>("");
   const [groups, setGroups] = useState<Chatroom[] | undefined>();
   const [friends, setFriends] = useState<Chatroom[] | undefined>();
   const [currentChatRoom, setCurrentChatRoom] = useState<
@@ -109,8 +110,10 @@ export default function FriendPage() {
               <div className="flex flex-row bg-base-100/50 items-center rounded-md mx-4">
                 <IoMdSearch className="text-base-400 ml-4 text-lg" />
                 <input
+                  value={searchFriend ?? ""}
+                  onChange={(e) => setSearchFriend(e.target.value)}
                   type="text"
-                  placeholder="Serach friends"
+                  placeholder="Search Friends"
                   className="pl-2 ring-0 focus:outline-0 rounded-md p-1 py-2 flex-1"
                 />
               </div>
@@ -175,35 +178,43 @@ export default function FriendPage() {
             )}
 
             {selectedTab === "friend" &&
-              friends?.map((g, index) => (
-                <div
-                  key={index}
-                  className="w-full flex flex-col overflow-y-scroll px-2 border-b-[1px] border-b-base-300/50"
-                >
-                  <ChatCard
-                    chat={"chat1"}
-                    chatDisplays={undefined}
-                    setChatDisplays={undefined}
-                    setCurrentChatroom={setCurrentChatRoom}
-                    chatInfo={g}
-                  />
-                </div>
-              ))}
+              friends
+                ?.filter((friend) =>
+                  (friend.roomName ?? "").includes(searchFriend)
+                )
+                .map((friend, index) => (
+                  <div
+                    key={index}
+                    className="w-full flex flex-col overflow-y-scroll px-2 border-b-[1px] border-b-base-300/50"
+                  >
+                    <ChatCard
+                      chat={"chat1"}
+                      chatDisplays={undefined}
+                      setChatDisplays={undefined}
+                      setCurrentChatroom={setCurrentChatRoom}
+                      chatInfo={friend}
+                    />
+                  </div>
+                ))}
             {selectedTab === "group" &&
-              groups?.map((g, index) => (
-                <div
-                  key={index}
-                  className="w-full flex flex-col overflow-y-scroll px-2 border-b-[1px] border-b-base-300/50"
-                >
-                  <ChatCard
-                    chat={"chat1"}
-                    chatDisplays={undefined}
-                    setChatDisplays={undefined}
-                    setCurrentChatroom={setCurrentChatRoom}
-                    chatInfo={g}
-                  />
-                </div>
-              ))}
+              groups
+                ?.filter((group) =>
+                  (group.roomName ?? "").includes(searchFriend)
+                )
+                .map((g, index) => (
+                  <div
+                    key={index}
+                    className="w-full flex flex-col overflow-y-scroll px-2 border-b-[1px] border-b-base-300/50"
+                  >
+                    <ChatCard
+                      chat={"chat1"}
+                      chatDisplays={undefined}
+                      setChatDisplays={undefined}
+                      setCurrentChatroom={setCurrentChatRoom}
+                      chatInfo={g}
+                    />
+                  </div>
+                ))}
             {/* <div className="border-b-[1px] border-b-base-300/50"></div> */}
           </div>
           {isAddFriendOpen ? (
