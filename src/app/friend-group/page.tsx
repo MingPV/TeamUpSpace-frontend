@@ -1,7 +1,7 @@
 "use client";
 
 import FriendCard from "@/components/FriendCard";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaUserFriends } from "react-icons/fa";
 import { IoMdSearch } from "react-icons/io";
 import ChatDisplay from "@/components/ChatDisplay";
@@ -10,11 +10,46 @@ import RecommendedFriendCard2 from "@/components/RecommendedFriendCard2";
 import { ImCross } from "react-icons/im";
 import { RxCross2 } from "react-icons/rx";
 import GroupInviteCard from "@/components/GroupInviteCard";
+import { addFriend } from "../api/friend";
+import { useUser } from "@/context/UserContext";
+import { createChatGroup } from "../api/chatroom";
 
 export default function FriendPage() {
+  const { user } = useUser();
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("friend");
+  const [addFriendByUsername, setAddFriendByUsername] = useState<string>("");
+  const [addGroup, setAddGroup] = useState<string>("");
+  const [userId, setUserId] = useState<string>("");
+  const [loadingCreateGroup, setLoadingCreateGroup] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    setUserId(user?.id ?? "");
+  }, [user]);
+
+  const handleClickAddFriend = async () => {
+    await addFriend(addFriendByUsername, userId ?? "");
+    setAddFriendByUsername("");
+  };
+
+  const handleCreateChatroom = async () => {
+    setLoadingCreateGroup(true);
+    setError("");
+    try {
+      const res = await createChatGroup(addGroup, user);
+      if (res.error) {
+        setError("create chatroom group is not successful, please try again");
+        return;
+      }
+    } catch (err: any) {
+      setError("Something went wrong, please try again");
+    } finally {
+      setLoadingCreateGroup(false);
+      setAddGroup("");
+    }
+  };
 
   return (
     <>
@@ -192,12 +227,17 @@ export default function FriendPage() {
                 </div>
                 <div className="flex flex-row gap-4 ">
                   <input
+                    value={addFriendByUsername}
+                    onChange={(e) => setAddFriendByUsername(e.target.value)}
                     className="p-2 pl-4 flex-1 border rounded-md border-base-300/50 focus:outline-amber-800 bg-white font-bold placeholder:font-medium"
                     placeholder="username"
                   />
-                  <div className="font-bold px-3 py-2 rounded-md text-base-400 bg-base-200 transition-all duration-300 select-none cursor-pointer hover:bg-amber-800 hover:text-white">
+                  <button
+                    onClick={handleClickAddFriend}
+                    className="font-bold px-3 py-2 rounded-md text-base-400 bg-base-200 transition-all duration-300 select-none cursor-pointer hover:bg-amber-800 hover:text-white"
+                  >
                     Add
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
@@ -220,12 +260,17 @@ export default function FriendPage() {
                 </div>
                 <div className="flex flex-row gap-4 ">
                   <input
+                    value={addGroup}
+                    onChange={(e) => setAddGroup(e.target.value)}
                     className="p-2 pl-4 flex-1 border rounded-md border-base-300/50 focus:outline-amber-800 bg-white font-bold placeholder:font-medium"
                     placeholder="group name"
                   />
-                  <div className="font-bold px-3 py-2 rounded-md text-base-400 bg-base-200 transition-all duration-300 select-none cursor-pointer hover:bg-amber-800 hover:text-white">
+                  <button
+                    onClick={handleCreateChatroom}
+                    className="font-bold px-3 py-2 rounded-md text-base-400 bg-base-200 transition-all duration-300 select-none cursor-pointer hover:bg-amber-800 hover:text-white"
+                  >
                     Create
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
