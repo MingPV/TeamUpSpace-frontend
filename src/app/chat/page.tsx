@@ -14,6 +14,7 @@ import {
   getAllGroupsByUserId,
 } from "../api/chatroom";
 import { Chatroom } from "../types/chatroom";
+import { addFriend } from "../api/friend";
 export default function FriendPage() {
   const { user } = useUser();
 
@@ -27,6 +28,7 @@ export default function FriendPage() {
   const [searchFriend, setSearchFriend] = useState<string>("");
   const [groups, setGroups] = useState<Chatroom[] | undefined>();
   const [friends, setFriends] = useState<Chatroom[] | undefined>();
+  const [addFriendByUsername, setAddFriendByUsername] = useState<string>("");
   const [currentChatRoom, setCurrentChatRoom] = useState<
     Chatroom | undefined
   >();
@@ -69,6 +71,10 @@ export default function FriendPage() {
       setLoadingCreateGroup(false);
       setGroupName("");
     }
+  };
+
+  const handleClickAddFriend = async () => {
+    await addFriend(addFriendByUsername, user?.id ?? "");
   };
 
   return (
@@ -235,12 +241,17 @@ export default function FriendPage() {
                 </div>
                 <div className="flex flex-row gap-4 ">
                   <input
+                    value={addFriendByUsername}
+                    onChange={(e) => setAddFriendByUsername(e.target.value)}
                     className="p-2 pl-4 flex-1 border rounded-md border-base-300/50 focus:outline-amber-800 bg-white font-bold placeholder:font-medium"
                     placeholder="username"
                   />
-                  <div className="font-bold px-3 py-2 rounded-md text-base-400 bg-base-200 transition-all duration-300 select-none cursor-pointer hover:bg-amber-800 hover:text-white">
+                  <button
+                    onClick={handleClickAddFriend}
+                    className="font-bold px-3 py-2 rounded-md text-base-400 bg-base-200 transition-all duration-300 select-none cursor-pointer hover:bg-amber-800 hover:text-white"
+                  >
                     Add
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>

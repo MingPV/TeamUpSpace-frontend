@@ -1,6 +1,6 @@
-import { getUserByUserId } from "./auth";
+import { getUserByUserId, getUserByUsername } from "./auth";
 import { fetchApi } from "./utils";
-
+import { useUser } from "@/context/UserContext";
 const BASE_URL = "/api/v1";
 
 export async function getAllFriendsByUserId(userId: string) {
@@ -24,4 +24,19 @@ export async function getAllFriendsByUserId(userId: string) {
     })
   );
   return adaptedFriends;
+}
+
+export async function addFriend(username: string, userId: string) {
+  const friendId = await getUserByUsername(username);
+  const addedFriend = await fetchApi(`${BASE_URL}/friends`, {
+    method: "POST",
+    body: JSON.stringify({
+      user_id: userId,
+      friend_id: friendId.id,
+      status: "pending",
+    }),
+  });
+  console.log(addedFriend);
+
+  return;
 }
