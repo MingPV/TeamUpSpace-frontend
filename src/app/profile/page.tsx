@@ -4,16 +4,12 @@
 import PostBox from "@/components/PostBox";
 import PostCreateBox from "@/components/PostCreateBox";
 import { IoCaretDownSharp } from "react-icons/io5";
-import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ProfileTopMe from "@/components/ProfileTopMe";
 import { useUser } from "@/context/UserContext";
 
 export default function Home() {
   const { user } = useUser();
-
-  const router = useRouter();
 
   console.log(user);
 

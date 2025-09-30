@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import ManageEventList from "@/components/ManageEventList";
 import { IoMdSearch } from "react-icons/io";
 import { FaFilter } from "react-icons/fa";
-import { FaBookmark } from "react-icons/fa";
 import { Event } from "@/app/types/event";
 import { fetchAllEvents } from "../../api/event";
 import { useUser } from "@/context/UserContext";

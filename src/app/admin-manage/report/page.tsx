@@ -1,11 +1,10 @@
 "use client";
 
 import React from "react";
-import { MdLocalPostOffice, MdOutlineReport } from "react-icons/md";
+import { MdOutlineReport } from "react-icons/md";
 import { MdNavigateNext } from "react-icons/md";
 import { MdNavigateBefore } from "react-icons/md";
 import Image from "next/image";
-import RequestCard from "@/components/RequestCard";
 import { useState } from "react";
 import ReportUserCard from "@/components/ReportUserCard";
 import ReportPostCard from "@/components/ReportPostCard";

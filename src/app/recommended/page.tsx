@@ -1,20 +1,12 @@
 "use client";
 
-import FriendCard from "@/components/FriendCard";
 import React, { useState } from "react";
-import { FaUserFriends } from "react-icons/fa";
-import { IoMdSearch } from "react-icons/io";
-import ChatDisplay from "@/components/ChatDisplay";
-import FriendRequestCard from "@/components/FriendRequestCard";
 import RecommendedFriendCard2 from "@/components/RecommendedFriendCard2";
-import { ImCross } from "react-icons/im";
 import { RxCross2 } from "react-icons/rx";
-import GroupInviteCard from "@/components/GroupInviteCard";
 
 export default function RecommendedPage() {
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
-  const [selectedTab, setSelectedTab] = useState("friend");
 
   return (
     <>
