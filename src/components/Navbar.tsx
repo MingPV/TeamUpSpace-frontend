@@ -53,6 +53,7 @@ export default function Navbar() {
       }
     };
     if (!user) {
+      console.log("Loading user info...");
       loadUserInfo();
     }
   }, [setUser, user]);

@@ -15,6 +15,13 @@ export default function Home() {
 
   const router = useRouter();
 
+  console.log(user);
+
+  if (!user) {
+    // router.push("/sign-in");
+    return <div>loading</div>;
+  }
+
   return (
     <>
       <div className="flex flex-col items-center w-full mt-20">
