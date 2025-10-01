@@ -22,48 +22,84 @@ export default function EventPage() {
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [eventTags, setEventTags] = useState<EventTag[]>([]);
+  const [searchText, setSearchText] = useState<string>("");
 
   const { user, setUser } = useUser();
 
   // const [user, setUser] = useState(null);
 
-  const loadAllEvents = useDebouncedCallback(async () => {
-    setIsLoadingEvent(true);
-    const events = await fetchAllEvents();
-    setAllEvents(events);
-    setFilteredEvents(events);
-    setIsLoadingEvent(false);
-  }, 300);
-
-  const loadAllTags = useDebouncedCallback(async () => {
-    const allTags = await fetchAllTags();
-    setAllTags(allTags);
-  }, 500);
-
-  const loadEventTags = useDebouncedCallback(async () => {
-    const eventTags = await fetchEventTags();
-    setEventTags(eventTags);
-  }, 500);
-
   useEffect(() => {
+    const loadAllEvents = async () => {
+      setIsLoadingEvent(true);
+      const events = await fetchAllEvents();
+      setAllEvents(events);
+      setFilteredEvents(events);
+      setIsLoadingEvent(false);
+    };
+
+    const loadAllTags = async () => {
+      const allTags = await fetchAllTags();
+      setAllTags(allTags);
+    };
+
+    const loadEventTags = async () => {
+      const eventTags = await fetchEventTags();
+      setEventTags(eventTags);
+    };
+
     loadAllEvents();
     loadAllTags();
     loadEventTags();
   }, []);
 
-  useEffect(() => {
+  const debouncedSetFilteredEvents = useDebouncedCallback(() => {
     // console.log("Selected Tags Updated: ", selectedTags);
-    if (selectedTags.length === 0) {
+    // console.log("Search Text Updated: ", searchText);
+    if (selectedTags.length === 0 && searchText === "") {
       setFilteredEvents(allEvents);
     } else {
       setFilteredEvents(prev => {
+        // Calculate these ONCE outside the filter loop
+        const searchWords = searchText.toLowerCase().split(/\s+/).filter(word => word.length > 0);
+        const hasSearchText = searchWords.length > 0;
+        const hasSelectedTags = selectedTags.length > 0;
+        
         return allEvents.filter(event => {
-          const eventTag = eventTags.find(et => et.eventId === event.id && selectedTags.includes(et.tagId));
-          return eventTag !== undefined;
+          // Early return if no filters applied
+          if (!hasSearchText && !hasSelectedTags) return true;
+          
+          // Check tag filter first (often faster to check)
+          if (hasSelectedTags) {
+            const hasMatchingTag = eventTags.some(et => 
+              et.eventId === event.id && selectedTags.includes(et.tagId)
+            );
+            if (!hasMatchingTag) return false;
+          }
+          
+          // Check text search
+          if (hasSearchText) {
+            const eventName = event.eventName?.toLowerCase() || '';
+            const eventDescription = event.eventDescription?.toLowerCase() || '';
+            const searchableText = `${eventName} ${eventDescription}`;
+            
+            // Use EVERY instead of SOME - usually what users expect
+            const hasAllSearchWords = searchWords.every(word => 
+              searchableText.includes(word)
+            );
+            
+            if (!hasAllSearchWords) return false;
+          }
+          
+          return true;
         });
       });
     }
-  }, [selectedTags]);
+  }, 500);
+
+  useEffect(() => {
+    setIsLoadingEvent(true);
+    debouncedSetFilteredEvents();
+  }, [selectedTags, searchText]);
 
   const handleTagToggle = (tagId: number) => {
     if (tagId === 0) return; // tagId is undefined
@@ -110,6 +146,7 @@ export default function EventPage() {
           <div className="flex flex-row gap-4 items-center">
             <div className="text-3xl font-rollingStone">Search for Events</div>
             {/* <div className="bg-white p-2">All</div> */}
+            <div className="text-base-400 font-semibold">{filteredEvents.length} items</div>
           </div>
           <div className="w-full flex flex-row gap-4 items-center">
             <div className="flex-1 bg-white px-2 pl-4 flex flex-row items-center gap-8 focus-within:ring-2 rounded-sm border-[1px] border-base-300/50">
@@ -117,6 +154,7 @@ export default function EventPage() {
                 type="text"
                 className="flex-1 ring-0 outline-none text-base-400 placeholder:text-base-300/80 font-bold"
                 placeholder="search event name"
+                onChange={(e) => setSearchText(e.target.value)}
               />
               <div className="p-2 rounded-full cursor-pointer hover:bg-black/5">
                 <IoMdSearch className="text-3xl rounded-full text-base-400" />
