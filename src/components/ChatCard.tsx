@@ -12,8 +12,8 @@ import { useChatroom } from "@/context/ChatroomContext";
 
 type ChatCardProps = {
   chat?: any;
-  chatDisplays?: any[];
-  setChatDisplays?: React.Dispatch<React.SetStateAction<any[]>>;
+  chatDisplays?: Chatroom[];
+  setChatDisplays?: React.Dispatch<React.SetStateAction<Chatroom[]>>;
   chatInfo: Chatroom;
 };
 
@@ -44,23 +44,34 @@ export default function ChatCard(chatList: ChatCardProps) {
     }
 
     if (chatList.setChatDisplays && chatList.chatDisplays) {
-      if (!chatList.chatDisplays.includes(chat)) {
-        let newChatDisplays = [];
+      console.log("here");
+      if (!chatList.chatDisplays.includes(chatList.chatInfo)) {
+        console.log("here2");
+        let newChatDisplays: Chatroom[] = [];
         // check that chatDisplays can contain only 3 Chat
         if (chatList.chatDisplays.length >= 3) {
           // remove last chat
+          console.log("here3");
+
           newChatDisplays = chatList.chatDisplays.slice(0, 2);
           // append chat to chatDisplays
-          const savedChatDisplays = [...newChatDisplays, chat];
+          const savedChatDisplays = [...newChatDisplays, chatList.chatInfo];
           chatList.setChatDisplays(savedChatDisplays);
         } else {
+          console.log("here4");
+
           // append chat to chatDisplays
-          newChatDisplays = [...chatList.chatDisplays, chat];
+          newChatDisplays = [...chatList.chatDisplays, chatList.chatInfo];
+          console.log(newChatDisplays);
           chatList.setChatDisplays(newChatDisplays);
         }
       } else {
+        console.log("here5");
+
         // remove chat from chatDisplays
-        const newChatDisplays = chatList.chatDisplays.filter((c) => c !== chat);
+        const newChatDisplays = chatList.chatDisplays.filter(
+          (c) => c !== chatList.chatInfo
+        );
         chatList.setChatDisplays(newChatDisplays);
       }
     }
@@ -73,7 +84,7 @@ export default function ChatCard(chatList: ChatCardProps) {
   return (
     <div
       className={`flex flex-row w-full gap-4 px-2 pt-3 pb-2 pl-4 items-center hover:bg-black/5 cursor-pointer select-none ${
-        selectedChatroom?.id === chatList.chatInfo?.id
+        selectedChatroom?.id === chatList.chatInfo?.id && ischatPage
           ? "bg-base-200/50"
           : "bg-transparent"
       }`}
@@ -95,9 +106,6 @@ export default function ChatCard(chatList: ChatCardProps) {
             </div>
           </div>
           <div className="text-base-400 text-sm mr-2">{"date 00"}</div>
-        </div>
-        <div className="text-base-400/70 text-sm mb-2 w-[82%]">
-          {chatList.chatDisplays && chatList.chatDisplays[0]}
         </div>
       </div>
     </div>

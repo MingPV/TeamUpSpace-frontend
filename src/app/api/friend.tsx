@@ -73,7 +73,7 @@ export async function getAllFriendRequests(user: any) {
       friendId: request.friendId,
       friendUsername: info.profile.display_name,
       createdAt: request.createdAt,
-      mutualFriendCount: matched.mutualFriends,
+      mutualFriendCount: matched ? matched.mutualFriends : 0,
     });
   }
 

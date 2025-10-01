@@ -20,10 +20,9 @@ import {
 //chat streaming
 import { useRoomChat } from "@/components/chatroom";
 import { useUser } from "@/context/UserContext";
-import { use, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ChatMessage, Member } from "@/app/types/chatroom";
 import { useChatroom } from "@/context/ChatroomContext";
-import { Profile } from "@/app/types/profile";
 
 export default function ChatDisplay({
   chatroom,
@@ -345,7 +344,7 @@ export default function ChatDisplay({
                 <IoMdSearch className="text-base-400 ml-4 text-lg" />
                 <input
                   type="text"
-                  placeholder="Serach friends"
+                  placeholder="search friends"
                   value={searchFriend}
                   onChange={(e) => setSearchFriend(e.target.value)}
                   className="pl-2 ring-0 focus:outline-0 rounded-md p-1 py-2 flex-1"
