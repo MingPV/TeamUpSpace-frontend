@@ -1,9 +1,11 @@
+import { Profile } from "./profile";
+import { User } from "./user";
+
 export interface Friend {
   id: string; //friend_id in db
-  friendId: string;
-  username: string;
-  displayName: string;
-  profileUrl: string;
+  userInfo: User;
+  roomId: string;
+  mutualFriends: number;
 }
 
 export interface FriendRequest {

@@ -110,97 +110,13 @@ export default function FriendPage() {
               </div>
             </div>
             <div className="w-full flex flex-col overflow-y-scroll px-2">
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
+              {selectedTab == "friend" &&
+                friends.map((friend) => (
+                  <div key={friend.userInfo.username}>
+                    <FriendCard friend={friend} />
+                    <div className="border-b-[1px] border-b-base-300/50"></div>
+                  </div>
+                ))}
             </div>
           </div>
           {isAddFriendOpen ? (

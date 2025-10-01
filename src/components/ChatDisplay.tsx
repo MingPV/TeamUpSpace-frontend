@@ -41,7 +41,9 @@ export default function ChatDisplay({
   const [invitees, setInvitees] = useState<string[]>([]);
   const [invitedMembers, setInvitedMembers] = useState<InviteTo[]>([]);
   //chat streaming
-  const { connected, events, send } = useRoomChat(selectedChatroom?.id ?? "0");
+  const { connected, events, send } = useRoomChat(
+    selectedChatroom?.id ?? "undefined"
+  );
 
   const [inputMessage, setInputMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -348,16 +350,27 @@ export default function ChatDisplay({
               <div className="h-full flex flex-col gap-3 overflow-y-scroll px-4">
                 {/* friend */}
                 {friends
-                  .filter((friend) => !members.has(friend.friendId))
-                  .filter((friend) => friend.displayName.includes(searchFriend)) // keep only not in members
-                  .filter((friend) => !invitedSet.has(friend.friendId))
+                  .filter(
+                    (friend) =>
+                      !members.has(friend.userInfo.profile.user_id ?? "userId")
+                  )
+                  .filter((friend) =>
+                    (
+                      friend.userInfo.profile.display_name ?? "displayname"
+                    ).includes(searchFriend)
+                  ) // keep only not in members
+                  .filter(
+                    (friend) => !invitedSet.has(friend.userInfo.profile.user_id)
+                  )
                   .map((friend) => (
                     <div
-                      key={friend.friendId}
+                      key={friend.userInfo.profile.user_id}
                       className="w-full p-2 border-[1px] border-base-300/30 rounded-md flex flex-row items-center gap-3 px-3"
                     >
                       <Image
-                        src={friend.profileUrl || "/golang.webp"}
+                        src={
+                          friend.userInfo.profile.profile_url ?? "/golang.webp"
+                        }
                         width={200}
                         height={200}
                         alt="profile-pic"
@@ -365,18 +378,29 @@ export default function ChatDisplay({
                         className="rounded-full h-10 w-10 cursor-pointer hover:opacity-90"
                       />
                       <div className="font-bold text-base-400 hover:underline underline-offset-2 cursor-pointer">
-                        {friend.displayName}
+                        {friend.userInfo.profile.display_name}
                       </div>
                       <div className="flex-1 flex justify-end">
                         <button
-                          onClick={() => handleClickInvite(friend.friendId)}
+                          onClick={() =>
+                            handleClickInvite(
+                              friend.userInfo.profile.display_name ??
+                                "displayname"
+                            )
+                          }
                           className={`px-2 py-1 border-[1px] border-base-300/30 rounded-md  font-bold cursor-pointer hover:bg-amber-900 ${
-                            invitees.includes(friend.friendId)
+                            invitees.includes(
+                              friend.userInfo.profile.display_name ??
+                                "displayname"
+                            )
                               ? "bg-amber-800 text-white hover:bg-amber-900"
                               : " border-amber-800 hover:border-amber-900 bg-white text-amber-800 hover:text-white"
                           }`}
                         >
-                          {invitees.includes(friend.friendId)
+                          {invitees.includes(
+                            friend.userInfo.profile.display_name ??
+                              "displayname"
+                          )
                             ? "Selected"
                             : "Add"}
                         </button>

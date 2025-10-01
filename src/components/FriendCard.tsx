@@ -5,21 +5,22 @@ import Image from "next/image";
 import { useState } from "react";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { useRouter } from "next/navigation";
-
-type FriendCardProps = {
-  displayName?: string;
-  username?: string;
-  mutualFriends?: number;
-  profilePicUrl?: string;
-};
-
-export default function FriendCard(data: FriendCardProps) {
+import { Friend } from "@/app/types/friend";
+import { useChatroom } from "@/context/ChatroomContext";
+import { useUser } from "@/context/UserContext";
+import { Chatroom } from "@/app/types/chatroom";
+import { getChatroomById } from "@/app/api/chatroom";
+export default function FriendCard({ friend }: { friend: Friend }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { denyFriend } = useUser();
+  const { setSelectedChatroom, selectedChatroom, friendChatrooms } =
+    useChatroom();
+  console.log(friend);
 
   const router = useRouter();
 
   const handleChatClick = () => {
-    router.push(`/profile/${data.username}`);
+    router.push(`/profile/${friend.userInfo.username}`);
   };
 
   const handleMenuClick = (e: React.MouseEvent) => {
@@ -27,16 +28,29 @@ export default function FriendCard(data: FriendCardProps) {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const getChatroom = () => {
+    const chatroom = friendChatrooms.find(
+      (chatroom) => chatroom.id == friend.roomId
+    );
+    setSelectedChatroom(chatroom ?? null);
+  };
+
+  const deleteFriend = async () => {
+    await denyFriend(friend.id);
+  };
+
   const handleMenuSelect = (e: React.MouseEvent, action: string) => {
     e.stopPropagation();
     setIsMenuOpen(false);
     console.log("action", action);
-    console.log(data);
+    console.log(friend);
     if (action === "viewProfile") {
-      router.push(`/profile/${data.username}`);
+      router.push(`/profile/${friend.userInfo.username ?? "unknown username"}`);
     } else if (action === "message") {
+      getChatroom();
       router.push(`/chat`);
     } else if (action === "removeFriend") {
+      deleteFriend();
       console.log("Remove friend");
     }
   };
@@ -48,7 +62,7 @@ export default function FriendCard(data: FriendCardProps) {
         onClick={handleChatClick}
       >
         <Image
-          src={"/golang.webp"}
+          src={friend.userInfo.profile.profile_url ?? "/golang.webp"}
           width={200}
           height={200}
           alt="profile-pic"
@@ -58,11 +72,13 @@ export default function FriendCard(data: FriendCardProps) {
         <div className="flex flex-col justify-center">
           <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row gap-2">
-              <div className="font-bold tetx-base-400">{"MingPV"}</div>
+              <div className="font-bold tetx-base-400">
+                {friend.userInfo.profile.display_name}
+              </div>
             </div>
           </div>
           <div className="text-base-400/70 text-sm mb-2">
-            {12} mutual friends
+            {friend.mutualFriends ?? "100"} mutual friends
           </div>
         </div>
 

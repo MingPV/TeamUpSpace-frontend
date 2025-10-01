@@ -24,6 +24,12 @@ export async function createChatGroup(roomName: string, user: any) {
   return addToRoomMember;
 }
 
+export async function getChatroomById(id: string) {
+  return await fetchApi(`${BASE_URL}/chatrooms/${id}`, {
+    method: "GET",
+  });
+}
+
 export async function getAllGroupsByUserId(user: any) {
   const allGroups = await fetchApi(`${BASE_URL}/roommembers/user/${user.id}`, {
     method: "GET",
