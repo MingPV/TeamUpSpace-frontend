@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
 import { IoHomeSharp } from "react-icons/io5";
@@ -48,6 +47,7 @@ export default function Navbar() {
         }
       } catch (error) {
         setUser(undefined);
+        console.error("Error fetching user info:", error);
       } finally {
         // setIsLoadingEvent(false);
       }
@@ -179,7 +179,7 @@ export default function Navbar() {
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
                   <Image
-                    src={"/golang.webp"}
+                    src={user.profile.profile_url || "/golang.webp"}
                     width={100}
                     height={100}
                     alt="profile-pic"
@@ -247,7 +247,7 @@ export default function Navbar() {
         >
           <div className="flex flex-row gap-3 ml-4 font-rollingStone items-center">
             <Image
-              src={"/golang.webp"}
+              src={user?.profile?.profile_url || "/golang.webp"}
               width={100}
               height={100}
               alt="profile-pic"

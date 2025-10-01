@@ -7,15 +7,7 @@ import { IoMdDownload } from "react-icons/io";
 
 export default function ReportUserCard() {
   const [isOpen, setIsOpen] = useState(false);
-  const [questionMenuOpen, setQuestionMenuOpen] = useState(false);
-  const [questionSelected, setQuestionSelected] = useState<string | null>(null);
   const [isBanned, setIsBanned] = useState(false);
-
-  const questions = [
-    { value: "question1", label: "🎉 Question 1" },
-    { value: "question2", label: "🚀 Question 2" },
-    { value: "question3", label: "🌟 Question 3" },
-  ];
 
   return (
     <>

@@ -7,25 +7,120 @@ import PostBox from "@/components/PostBox";
 import PostCreateBox from "@/components/PostCreateBox";
 import { IoCaretDownSharp } from "react-icons/io5";
 import { fetchUserInfo } from "./api/auth";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import LoadingHomeLeft from "@/components/LoadingHomeLeft";
 import { FaCheck } from "react-icons/fa";
 
 import { useUser } from "@/context/UserContext";
+import { Post } from "./types/post";
+import { fetchAllPosts } from "./api/post";
+import { fetchAllEvents, fetchAllEventTags, fetchAllTags } from "./api/event";
+import { Event } from "./types/event";
+import { EventTag } from "./types/eventTag";
+import { Tag } from "./types/tag";
+import { set } from "date-fns";
 
 export default function Home() {
-  // const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true)
 
-  const [filters, setFilters] = useState<string[]>(["tech", "game"]);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
+
+  const [filters, setFilters] = useState<number[]>([]);
+  const [filterNames, setFilterNames] = useState<string[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sortBy, setSortBy] = useState("Top");
   const [isSortOpen, setIsSortOpen] = useState(false);
 
+  const [tags, setTags] = useState<Tag[]>([]);
+
   const { user, setUser } = useUser();
 
-  const mockType = ["tech", "game", "art", "music", "sport", "food", "movie"];
+  const [postEventMap, setPostEventMap] = useState<Map<number, number[]>>();
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const loadPosts = async () => {
+      const posts = await fetchAllPosts();
+      setPosts(posts);
+
+      const SortedPost = posts.sort((a: Post, b: Post) => {
+        if (sortBy === "Top") {
+          // Sort by a score: likesCount * (1 + (14 - ageInDays) / 14) if post is less than 14 days old, else just likesCount
+          const getPostScore = (post: Post) => {
+            const likesCount = post.likesCount ?? 0;
+            const createdAt = post.createdAt
+              ? new Date(post.createdAt).getTime()
+              : 0;
+            const ageInDays = (Date.now() - createdAt) / (1000 * 60 * 60 * 24);
+            if (ageInDays < 14) {
+              return likesCount * (1 + (14 - ageInDays) / 14);
+            }
+            return likesCount;
+          };
+          const scoreDiff = getPostScore(b) - getPostScore(a);
+          if (scoreDiff !== 0) {
+            return scoreDiff;
+          }
+          // If scores are equal, sort by most recent
+          return (
+            new Date(b.createdAt || 0).getTime() -
+            new Date(a.createdAt || 0).getTime()
+          );
+        } else if (sortBy === "Recent") {
+          return (
+            new Date(b.createdAt || 0).getTime() -
+            new Date(a.createdAt || 0).getTime()
+          );
+        }
+        return 0;
+      });
+      setFilteredPosts(SortedPost);
+    };
+
+    loadPosts();
+  }, [sortBy]);
+
+  useEffect(() => {
+    const loadEventTags = async () => {
+      const eventTags = await fetchAllEventTags();
+      if (!eventTags) return;
+      const tempMap = new Map<number, number[]>();
+      eventTags.forEach((eventTag: EventTag) => {
+        const tagId = eventTag.tagId;
+        if (tempMap && tempMap.has(eventTag.eventId)) {
+          tempMap.get(eventTag.eventId)?.push(tagId);
+        } else {
+          tempMap.set(eventTag.eventId, [tagId]);
+        }
+      });
+      setPostEventMap(tempMap);
+    };
+    loadEventTags();
+  }, []);
+
+  useEffect(() => {
+    const loadTags = async () => {
+      const tags = await fetchAllTags();
+      setTags(tags);
+    };
+    loadTags();
+  }, []);
+
+  const handlerFilterApply = () => {
+    if (filters.length === 0) {
+      setFilteredPosts(posts);
+    } else {
+      const filtered = posts.filter((post) => {
+        if (post.eventId && postEventMap && postEventMap.has(post.eventId)) {
+          const tags = postEventMap.get(post.eventId) || [];
+          return filters.some((filter) => tags.includes(filter));
+        }
+        return false;
+      });
+      setFilteredPosts(filtered);
+    }
+    setIsFilterOpen(false);
+  };
 
   return (
     <>
@@ -35,7 +130,7 @@ export default function Home() {
           <HomeLeft />
         </div>
         <div className="flex flex-col md:w-full lg:w-[45vw] px-8">
-          <PostCreateBox user={user} />
+          <PostCreateBox user={user} setPosts={setFilteredPosts} />
           <div className="flex flex-row items-center my-2 relative">
             <div className="flex-1 border-b border-base-300"></div>
             <div
@@ -81,7 +176,7 @@ export default function Home() {
               </div>
             )}
 
-            {filters.map((filter, index) => (
+            {filterNames.map((filter, index) => (
               <div
                 key={index}
                 className="bg-white rounded-full font-bold text-base-400 px-3 py-1 text-sm cursor-default select-none"
@@ -105,39 +200,51 @@ export default function Home() {
                 </div>
                 <div className="flex flex-row gap-2">
                   <div className="flex flex-row gap-2 flex-1 flex-wrap">
-                    {mockType.map((type, index) => (
-                      <div
-                        className={`border border-base-300 rounded-full font-bold text-base-400/50 px-2 py-1 text-sm cursor-default select-none flex gap-2 items-center ${
-                          filters.includes(type)
-                            ? "bg-amber-800 text-white border-amber-800"
-                            : "hover:bg-black/10"
-                        }`}
-                        key={index}
-                        onClick={() => {
-                          if (filters.includes(type)) {
-                            setFilters(filters.filter((f) => f !== type));
-                          } else {
-                            setFilters([...filters, type]);
-                          }
-                        }}
-                      >
-                        {filters.includes(type) ? (
-                          <FaCheck className="text-white" />
-                        ) : null}
-                        {type}
-                      </div>
-                    ))}
+                    {tags.map((tag, index) =>
+                      tag.id ? (
+                        <div
+                          className={`border border-base-300 rounded-full font-bold text-base-400/50 px-2 py-1 text-sm cursor-default select-none flex gap-2 items-center ${
+                            filters.includes(tag.id)
+                              ? "bg-amber-800 text-white border-amber-800"
+                              : "hover:bg-black/10"
+                          }`}
+                          key={index}
+                          onClick={() => {
+                            if (!tag.id || !tag.tagName) return;
+                            if (filters.includes(tag.id!)) {
+                              setFilters(filters.filter((f) => f !== tag.id));
+                              setFilterNames(
+                                filterNames.filter(
+                                  (name) => name !== tag.tagName
+                                )
+                              );
+                            } else {
+                              setFilters([...filters, tag.id]);
+                              setFilterNames([...filterNames, tag.tagName]);
+                            }
+                          }}
+                        >
+                          {filters.includes(tag.id) ? (
+                            <FaCheck className="text-white" />
+                          ) : null}
+                          {tag.tagName}
+                        </div>
+                      ) : null
+                    )}
                   </div>
                   <div className="flex justify-end items-end">
                     <div
                       className="px-4 py-1.5 rounded-full border-[1px] border-base-300/30 font-bold text-base-400 mr-4 h-fit cursor-pointer select-none hover:bg-black/5"
-                      onClick={() => setFilters([])}
+                      onClick={() => {
+                        setFilters([]);
+                        setFilterNames([]);
+                      }}
                     >
                       Clear All
                     </div>
                     <div
                       className="px-4 py-1.5 rounded-full bg-base-200 font-bold text-base-400 mr-4 h-fit cursor-pointer select-none hover:bg-base-300"
-                      onClick={() => setIsFilterOpen(false)}
+                      onClick={handlerFilterApply}
                     >
                       Apply
                     </div>
@@ -148,11 +255,9 @@ export default function Home() {
           )}
 
           <div className="flex flex-col gap-2">
-            <PostBox />
-            <PostBox />
-            <PostBox />
-            <PostBox />
-            <PostBox />
+            {filteredPosts.map((post) => (
+              <PostBox key={post.id} post={post} />
+            ))}
           </div>
         </div>
         <div className="hidden md:flex flex-row md:w-full lg:w-[30vw]">

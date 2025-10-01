@@ -4,25 +4,6 @@ import { createClient } from "@/utils/supabase/server";
 import { Profile } from "../types/profile";
 import { fetchApi } from "./utils";
 
-const API_GATEWAY_URL =
-  process.env.NEXT_PUBLIC_API_GATEWAY_URL || "http://localhost:8080"; // Set your URL
-
-// checking username unique
-export async function getUserByUsername(username: string) {
-  return fetchApi(`/api/v1/users/username/${username}`);
-}
-
-// checking email unique
-export async function getUserByEmail(email: string) {
-  return fetchApi(`/api/v1/users/email/${email}`);
-}
-
-// login with google
-export async function signInWithGoogle() {
-  // Redirect to backend Google OAuth endpoint
-  window.location.href = `${API_GATEWAY_URL}/api/v1/auth/google/login`;
-}
-
 export async function updateUserProfile(
   userID: string,
   profile: Profile,

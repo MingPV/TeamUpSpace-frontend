@@ -1,18 +1,36 @@
-import React, { useRef } from "react";
+"use client";
+
+import React, { useRef, useState } from "react";
 
 import { RxCross2 } from "react-icons/rx";
 import Image from "next/image";
 import { IoSend } from "react-icons/io5";
+import { createComment } from "@/app/api/post";
+import { Post } from "@/app/types/post";
+import { useUser } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
+import { Comment } from "@/app/types/comment";
 
 export default function PostModal({
   children,
   isOpen,
   onClose,
+  post,
+  setComments,
+  comments,
 }: {
   children: React.ReactNode;
   isOpen: boolean;
   onClose: () => void;
+  post: Post;
+  setComments?: React.Dispatch<React.SetStateAction<Comment[]>>;
+  comments?: Comment[];
 }) {
+  const [commentText, setCommentText] = useState("");
+
+  const { user } = useUser();
+  const router = useRouter();
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleInput = () => {
@@ -20,6 +38,37 @@ export default function PostModal({
     if (textarea) {
       textarea.style.height = "auto";
       textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+    setCommentText(textarea?.value || "");
+  };
+
+  const handlePostComment = () => {
+    if (!user) {
+      console.log("User not logged in");
+      router.push("/sign-in");
+      return;
+    }
+
+    if (!post.id) {
+      return;
+    }
+
+    // Handle posting the comment
+    console.log("Posting comment:", commentText);
+
+    createComment(post.id, user.id, commentText).then((newComment) => {
+      console.log("Comment created:", newComment);
+      if (setComments && newComment && newComment.comment) {
+        setComments((prevComments) => [newComment.comment, ...prevComments]);
+      }
+      console.log("Comments updated", comments);
+    });
+
+    // Clear the textarea after posting
+
+    setCommentText("");
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
     }
   };
 
@@ -46,10 +95,10 @@ export default function PostModal({
               <RxCross2 className="text-xl font-bold" />
             </span>
           </div>
-          <div className="mt-18 mb-24">{children}</div>
+          <div className="mt-18 mb-24 z-49">{children}</div>
           <div className="absolute bottom-0 border-b border-b-base-300 w-full flex items-center justify-center pt-3 pb-5 px-4 text-xl bg-white rounded-b-xl border-t border-t-base-300/30 gap-2">
             <Image
-              src={"/golang.webp"}
+              src={user?.profile.profile_url || "/golang.webp"}
               width={100}
               height={100}
               alt="profile-pic"
@@ -62,11 +111,15 @@ export default function PostModal({
                   className="bg-transparent focus:outline-none w-full text-sm ml-4 placeholder:text-base-300 resize-none"
                   placeholder="Type your comment..."
                   ref={textareaRef}
+                  value={commentText}
                   onInput={handleInput}
                   rows={1}
                 />
               </div>
-              <IoSend className="text-xl mr-4 text-base-300 self-end mb-1 cursor-pointer hover:text-base-500" />
+              <IoSend
+                className="text-xl mr-4 text-base-300 self-end mb-1 cursor-pointer hover:text-base-500"
+                onClick={handlePostComment}
+              />
             </div>
           </div>
         </div>
