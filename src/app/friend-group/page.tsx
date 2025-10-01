@@ -4,16 +4,11 @@ import FriendCard from "@/components/FriendCard";
 import React, { useEffect, useState } from "react";
 import { FaUserFriends } from "react-icons/fa";
 import { IoMdSearch } from "react-icons/io";
-import ChatDisplay from "@/components/ChatDisplay";
 import FriendRequestCard from "@/components/FriendRequestCard";
-import RecommendedFriendCard2 from "@/components/RecommendedFriendCard2";
-import { ImCross } from "react-icons/im";
 import { RxCross2 } from "react-icons/rx";
 import GroupInviteCard from "@/components/GroupInviteCard";
 import { addFriend, getAllFriendRequests } from "../api/friend";
 import { useUser } from "@/context/UserContext";
-import { createChatGroup } from "../api/chatroom";
-import { FriendRequest } from "../types/friend";
 import { useChatroom } from "@/context/ChatroomContext";
 export default function FriendPage() {
   const { user, friends, friendRequests } = useUser();

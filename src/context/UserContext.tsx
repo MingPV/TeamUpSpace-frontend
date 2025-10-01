@@ -8,12 +8,6 @@ import {
 } from "react";
 import { User } from "@/app/types/user";
 import { Friend, FriendRequest } from "@/app/types/friend";
-import { Chatroom } from "@/app/types/chatroom";
-import {
-  createChatGroup,
-  getAllFriendChatroomsByUserId,
-  getAllGroupsByUserId,
-} from "@/app/api/chatroom";
 import {
   acceptFriendRequest,
   deleteFriend,
@@ -48,6 +42,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const refreshFriends = async (): Promise<void> => {
     const res = await getAllFriendsByUserId(user);
     setFriends(res);
+    console.log("friends", res);
   };
 
   const acceptFriend = async (id: string): Promise<void> => {
@@ -65,6 +60,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const refreshFriendRequests = async (): Promise<void> => {
     const res = await getAllFriendRequests(user);
     setFriendRequests(res);
+    console.log("friend request", res);
   };
 
   useEffect(() => {

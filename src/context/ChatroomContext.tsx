@@ -7,7 +7,6 @@ import React, {
   useEffect,
 } from "react";
 import { Chatroom, ChatroomInvite } from "@/app/types/chatroom";
-import { Friend } from "@/app/types/friend";
 import {
   getAllFriendChatroomsByUserId,
   getAllGroupsByUserId,
@@ -58,6 +57,7 @@ export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
   const refreshGroups = async (): Promise<void> => {
     const res = await getAllGroupsByUserId(user);
     setGroups(res);
+    console.log("groups", res);
   };
 
   const createChatroom = async (roomName: string): Promise<void> => {
@@ -68,12 +68,14 @@ export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
   const refreshFriendChatrooms = async (): Promise<void> => {
     const res = await getAllFriendChatroomsByUserId(user);
     setFriendChatrooms(res);
+    console.log("friendchatrooms", res);
   };
 
   const refreshGroupInvites = async (): Promise<void> => {
     const res = await getAllGroupInvites(user);
     console.log("response", res);
     setGroupInvites(res);
+    console.log("group invite", res);
   };
 
   const acceptInvite = async (id: string): Promise<void> => {
@@ -93,8 +95,6 @@ export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
       refreshGroups();
       refreshFriendChatrooms();
       refreshGroupInvites();
-      console.log("groupInvites", groupInvites);
-      console.log(groups);
     }
   }, [user?.id]);
 

@@ -56,7 +56,9 @@ export async function getAllFriendChatroomsByUserId(user: any) {
       .map(async (group: any) => {
         const members = await getAllMembersInGroup(group.roomId);
 
-        const otherMember = members.find((m: any) => m.profile.id !== user.id);
+        const otherMember = members.find(
+          (m: any) => m.profile.user_id !== user.id
+        );
         console.log(otherMember);
 
         return {
