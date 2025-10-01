@@ -31,7 +31,7 @@ export default function ChatDisplay({
   chatroom: Chatroom | null;
 }) {
   const { friends } = useUser();
-  const { selectedChatroom } = useChatroom();
+  const { selectedChatroom, leaveGroup } = useChatroom();
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const roomId = String(chatroom?.id);
@@ -75,6 +75,10 @@ export default function ChatDisplay({
     setIsInviteOpen(!isInviteOpen);
     setIsMenuOpen(false);
     fetchInviteData();
+  };
+
+  const handleLeaveGroup = async () => {
+    await leaveGroup(chatroom?.id ?? "0");
   };
 
   const handleClickInvite = (id: string) =>
@@ -262,7 +266,7 @@ export default function ChatDisplay({
           <div className="w-2/6 flex justify-end items-end mb-12 pr-10">
             <div className="flex flex-row gap-2">
               <button
-                onClick={() => handleDeleteMember(members.get(userId)?.id ?? 0)}
+                onClick={handleLeaveGroup}
                 className="px-4 py-2 bg-red-700 text-white font-bold rounded-md cursor-pointer hover:bg-red-800"
               >
                 Leave Group
@@ -384,22 +388,19 @@ export default function ChatDisplay({
                         <button
                           onClick={() =>
                             handleClickInvite(
-                              friend.userInfo.profile.display_name ??
-                                "displayname"
+                              friend.userInfo.profile.user_id ?? "userId"
                             )
                           }
                           className={`px-2 py-1 border-[1px] border-base-300/30 rounded-md  font-bold cursor-pointer hover:bg-amber-900 ${
                             invitees.includes(
-                              friend.userInfo.profile.display_name ??
-                                "displayname"
+                              friend.userInfo.profile.user_id ?? "displayname"
                             )
                               ? "bg-amber-800 text-white hover:bg-amber-900"
                               : " border-amber-800 hover:border-amber-900 bg-white text-amber-800 hover:text-white"
                           }`}
                         >
                           {invitees.includes(
-                            friend.userInfo.profile.display_name ??
-                              "displayname"
+                            friend.userInfo.profile.user_id ?? "displayname"
                           )
                             ? "Selected"
                             : "Add"}

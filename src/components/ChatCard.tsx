@@ -18,7 +18,7 @@ type ChatCardProps = {
 };
 
 export default function ChatCard(chatList: ChatCardProps) {
-  const { setSelectedChatroom } = useChatroom();
+  const { setSelectedChatroom, selectedChatroom } = useChatroom();
   const [chat, setChat] = useState<any>(chatList.chat);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const pathname = usePathname();
@@ -72,7 +72,11 @@ export default function ChatCard(chatList: ChatCardProps) {
 
   return (
     <div
-      className="flex flex-row w-full gap-4 px-2 pt-3 pb-2 pl-4 items-center hover:bg-black/5 cursor-pointer select-none"
+      className={`flex flex-row w-full gap-4 px-2 pt-3 pb-2 pl-4 items-center hover:bg-black/5 cursor-pointer select-none ${
+        selectedChatroom?.id === chatList.chatInfo?.id
+          ? "bg-base-200/50"
+          : "bg-transparent"
+      }`}
       onClick={handleChatClick}
     >
       <Image

@@ -23,7 +23,9 @@ export default function FriendPage() {
 
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
-  const [selectedTab, setSelectedTab] = useState("friend");
+  const [selectedTab, setSelectedTab] = useState(
+    selectedChatroom?.isGroup ? "group" : "friend"
+  );
   const [groupName, setGroupName] = useState("");
   const [error, setError] = useState("");
   const [searchFriend, setSearchFriend] = useState<string>("");

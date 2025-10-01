@@ -59,7 +59,8 @@ export async function getAllFriendRequests(user: any) {
   });
 
   const adaptedRequests: FriendRequest[] = [];
-  const friends = await getAllFriendChatroomsByUserId(user);
+  const friends = await getAllFriendsByUserId(user);
+  console.log(friends);
 
   for (const request of requests.friends) {
     const info = await getUserByUserId(request.friendId); // sequential call

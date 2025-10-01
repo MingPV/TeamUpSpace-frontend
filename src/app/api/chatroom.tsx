@@ -24,6 +24,15 @@ export async function createChatGroup(roomName: string, user: any) {
   return addToRoomMember;
 }
 
+export async function getRoomMemberByRoomIdAndUserId(
+  roomId: string,
+  user: any
+) {
+  return fetchApi(`${BASE_URL}/roommembers/room/${roomId}/${user.id}`, {
+    method: "GET",
+  });
+}
+
 export async function getChatroomById(id: string) {
   return await fetchApi(`${BASE_URL}/chatrooms/${id}`, {
     method: "GET",
@@ -183,7 +192,7 @@ export async function getAllGroupInvites(user: any) {
 
   const adaptedAllInvites = await Promise.all(
     allInvites.invites.map(async (invite: any) => {
-      const info = await getUserByUserId(invite.inviteTo);
+      const info = await getUserByUserId(invite.sender);
       const room = await getRoomInfoById(invite.roomId);
       return {
         id: invite.id,

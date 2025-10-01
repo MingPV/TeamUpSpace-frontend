@@ -10,18 +10,18 @@ import GroupInviteCard from "@/components/GroupInviteCard";
 import { addFriend, getAllFriendRequests } from "../api/friend";
 import { useUser } from "@/context/UserContext";
 import { useChatroom } from "@/context/ChatroomContext";
+import GroupCard from "@/components/GroupCard";
 export default function FriendPage() {
   const { user, friends, friendRequests } = useUser();
+  const { createChatroom, groupInvites, groups } = useChatroom();
 
-  const { createChatroom, groupInvites } = useChatroom();
-
+  const [searchFriend, setSearchFriend] = useState<string>("");
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("friend");
   const [addFriendByUsername, setAddFriendByUsername] = useState<string>("");
   const [addGroup, setAddGroup] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   console.log(groupInvites);
 
@@ -37,7 +37,7 @@ export default function FriendPage() {
   const handleCreateChatroom = async () => {
     setError("");
     try {
-      const res = await createChatroom(addGroup);
+      await createChatroom(addGroup);
     } catch (err: any) {
       setError("Something went wrong, please try again");
     } finally {
@@ -82,7 +82,9 @@ export default function FriendPage() {
                 <IoMdSearch className="text-base-400 ml-4 text-lg" />
                 <input
                   type="text"
-                  placeholder="Serach friends"
+                  value={searchFriend}
+                  onChange={(e) => setSearchFriend(e.target.value)}
+                  placeholder="Search friends"
                   className="pl-2 ring-0 focus:outline-0 rounded-md p-1 py-2 flex-1"
                 />
               </div>
@@ -109,14 +111,37 @@ export default function FriendPage() {
                 </div>
               </div>
             </div>
-            <div className="w-full flex flex-col overflow-y-scroll px-2">
-              {selectedTab == "friend" &&
-                friends.map((friend) => (
-                  <div key={friend.userInfo.username}>
-                    <FriendCard friend={friend} />
-                    <div className="border-b-[1px] border-b-base-300/50"></div>
-                  </div>
-                ))}
+            <div className="h-full">
+              <div
+                className={`w-full flex flex-col overflow-y-scroll px-2 ${
+                  selectedTab == "friend" ? "h-full" : "hidden"
+                }`}
+              >
+                {selectedTab == "friend" &&
+                  friends
+                    .filter((friend) =>
+                      friend.userInfo.profile.display_name?.includes(
+                        searchFriend
+                      )
+                    )
+                    .map((friend) => (
+                      <div key={friend.userInfo.username}>
+                        <FriendCard friend={friend} />
+                        <div className="border-b-[1px] border-b-base-300/50"></div>
+                      </div>
+                    ))}
+              </div>
+              <div className="w-full flex flex-col overflow-y-scroll px-2  h-full">
+                {selectedTab == "group" &&
+                  groups
+                    .filter((group) => group.roomName.includes(searchFriend))
+                    .map((group) => (
+                      <div key={group.roomName}>
+                        <GroupCard group={group} />
+                        <div className="border-b-[1px] border-b-base-300/50"></div>
+                      </div>
+                    ))}
+              </div>
             </div>
           </div>
           {isAddFriendOpen ? (

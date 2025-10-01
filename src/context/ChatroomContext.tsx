@@ -14,6 +14,8 @@ import {
   getAllGroupInvites,
   acceptGroupInvite,
   denyGroupInvite,
+  getRoomMemberByRoomIdAndUserId,
+  deleteMember,
 } from "@/app/api/chatroom";
 import { useUser } from "./UserContext";
 
@@ -26,6 +28,7 @@ interface ChatroomContextType {
   groups: Chatroom[];
   createChatroom: (roomName: string) => Promise<void>;
   refreshGroups: () => Promise<void>;
+  leaveGroup: (roomId: string) => Promise<void>;
 
   //groupInvite
   groupInvites: ChatroomInvite[];
@@ -57,7 +60,7 @@ export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
   const refreshGroups = async (): Promise<void> => {
     const res = await getAllGroupsByUserId(user);
     setGroups(res);
-    console.log("groups", res);
+    setSelectedChatroom(res[0]);
   };
 
   const createChatroom = async (roomName: string): Promise<void> => {
@@ -68,14 +71,12 @@ export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
   const refreshFriendChatrooms = async (): Promise<void> => {
     const res = await getAllFriendChatroomsByUserId(user);
     setFriendChatrooms(res);
-    console.log("friendchatrooms", res);
+    setSelectedChatroom(res[0]);
   };
 
   const refreshGroupInvites = async (): Promise<void> => {
     const res = await getAllGroupInvites(user);
-    console.log("response", res);
     setGroupInvites(res);
-    console.log("group invite", res);
   };
 
   const acceptInvite = async (id: string): Promise<void> => {
@@ -89,9 +90,14 @@ export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
     refreshGroupInvites();
   };
 
+  const leaveGroup = async (roomId: string): Promise<void> => {
+    const roomMember = await getRoomMemberByRoomIdAndUserId(roomId, user);
+    await deleteMember(roomMember.member.id);
+    refreshGroups();
+  };
+
   useEffect(() => {
     if (user?.id) {
-      console.log("call this function", user.id);
       refreshGroups();
       refreshFriendChatrooms();
       refreshGroupInvites();
@@ -106,6 +112,7 @@ export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
         groups,
         createChatroom,
         refreshGroups,
+        leaveGroup,
         friendChatrooms,
         refreshFriendChatrooms,
         groupInvites,
