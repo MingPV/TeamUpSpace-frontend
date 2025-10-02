@@ -4,16 +4,22 @@
 import PostBox from "@/components/PostBox";
 import PostCreateBox from "@/components/PostCreateBox";
 import { IoCaretDownSharp } from "react-icons/io5";
-import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ProfileTopMe from "@/components/ProfileTopMe";
 import { useUser } from "@/context/UserContext";
+import { Post } from "../types/post";
+import { useState } from "react";
 
 export default function Home() {
   const { user } = useUser();
+  const [posts, setPosts] = useState<Post[]>([]);
 
-  const router = useRouter();
+  console.log(user);
+
+  if (!user) {
+    // router.push("/sign-in");
+    return <div>loading</div>;
+  }
 
   return (
     <>
@@ -22,7 +28,7 @@ export default function Home() {
           <ProfileTopMe user={user} />
         </div>
         <div className="flex flex-col md:w-full lg:w-[55vw] px-8">
-          <PostCreateBox user={user} />
+          <PostCreateBox user={user} setPosts={setPosts} />
           <div className="flex flex-row items-center my-2">
             <div className="flex-1 border-b border-base-300"></div>
             <div className="flex text-xs gap-1 pl-2 cursor-pointer">

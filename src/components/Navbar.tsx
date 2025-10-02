@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
 import { IoHomeSharp } from "react-icons/io5";
@@ -50,11 +49,13 @@ export default function Navbar() {
         }
       } catch (error) {
         setUser(undefined);
+        console.error("Error fetching user info:", error);
       } finally {
         // setIsLoadingEvent(false);
       }
     };
     if (!user) {
+      console.log("Loading user info...");
       loadUserInfo();
     }
   }, [setUser, user]);
@@ -96,40 +97,82 @@ export default function Navbar() {
             {/* make this text can't select */}
             <div className="text-sm select-none">Home</div>
           </div>
-          <div
-            className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
-            onClick={() => router.push("/friend-group")}
-          >
-            <FaUserFriends className="text-xl" />
-            <div className="text-sm select-none">Friends</div>
-          </div>
-          <div
-            className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
-            onClick={() => router.push("/event")}
-          >
-            <MdEmojiEvents className="text-xl" />
-            <div className="text-sm select-none">Events</div>
-          </div>
-          <div
-            className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
-            onClick={() => {
-              setIsChatOpen(!isChatOpen);
-              setIsNotificationOpen(false);
-            }}
-          >
-            <AiOutlineMessage className="text-xl " />
-            <div className="text-sm select-none">Messages</div>
-          </div>
-          <div
-            className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
-            onClick={() => {
-              setIsNotificationOpen(!isNotificationOpen);
-              setIsChatOpen(false);
-            }}
-          >
-            <IoNotifications className="text-xl " />
-            <div className="text-sm select-none">Notification</div>
-          </div>
+          {user?.is_admin ? (
+            <>
+              <div
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
+                onClick={() => router.push("/admin-manage/report")}
+              >
+                <FaUserFriends className="text-xl" />
+                <div className="text-sm select-none">Reports</div>
+              </div>
+              <div
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
+                onClick={() => router.push("/admin-manage/event")}
+              >
+                <MdEmojiEvents className="text-xl" />
+                <div className="text-sm select-none">Manage Event</div>
+              </div>
+              <div
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
+                onClick={() => {
+                  setIsChatOpen(!isChatOpen);
+                  setIsNotificationOpen(false);
+                }}
+              >
+                <AiOutlineMessage className="text-xl " />
+                <div className="text-sm select-none">Messages</div>
+              </div>
+              <div
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
+                onClick={() => {
+                  setIsNotificationOpen(!isNotificationOpen);
+                  setIsChatOpen(false);
+                }}
+              >
+                <IoNotifications className="text-xl " />
+                <div className="text-sm select-none">Notification</div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
+                onClick={() => router.push("/friend-group")}
+              >
+                <FaUserFriends className="text-xl" />
+                <div className="text-sm select-none">Friends</div>
+              </div>
+              <div
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
+                onClick={() => router.push("/event")}
+              >
+                <MdEmojiEvents className="text-xl" />
+                <div className="text-sm select-none">Events</div>
+              </div>
+              <div
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
+                onClick={() => {
+                  setIsChatOpen(!isChatOpen);
+                  setIsNotificationOpen(false);
+                }}
+              >
+                <AiOutlineMessage className="text-xl " />
+                <div className="text-sm select-none">Messages</div>
+              </div>
+              <div
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
+                onClick={() => {
+                  setIsNotificationOpen(!isNotificationOpen);
+                  setIsChatOpen(false);
+                }}
+              >
+                <IoNotifications className="text-xl " />
+                <div className="text-sm select-none">Notification</div>
+              </div>
+            </>
+          )}
+
           <div className="hidden lg:flex flex-col border-b-2 border-b-white items-center px-8 border-r border-r-base-200 relative">
             {user ? (
               <div className="flex flex-col px-0 md:px-4 items-center rounded-md">
@@ -138,7 +181,7 @@ export default function Navbar() {
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
                   <Image
-                    src={"/golang.webp"}
+                    src={user.profile.profile_url || "/golang.webp"}
                     width={100}
                     height={100}
                     alt="profile-pic"
@@ -206,7 +249,7 @@ export default function Navbar() {
         >
           <div className="flex flex-row gap-3 ml-4 font-rollingStone items-center">
             <Image
-              src={"/golang.webp"}
+              src={user?.profile?.profile_url || "/golang.webp"}
               width={100}
               height={100}
               alt="profile-pic"

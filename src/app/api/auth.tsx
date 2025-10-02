@@ -62,6 +62,14 @@ export async function getUserByEmail(email: string) {
   return fetchApi(`/api/v1/users/email/${email}`);
 }
 
+export async function getUserById(id: string) {
+  return fetchApi(`/api/v1/users/${id}`);
+}
+
+export async function getProfileByUserId(id: string) {
+  return fetchApi(`/api/v1/profiles/${id}`);
+}
+
 // login with google
 export async function signInWithGoogle() {
   // Redirect to backend Google OAuth endpoint

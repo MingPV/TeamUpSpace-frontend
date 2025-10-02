@@ -34,3 +34,13 @@ export async function fetchEventByTagID(tagID: string) {
 
   return events;
 }
+
+export async function fetchAllEventTags() {
+  const res = await fetchApi(`/api/v1/eventTags`);
+  return res.eventTags;
+}
+
+export async function fetchAllTags() {
+  const res = await fetchApi(`/api/v1/tags`);
+  return res.tags;
+}
