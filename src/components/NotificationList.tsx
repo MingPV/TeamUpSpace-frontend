@@ -14,9 +14,9 @@ export default function NotificationList() {
         </div>
       </div>
       <div className="border-b-[1px] border-b-base-300/50 w-[90%]"></div>
-      <FriendRequestCard />
+      {/* <FriendRequestCard /> */}
       <div className="border-b-[1px] border-b-base-300/50 w-[90%]"></div>
-      <FriendRequestCard />
+      {/* <FriendRequestCard /> */}
       <div className="border-b-[1px] border-b-base-300/50 w-[90%]"></div>
       <div className="w-full flex text-sm font-bold text-base-400/70 mt-2">
         <div className="ml-4 mb-2">Others</div>

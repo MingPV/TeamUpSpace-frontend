@@ -7,7 +7,7 @@ import { IoMdSearch } from "react-icons/io";
 import { FaFilter } from "react-icons/fa";
 import { FaBookmark } from "react-icons/fa";
 import { Event } from "../types/event";
-import { fetchAllEvents, fetchAllTags, fetchEventTags } from "../api/event";
+import { fetchAllEvents, fetchAllTags, fetchAllEventTags } from "../api/event";
 import { fetchUserInfo } from "../api/auth";
 import { useUser } from "@/context/UserContext";
 import { Tag } from "../types/tag";
@@ -43,7 +43,7 @@ export default function EventPage() {
     };
 
     const loadEventTags = async () => {
-      const eventTags = await fetchEventTags();
+      const eventTags = await fetchAllEventTags();
       setEventTags(eventTags);
     };
 
@@ -58,38 +58,42 @@ export default function EventPage() {
     if (selectedTags.length === 0 && searchText === "") {
       setFilteredEvents(allEvents);
     } else {
-      setFilteredEvents(prev => {
+      setFilteredEvents((prev) => {
         // Calculate these ONCE outside the filter loop
-        const searchWords = searchText.toLowerCase().split(/\s+/).filter(word => word.length > 0);
+        const searchWords = searchText
+          .toLowerCase()
+          .split(/\s+/)
+          .filter((word) => word.length > 0);
         const hasSearchText = searchWords.length > 0;
         const hasSelectedTags = selectedTags.length > 0;
-        
-        return allEvents.filter(event => {
+
+        return allEvents.filter((event) => {
           // Early return if no filters applied
           if (!hasSearchText && !hasSelectedTags) return true;
-          
+
           // Check tag filter first (often faster to check)
           if (hasSelectedTags) {
-            const hasMatchingTag = eventTags.some(et => 
-              et.eventId === event.id && selectedTags.includes(et.tagId)
+            const hasMatchingTag = eventTags.some(
+              (et) => et.eventId === event.id && selectedTags.includes(et.tagId)
             );
             if (!hasMatchingTag) return false;
           }
-          
+
           // Check text search
           if (hasSearchText) {
-            const eventName = event.eventName?.toLowerCase() || '';
-            const eventDescription = event.eventDescription?.toLowerCase() || '';
+            const eventName = event.eventName?.toLowerCase() || "";
+            const eventDescription =
+              event.eventDescription?.toLowerCase() || "";
             const searchableText = `${eventName} ${eventDescription}`;
-            
+
             // Use EVERY instead of SOME - usually what users expect
-            const hasAllSearchWords = searchWords.every(word => 
+            const hasAllSearchWords = searchWords.every((word) =>
               searchableText.includes(word)
             );
-            
+
             if (!hasAllSearchWords) return false;
           }
-          
+
           return true;
         });
       });
@@ -104,10 +108,10 @@ export default function EventPage() {
   const handleTagToggle = (tagId: number) => {
     if (tagId === 0) return; // tagId is undefined
     const isSelected = selectedTags.includes(tagId);
-    setSelectedTags(prev => {
+    setSelectedTags((prev) => {
       if (isSelected) {
         // Remove tag if already selected
-        return prev.filter(id => id !== tagId);
+        return prev.filter((id) => id !== tagId);
       } else {
         // Add tag if not selected
         return [...prev, tagId];
@@ -146,7 +150,9 @@ export default function EventPage() {
           <div className="flex flex-row gap-4 items-center">
             <div className="text-3xl font-rollingStone">Search for Events</div>
             {/* <div className="bg-white p-2">All</div> */}
-            <div className="text-base-400 font-semibold">{filteredEvents.length} items</div>
+            <div className="text-base-400 font-semibold">
+              {filteredEvents.length} items
+            </div>
           </div>
           <div className="w-full flex flex-row gap-4 items-center">
             <div className="flex-1 bg-white px-2 pl-4 flex flex-row items-center gap-8 focus-within:ring-2 rounded-sm border-[1px] border-base-300/50">
@@ -188,7 +194,9 @@ export default function EventPage() {
                 {/* Filter by A */}
                 <div className="flex flex-col">
                   <div className="flex flex-row justify-between items-center">
-                    <div className="text-base-300 font-rollingStone">Filter</div>
+                    <div className="text-base-300 font-rollingStone">
+                      Filter
+                    </div>
                     <div
                       className="text-sm text-amber-800 font-bold cursor-pointer hover:underline"
                       onClick={() => setSelectedTags([])}
@@ -196,7 +204,7 @@ export default function EventPage() {
                       Clear
                     </div>
                   </div>
-                  
+
                   {allTags.map((tag) => (
                     <LabelTag key={tag.id} tag={tag} />
                   ))}
