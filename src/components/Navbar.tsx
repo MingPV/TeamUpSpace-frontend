@@ -28,6 +28,8 @@ export default function Navbar() {
 
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<string>("friend");
+  const [searchFriend, setSearchFriend] = useState<string>("");
 
   const handleLogout = () => {
     logout();
@@ -254,7 +256,7 @@ export default function Navbar() {
               style={{ objectFit: "cover" }}
               className="rounded-full h-7 w-7"
             />
-            <div className="text-base-400">Messaging</div>
+            <div className="text-base-400 ">Messaging</div>
           </div>
           <div className="text-lg text-base-400 mr-4">
             <FaChevronUp />
@@ -266,24 +268,47 @@ export default function Navbar() {
               <IoMdSearch className="text-base-400 ml-4 text-lg" />
               <input
                 type="text"
-                placeholder="Serach messages"
+                placeholder="search messages"
+                value={searchFriend}
+                onChange={(e) => setSearchFriend(e.target.value)}
                 className="pl-2 ring-0 focus:outline-0 rounded-md p-1 py-2 "
               />
             </div>
           </div>
-          <div className="flex flex-row w-full border-b-[1px] border-b-base-300/30">
-            <div className="flex-1 py-1 flex items-center justify-center border-b-2 border-b-lime-700 cursor-pointer text-lime-700 font-bold">
+          <div className="flex flex-row w-full border-b-[1px] border-b-base-300/30 mt-5">
+            <div
+              className={`flex-1 py-1 flex items-center justify-center border-b-2 ${
+                selectedTab == "chat"
+                  ? "border-b-lime-700 text-lime-700"
+                  : "text-base-300 border-b-transparent hover:text-base-400 hover:bg-black/5"
+              }  cursor-pointer font-bold select-none`}
+              onClick={() => setSelectedTab("chat")}
+            >
               Chat
             </div>
-            <div className="flex-1 py-1 flex items-center justify-center border-b-2 border-b-transparent cursor-pointer text-base-300 font-bold">
+            <div
+              className={`flex-1 py-1 flex items-center justify-center border-b-2 ${
+                selectedTab == "friend"
+                  ? "border-b-lime-700 text-lime-700"
+                  : "text-base-300 border-b-transparent hover:text-base-400 hover:bg-black/5"
+              }  cursor-pointer font-bold select-none`}
+              onClick={() => setSelectedTab("friend")}
+            >
               Friend
             </div>
-            <div className="flex-1 py-1 flex items-center justify-center border-b-2 border-b-transparent cursor-pointer text-base-300 font-bold">
+            <div
+              className={`flex-1 py-1 flex items-center justify-center border-b-2 ${
+                selectedTab == "group"
+                  ? "border-b-lime-700 text-lime-700"
+                  : "text-base-300 border-b-transparent hover:text-base-400 hover:bg-black/5"
+              }  cursor-pointer font-bold select-none`}
+              onClick={() => setSelectedTab("group")}
+            >
               Group
             </div>
           </div>
         </div>
-        <ChatList />
+        <ChatList selectedTab={selectedTab} searchFriend={searchFriend} />
       </div>
       <div
         className={`fixed w-[30%] h-[80%] right-6 bg-white z-40 rounded-md pb-4 border-[1px] border-base-300/50  transition-all duration-300 flex flex-col items-center shadow-lg shadow-base-400/30  ${

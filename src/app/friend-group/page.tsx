@@ -1,20 +1,49 @@
 "use client";
 
 import FriendCard from "@/components/FriendCard";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaUserFriends } from "react-icons/fa";
 import { IoMdSearch } from "react-icons/io";
-import ChatDisplay from "@/components/ChatDisplay";
 import FriendRequestCard from "@/components/FriendRequestCard";
-import RecommendedFriendCard2 from "@/components/RecommendedFriendCard2";
-import { ImCross } from "react-icons/im";
 import { RxCross2 } from "react-icons/rx";
 import GroupInviteCard from "@/components/GroupInviteCard";
-
+import { addFriend, getAllFriendRequests } from "../api/friend";
+import { useUser } from "@/context/UserContext";
+import { useChatroom } from "@/context/ChatroomContext";
+import GroupCard from "@/components/GroupCard";
 export default function FriendPage() {
+  const { user, friends, friendRequests } = useUser();
+  const { createChatroom, groupInvites, groups } = useChatroom();
+
+  const [searchFriend, setSearchFriend] = useState<string>("");
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("friend");
+  const [addFriendByUsername, setAddFriendByUsername] = useState<string>("");
+  const [addGroup, setAddGroup] = useState<string>("");
+  const [userId, setUserId] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  console.log(groupInvites);
+
+  useEffect(() => {
+    setUserId(user?.id ?? "");
+  }, [user]);
+
+  const handleClickAddFriend = async () => {
+    await addFriend(addFriendByUsername, userId ?? "");
+    setAddFriendByUsername("");
+  };
+
+  const handleCreateChatroom = async () => {
+    setError("");
+    try {
+      await createChatroom(addGroup);
+    } catch (err: any) {
+      setError("Something went wrong, please try again");
+    } finally {
+      setAddGroup("");
+    }
+  };
 
   return (
     <>
@@ -53,7 +82,9 @@ export default function FriendPage() {
                 <IoMdSearch className="text-base-400 ml-4 text-lg" />
                 <input
                   type="text"
-                  placeholder="Serach friends"
+                  value={searchFriend}
+                  onChange={(e) => setSearchFriend(e.target.value)}
+                  placeholder="Search friends"
                   className="pl-2 ring-0 focus:outline-0 rounded-md p-1 py-2 flex-1"
                 />
               </div>
@@ -80,98 +111,37 @@ export default function FriendPage() {
                 </div>
               </div>
             </div>
-            <div className="w-full flex flex-col overflow-y-scroll px-2">
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
-              <FriendCard
-                displayName="MingPV"
-                username="mingpv"
-                mutualFriends={10}
-                profilePicUrl="/golang.webp"
-              />
-              <div className="border-b-[1px] border-b-base-300/50"></div>
+            <div className="h-full">
+              <div
+                className={`w-full flex flex-col overflow-y-scroll px-2 ${
+                  selectedTab == "friend" ? "h-full" : "hidden"
+                }`}
+              >
+                {selectedTab == "friend" &&
+                  friends
+                    .filter((friend) =>
+                      friend.userInfo.profile.display_name?.includes(
+                        searchFriend
+                      )
+                    )
+                    .map((friend) => (
+                      <div key={friend.userInfo.username}>
+                        <FriendCard friend={friend} />
+                        <div className="border-b-[1px] border-b-base-300/50"></div>
+                      </div>
+                    ))}
+              </div>
+              <div className="w-full flex flex-col overflow-y-scroll px-2  h-full">
+                {selectedTab == "group" &&
+                  groups
+                    .filter((group) => group.roomName.includes(searchFriend))
+                    .map((group) => (
+                      <div key={group.roomName}>
+                        <GroupCard group={group} />
+                        <div className="border-b-[1px] border-b-base-300/50"></div>
+                      </div>
+                    ))}
+              </div>
             </div>
           </div>
           {isAddFriendOpen ? (
@@ -192,12 +162,17 @@ export default function FriendPage() {
                 </div>
                 <div className="flex flex-row gap-4 ">
                   <input
+                    value={addFriendByUsername}
+                    onChange={(e) => setAddFriendByUsername(e.target.value)}
                     className="p-2 pl-4 flex-1 border rounded-md border-base-300/50 focus:outline-amber-800 bg-white font-bold placeholder:font-medium"
                     placeholder="username"
                   />
-                  <div className="font-bold px-3 py-2 rounded-md text-base-400 bg-base-200 transition-all duration-300 select-none cursor-pointer hover:bg-amber-800 hover:text-white">
+                  <button
+                    onClick={handleClickAddFriend}
+                    className="font-bold px-3 py-2 rounded-md text-base-400 bg-base-200 transition-all duration-300 select-none cursor-pointer hover:bg-amber-800 hover:text-white"
+                  >
                     Add
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
@@ -220,12 +195,17 @@ export default function FriendPage() {
                 </div>
                 <div className="flex flex-row gap-4 ">
                   <input
+                    value={addGroup}
+                    onChange={(e) => setAddGroup(e.target.value)}
                     className="p-2 pl-4 flex-1 border rounded-md border-base-300/50 focus:outline-amber-800 bg-white font-bold placeholder:font-medium"
                     placeholder="group name"
                   />
-                  <div className="font-bold px-3 py-2 rounded-md text-base-400 bg-base-200 transition-all duration-300 select-none cursor-pointer hover:bg-amber-800 hover:text-white">
+                  <button
+                    onClick={handleCreateChatroom}
+                    className="font-bold px-3 py-2 rounded-md text-base-400 bg-base-200 transition-all duration-300 select-none cursor-pointer hover:bg-amber-800 hover:text-white"
+                  >
                     Create
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
@@ -240,24 +220,14 @@ export default function FriendPage() {
                 Friend Request
               </div>
               <div className="flex flex-col gap-4 overflow-y-scroll w-full items-center">
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <FriendRequestCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <FriendRequestCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <FriendRequestCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <FriendRequestCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <FriendRequestCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <FriendRequestCard />
-                </div>
+                {friendRequests?.map((request) => (
+                  <div
+                    key={request.id}
+                    className="bg-black/5 rounded-md w-[90%]"
+                  >
+                    <FriendRequestCard friendRequest={request} />
+                  </div>
+                ))}
               </div>
             </div>
             <div className="border-r-[1px] border-r-base-300/30 h-[90%] mt-[5%]"></div>
@@ -266,24 +236,14 @@ export default function FriendPage() {
                 Group Invite
               </div>
               <div className="flex flex-col gap-4 overflow-y-scroll w-full items-center">
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <GroupInviteCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <GroupInviteCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <GroupInviteCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <GroupInviteCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <GroupInviteCard />
-                </div>
-                <div className="bg-black/5 rounded-md w-[90%]">
-                  <GroupInviteCard />
-                </div>
+                {groupInvites.map((invite) => (
+                  <div
+                    key={invite.id}
+                    className="bg-black/5 rounded-md w-[90%]"
+                  >
+                    <GroupInviteCard groupInvite={invite} />
+                  </div>
+                ))}
               </div>
             </div>
           </div>

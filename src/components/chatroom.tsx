@@ -42,7 +42,7 @@ export function useRoomChat(roomId: string) {
     ws.onerror = (err) => {
       setConnected(false);
       setError("WebSocket error occurred");
-      console.error("WebSocket error:", err);
+      // console.error("WebSocket error:", err);
     };
 
     return () => {

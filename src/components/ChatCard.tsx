@@ -2,37 +2,76 @@
 "use client";
 import React, { useEffect } from "react";
 import Image from "next/image";
+import { Friend } from "@/app/types/friend";
 import { useState } from "react";
+import { Chatroom } from "@/app/types/chatroom";
+import { getAllMessages } from "@/app/api/chatroom";
+import { ChatMessage } from "@/app/types/chatroom";
+import { usePathname } from "next/navigation";
+import { useChatroom } from "@/context/ChatroomContext";
 
 type ChatCardProps = {
   chat?: any;
-  chatDisplays?: any[];
-  setChatDisplays?: React.Dispatch<React.SetStateAction<any[]>>;
+  chatDisplays?: Chatroom[];
+  setChatDisplays?: React.Dispatch<React.SetStateAction<Chatroom[]>>;
+  chatInfo: Chatroom;
 };
 
 export default function ChatCard(chatList: ChatCardProps) {
+  const { setSelectedChatroom, selectedChatroom } = useChatroom();
   const [chat, setChat] = useState<any>(chatList.chat);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const pathname = usePathname();
+  const ischatPage = pathname.includes("/chat");
 
+  const fetchChatHistory = async () => {
+    const res = await getAllMessages(String(chatList.chatInfo.id));
+    setMessages(res);
+  };
+  function formatDateToMonthDay(dateString: string) {
+    const date = new Date(dateString);
+
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+  }
   const handleChatClick = () => {
-    console.log("chatlist", chatList.chatDisplays);
+    if (ischatPage) {
+      console.log(chatList.chatInfo);
+      console.log("click");
+      setSelectedChatroom(chatList.chatInfo);
+    }
+
     if (chatList.setChatDisplays && chatList.chatDisplays) {
-      if (!chatList.chatDisplays.includes(chat)) {
-        let newChatDisplays = [];
+      console.log("here");
+      if (!chatList.chatDisplays.includes(chatList.chatInfo)) {
+        console.log("here2");
+        let newChatDisplays: Chatroom[] = [];
         // check that chatDisplays can contain only 3 Chat
         if (chatList.chatDisplays.length >= 3) {
           // remove last chat
+          console.log("here3");
+
           newChatDisplays = chatList.chatDisplays.slice(0, 2);
           // append chat to chatDisplays
-          const savedChatDisplays = [...newChatDisplays, chat];
+          const savedChatDisplays = [...newChatDisplays, chatList.chatInfo];
           chatList.setChatDisplays(savedChatDisplays);
         } else {
+          console.log("here4");
+
           // append chat to chatDisplays
-          newChatDisplays = [...chatList.chatDisplays, chat];
+          newChatDisplays = [...chatList.chatDisplays, chatList.chatInfo];
+          console.log(newChatDisplays);
           chatList.setChatDisplays(newChatDisplays);
         }
       } else {
+        console.log("here5");
+
         // remove chat from chatDisplays
-        const newChatDisplays = chatList.chatDisplays.filter((c) => c !== chat);
+        const newChatDisplays = chatList.chatDisplays.filter(
+          (c) => c !== chatList.chatInfo
+        );
         chatList.setChatDisplays(newChatDisplays);
       }
     }
@@ -44,7 +83,11 @@ export default function ChatCard(chatList: ChatCardProps) {
 
   return (
     <div
-      className="flex flex-row w-full gap-4 px-2 pt-3 pb-2 pl-4 items-center hover:bg-black/5 cursor-pointer select-none"
+      className={`flex flex-row w-full gap-4 px-2 pt-3 pb-2 pl-4 items-center hover:bg-black/5 cursor-pointer select-none ${
+        selectedChatroom?.id === chatList.chatInfo?.id && ischatPage
+          ? "bg-base-200/50"
+          : "bg-transparent"
+      }`}
       onClick={handleChatClick}
     >
       <Image
@@ -58,12 +101,11 @@ export default function ChatCard(chatList: ChatCardProps) {
       <div className="flex-1 flex flex-col mr-4">
         <div className="flex flex-row justify-between items-center">
           <div className="flex flex-row gap-2">
-            <div className="font-bold text-sm tetx-base-400">{"MingPV"}</div>
+            <div className="font-bold text-sm tetx-base-400">
+              {chatList.chatInfo?.roomName ?? "null"}
+            </div>
           </div>
-          <div className="text-base-400 text-sm mr-2">Sep 13</div>
-        </div>
-        <div className="text-base-400/70 text-sm mb-2 w-[82%]">
-          hello mingmingpv, I am interested in your money {chat}.
+          <div className="text-base-400 text-sm mr-2">{"date 00"}</div>
         </div>
       </div>
     </div>
