@@ -17,7 +17,7 @@ export default function EventCard({ event }: EventProps) {
     if (event) {
       setEventInfo(event);
     }
-    console.log(event);
+    // console.log(event);
   }, [event]);
 
   return (
@@ -76,6 +76,7 @@ export default function EventCard({ event }: EventProps) {
             tagExample
           </div>
         </div>
+        <div>id: {eventInfo?.id}</div>
         <div className="border-2 border-base-300 rounded-full py-2 px-3 cursor-pointer hover:bg-lime-600 hover:text-white transition-all duration-300 font-bold hover:border-lime-700">
           Apply Now
         </div>

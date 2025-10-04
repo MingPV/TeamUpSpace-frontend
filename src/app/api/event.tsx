@@ -25,8 +25,8 @@ export async function fetchTagByEventID(eventID: string) {
 }
 
 export async function fetchEventByTagID(tagID: string) {
-  const res = await fetchApi(`/api/v1/events/tags/${tagID}`);
-  const events_tags = res.events;
+  const res = await fetchApi(`/api/v1/eventTags/tag/${tagID}`);
+  const events_tags = res.event_tags;
 
   const events: number[] = events_tags.map(
     (event_tag: EventTag) => event_tag.eventId
