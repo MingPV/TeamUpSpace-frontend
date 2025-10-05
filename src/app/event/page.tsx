@@ -208,72 +208,7 @@ export default function EventPage() {
                   {allTags.map((tag) => (
                     <LabelTag key={tag.id} tag={tag} />
                   ))}
-                  {/* <div className="text-base-300 font-rollingStone">FilterA</div>
-                  <div className="flex flex-col">
-                    <div className="flex flex-row gap-4 items-center cursor-pointer hover:bg-black/5 p-2.5">
-                      <input
-                        type="checkbox"
-                        className="size-5 cursor-pointer"
-                      />
-                      <div className="font-bold text-base-400">choice</div>
-                    </div>
-                    <div className="flex flex-row gap-4 items-center cursor-pointer hover:bg-black/5 p-2.5">
-                      <input
-                        type="checkbox"
-                        className="size-5 cursor-pointer"
-                      />
-                      <div className="font-bold text-base-400">choice</div>
-                    </div>
-                    <div className="flex flex-row gap-4 items-center cursor-pointer hover:bg-black/5 p-2.5">
-                      <input
-                        type="checkbox"
-                        className="size-5 cursor-pointer"
-                      />
-                      <div className="font-bold text-base-400">choice</div>
-                    </div>
-                    <div className="flex flex-row gap-4 items-center cursor-pointer hover:bg-black/5 p-2.5">
-                      <input
-                        type="checkbox"
-                        className="size-5 cursor-pointer"
-                      />
-                      <div className="font-bold text-base-400">choice</div>
-                    </div>
-                    <div className="flex flex-row gap-4 items-center cursor-pointer hover:bg-black/5 p-2.5">
-                      <input
-                        type="checkbox"
-                        className="size-5 cursor-pointer"
-                      />
-                      <div className="font-bold text-base-400">choice</div>
-                    </div>
-                  </div> */}
                 </div>
-                {/* Filter by B */}
-                {/* <div className="flex flex-col">
-                  <div className="text-base-300 font-rollingStone">FilterA</div>
-                  <div className="flex flex-col">
-                    <div className="flex flex-row gap-4 items-center cursor-pointer hover:bg-black/5 p-2.5">
-                      <input
-                        type="checkbox"
-                        className="size-5 cursor-pointer"
-                      />
-                      <div className="font-bold text-base-400">choice</div>
-                    </div>
-                    <div className="flex flex-row gap-4 items-center cursor-pointer hover:bg-black/5 p-2.5">
-                      <input
-                        type="checkbox"
-                        className="size-5 cursor-pointer"
-                      />
-                      <div className="font-bold text-base-400">choice</div>
-                    </div>
-                    <div className="flex flex-row gap-4 items-center cursor-pointer hover:bg-black/5 p-2.5">
-                      <input
-                        type="checkbox"
-                        className="size-5 cursor-pointer"
-                      />
-                      <div className="font-bold text-base-400">choice</div>
-                    </div>
-                  </div>
-                </div> */}
               </div>
             </div>
           </div>
