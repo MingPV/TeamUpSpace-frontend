@@ -93,3 +93,13 @@ export async function deleteFriend(id: string) {
   });
   return;
 }
+
+export async function isMyFriend(user: any, friendId: string) {
+  const res = await fetchApi(
+    `${BASE_URL}/friends/ismyfriends/${user.id}/${friendId}`,
+    {
+      method: "GET",
+    }
+  );
+  return res.status;
+}

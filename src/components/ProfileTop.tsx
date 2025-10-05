@@ -9,9 +9,23 @@ import { useUser } from "@/context/UserContext";
 import { IoWarning } from "react-icons/io5";
 import { followUser, getFollowers, unfollowUser } from "@/app/api/user";
 import { UserFollow } from "@/app/types/user";
+import {
+  addFriend,
+  deleteFriend,
+  getAllFriendRequests,
+  isMyFriend,
+} from "@/app/api/friend";
+import { User } from "@/app/types/user";
+import { FriendStatusButton } from "./FriendStatus";
 
 export default function ProfileTop({ user }: { user: any }) {
-  const { user: currentUser } = useUser();
+  const {
+    user: currentUser,
+    denyFriend,
+    acceptFriend,
+    friends,
+    friendRequests,
+  } = useUser();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isReportOpen, setIsReportOpen] = React.useState(false);
   const [selectedReportIndex, setSelectedReportIndex] = React.useState(0);
@@ -19,8 +33,11 @@ export default function ProfileTop({ user }: { user: any }) {
   const [otherReportText, setOtherReportText] = React.useState("");
 
   const [isFollowed, setIsFollowed] = React.useState(false);
+  const [friendStatus, setFriendStatus] = React.useState<string>("");
 
   const [userFollows, setUserFollows] = React.useState<UserFollow[]>([]);
+  const [hisFriends, setHisFriends] = React.useState<User[]>([]);
+  const [isAccept, setIsAccept] = React.useState<boolean>(true);
 
   const handleReport = () => {
     if (!user || !currentUser) {
@@ -37,6 +54,12 @@ export default function ProfileTop({ user }: { user: any }) {
     setReason("");
   };
 
+  const fetchFriendStatus = async () => {
+    const status = await isMyFriend(currentUser, user.id);
+    setFriendStatus(status);
+    console.log("status", status);
+  };
+
   useEffect(() => {
     const loadFollowers = async () => {
       if (!user || !user.id) {
@@ -47,6 +70,7 @@ export default function ProfileTop({ user }: { user: any }) {
       console.log("followers", res);
       if (currentUser) {
         setIsFollowed(res.some((f: UserFollow) => f.userId === currentUser.id));
+        fetchFriendStatus();
       }
     };
 
@@ -77,6 +101,52 @@ export default function ProfileTop({ user }: { user: any }) {
       setIsFollowed(true);
     }
   };
+
+  // const handleClickFriendStatus = async () => {
+  //   switch (friendStatus) {
+  //     case "friend":
+  //       console.log("You are friends and now you want to delete friend");
+  //       console.log(friends);
+  //       const friend = friends.find((f) => f.userInfo.id === user.id);
+  //       if (friend) {
+  //         await deleteFriend(friend?.id);
+  //       }
+  //       break;
+
+  //     case "asked":
+  //       console.log("Friend request sent and you want to acceot or deny");
+  //       const request = friendRequests.find((f) => f.friendId === user.id);
+  //       console.log("request trtertkljert", request, user, currentUser);
+  //       if (request) {
+  //         await acceptFriend(request?.id);
+  //       }
+  //       break;
+
+  //     case "pending":
+  //       console.log(
+  //         "You have a pending friend request and now you dont need to add anymore"
+  //       );
+  //       const hisRequests = await getAllFriendRequests(user); //friendRequest of this user
+  //       const requestId = hisRequests.find(
+  //         (f) => f.friendId === currentUser?.id
+  //       );
+  //       if (requestId) {
+  //         await deleteFriend(requestId.id);
+  //       }
+  //       break;
+
+  //     default: //not friend
+  //       console.log("not my friend and now i want to be friend");
+  //       console.log("user", user);
+  //       await addFriend(user.username, currentUser?.id ?? "");
+  //       break;
+  //   }
+  //   fetchFriendStatus();
+  // };
+
+  // const handleFriendStatusComponent = () => {
+
+  // }
 
   if (!user) {
     return <div>not found</div>;
@@ -254,7 +324,7 @@ export default function ProfileTop({ user }: { user: any }) {
                   )}
                 </div>
                 <div className="text-lg text-base-400 font-bold">
-                  47 friends
+                  {hisFriends.length} friends
                 </div>
                 <div className="text-lg text-base-400 font-bold">
                   {userFollows.length} followers
@@ -349,9 +419,21 @@ export default function ProfileTop({ user }: { user: any }) {
                   >
                     Get Resume {user?.profile?.resume ? "" : "(not set)"}
                   </a>
-                  <div className="px-4 py-1 text-amber-800/90 font-bold rounded-full border-[1px] border-amber-800/90 hover:bg-amber-800/20 cursor-pointer">
-                    Add Friend
-                  </div>
+                  {user && currentUser && (
+                    <FriendStatusButton
+                      friendStatus={friendStatus}
+                      user={user}
+                      currentUser={currentUser}
+                      friends={friends}
+                      friendRequests={friendRequests}
+                      fetchFriendStatus={fetchFriendStatus}
+                      deleteFriend={deleteFriend}
+                      acceptFriend={acceptFriend}
+                      addFriend={addFriend}
+                      getAllFriendRequests={getAllFriendRequests}
+                    />
+                  )}
+
                   <div
                     className={`px-4 py-1 text-amber-800/90 font-bold rounded-full border-[1px] border-amber-800/90 
                       cursor-pointer hover:bg-amber-800/20
@@ -379,7 +461,9 @@ export default function ProfileTop({ user }: { user: any }) {
             <div className="w-full flex mt-4 ">
               <div className="w-fit flex flex-col gap-2 border-[1px] border-base-200 rounded-md py-2 px-4">
                 <div className="ml-2 mt-2 flex flex-row justify-between items-center">
-                  <div className="font-bold">Friend (47 friends)</div>
+                  <div className="font-bold">
+                    Friend ({hisFriends.length} friends)
+                  </div>
                   <div className="font-bold hover:underline underline-offset-2 text-base-400 text-sm mr-2 cursor-pointer">
                     View all
                   </div>
