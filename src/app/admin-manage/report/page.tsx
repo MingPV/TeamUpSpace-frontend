@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { MdOutlineReport } from "react-icons/md";
 import { MdNavigateNext } from "react-icons/md";
 import { MdNavigateBefore } from "react-icons/md";
@@ -8,9 +8,29 @@ import Image from "next/image";
 import { useState } from "react";
 import ReportUserCard from "@/components/ReportUserCard";
 import ReportPostCard from "@/components/ReportPostCard";
+import { getAllPostReports, getAllUserReports } from "@/app/api/report";
+import { PostReport, UserReport } from "@/app/types/post";
 
 export default function Report() {
   const [isUserReport, setIsUserReport] = useState(true);
+  const [postReports, setPostReports] = useState([]);
+  const [userReports, setUserReports] = useState([]);
+  // fetch post reports and user reports from backend
+
+  useEffect(() => {
+    const loadPostReports = async () => {
+      const res = await getAllPostReports();
+      setPostReports(res);
+      console.log("post reports:", res);
+    };
+    const loadUserReports = async () => {
+      const res = await getAllUserReports();
+      setUserReports(res);
+      console.log("user reports:", res);
+    };
+    loadUserReports();
+    loadPostReports();
+  }, []);
 
   return (
     <div className="w-full h-screen flex flex-col">
@@ -57,96 +77,22 @@ export default function Report() {
                 isUserReport ? "" : "hidden"
               }`}
             >
-              <ReportUserCard />
-              <ReportUserCard />
-              {/* Change these below card to Request card and pass status */}
-              <div className="w-full grid grid-flow-row grid-cols-4 rounded-md">
-                <div className="col-span-3 grid grid-flow-row grid-cols-3 rounded-md bg-white hover:border-base-300 border-[1px] border-base-300/30 cursor-pointer transition-all duration-300">
-                  <div className="w-full flex flex-row items-center pl-8 gap-4 py-2 rounded-l-md text-base-400/80 font-bold">
-                    <Image
-                      src={"/golang.webp"}
-                      width={200}
-                      height={200}
-                      alt="profile-pic"
-                      style={{ objectFit: "cover" }}
-                      className="rounded-full h-10 w-10 cursor-pointer hover:opacity-90"
-                    />
-                    MingPV
-                  </div>
-                  <div className="w-full flex justify-center items-center py-2 text-base-400/80 font-bold">
-                    MingPV3
-                  </div>
-                  <div className="w-full flex justify-center items-center py-2 rounded-r-md text-base-400/80 font-bold">
-                    3 days
-                  </div>
-                </div>
-                <div className="w-full flex justify-center h-full items-center">
-                  <div className="px-10 py-2 rounded-md text-red-600/80 border border-red-600/80 font-bold cursor-default">
-                    RESOLVED
-                  </div>
-                </div>
-              </div>
-              <div className="w-full grid grid-flow-row grid-cols-4 rounded-md">
-                <div className="col-span-3 grid grid-flow-row grid-cols-3 rounded-md bg-white hover:border-base-300 border-[1px] border-base-300/30 cursor-pointer transition-all duration-300">
-                  <div className="w-full flex flex-row items-center pl-8 gap-4 py-2 rounded-l-md text-base-400/80 font-bold">
-                    <Image
-                      src={"/golang.webp"}
-                      width={200}
-                      height={200}
-                      alt="profile-pic"
-                      style={{ objectFit: "cover" }}
-                      className="rounded-full h-10 w-10 cursor-pointer hover:opacity-90"
-                    />
-                    MingPV
-                  </div>
-                  <div className="w-full flex justify-center items-center py-2 text-base-400/80 font-bold">
-                    MingPV3
-                  </div>
-                  <div className="w-full flex justify-center items-center py-2 rounded-r-md text-base-400/80 font-bold">
-                    3 days
-                  </div>
-                </div>
-                <div className="w-full flex justify-center h-full items-center">
-                  <div className="px-10 py-2 rounded-md text-red-600/80 border border-red-600/80 font-bold cursor-default">
-                    RESOLVED
-                  </div>
-                </div>
-              </div>
+              {/* User Reports */}
+              {userReports &&
+                userReports.map((report: UserReport) => (
+                  <ReportUserCard key={report.id} report={report} />
+                ))}
             </div>
             <div
               className={`flex-1 flex flex-col gap-3 ${
                 isUserReport ? "hidden" : ""
               }`}
             >
-              <ReportPostCard />
-              <ReportPostCard />
-              {/* Change these below card to Request card and pass status */}
-              <div className="w-full grid grid-flow-row grid-cols-4 rounded-md">
-                <div className="col-span-3 grid grid-flow-row grid-cols-3 rounded-md bg-white hover:border-base-300 border-[1px] border-base-300/30 cursor-pointer transition-all duration-300">
-                  <div className="w-full flex flex-row items-center pl-8 gap-4 py-2 rounded-l-md text-base-400/80 font-bold">
-                    <Image
-                      src={"/golang.webp"}
-                      width={200}
-                      height={200}
-                      alt="profile-pic"
-                      style={{ objectFit: "cover" }}
-                      className="rounded-full h-10 w-10 cursor-pointer hover:opacity-90"
-                    />
-                    MingPV
-                  </div>
-                  <div className="w-full flex justify-center items-center py-2 text-base-400/80 font-bold">
-                    MingPV4
-                  </div>
-                  <div className="w-full flex justify-center items-center py-2 rounded-r-md text-base-400/80 font-bold">
-                    3 days
-                  </div>
-                </div>
-                <div className="w-full flex justify-center h-full items-center">
-                  <div className="px-10 py-2 rounded-md text-red-600/80 border border-red-600/80 font-bold cursor-default">
-                    RESOLVED
-                  </div>
-                </div>
-              </div>
+              {/* Post Reports */}
+              {postReports &&
+                postReports.map((report: PostReport) => (
+                  <ReportPostCard key={report.id} report={report} />
+                ))}
             </div>
             <div className="w-full flex flex-col justify-center items-center font-bold text-base-400/80">
               <div className="font-bold text-sm">1/5</div>

@@ -53,3 +53,25 @@ export async function updateUserProfile(
     body: JSON.stringify(profile),
   });
 }
+
+export async function banUser(userID: string, duration_day?: number) {
+  const ban_until = duration_day
+    ? new Date(Date.now() + duration_day * 24 * 60 * 60 * 1000).toISOString()
+    : null;
+
+  console.log("ban user until:", ban_until);
+
+  const res = fetchApi(`/api/v1/users/${userID}`, {
+    method: "PATCH",
+    body: JSON.stringify({ is_ban: true, ban_until: ban_until }),
+  });
+  console.log("ban user response:", res);
+  return res;
+}
+
+// export async function updatePostReportStatus(id: number, status: string) {
+//   return fetchApi(`/api/v1/postreports/${id}`, {
+//     method: "PATCH",
+//     body: JSON.stringify({ status }),
+//   });
+// }

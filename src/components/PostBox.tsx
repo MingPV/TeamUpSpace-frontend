@@ -356,7 +356,7 @@ export default function PostBox({ post }: PostProps) {
               <div className="flex-1 flex flex-row gap-2 justify-end pr-8 pb-4 items-end">
                 <div
                   className="px-4 py-2 border border-base-400 text-base-400 hover:border-base-400  hover:bg-base-400 hover:text-white font-bold rounded-md cursor-pointer transition-all duration-300"
-                  onClick={() => setIsDeleteOpen(false)}
+                  onClick={() => setIsReportOpen(false)}
                 >
                   Cancel
                 </div>

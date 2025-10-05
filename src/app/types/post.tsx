@@ -17,3 +17,23 @@ export interface PostLike {
   userId?: string;
   createdAt?: string;
 }
+
+export interface PostReport {
+  id: number;
+  postId: number;
+  reporter: string; // User ID of the reporter
+  reportTo: string; // User ID of the reported user
+  detail: string; // Detail of the report
+  status: string; // Status of the report (e.g., "pending", "resolved")
+  createdAt: string; // ISO date string for when the report was created
+  updatedAt: string; // ISO date string for when the report was last updated
+}
+
+export interface UserReport {
+  id: number;
+  reporter: string; // User ID of the reporter
+  reportTo: string; // User ID of the reported user
+  detail: string; // Detail of the report
+  status: string; // Status of the report (e.g., "pending", "resolved")
+  createdAt: string; // ISO date string for when the report was created
+}
