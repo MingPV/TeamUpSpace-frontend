@@ -209,6 +209,9 @@ export default function ProfileTop({ user }: { user: any }) {
                 <div className="text-lg text-base-400 font-bold">
                   47 friends
                 </div>
+                <div className="text-lg text-base-400 font-bold">
+                  12 followers
+                </div>
                 <div className="text-lg text-base-400 font-bold">4 posts</div>
               </div>
 
@@ -247,7 +250,12 @@ export default function ProfileTop({ user }: { user: any }) {
             </div>
             <div className="flex flex-col xl:flex-row gap-4">
               <div className="flex flex-col relative top-1 gap-2 ml-4">
-                <div className="">username: mingpv</div>
+                {user?.username ? (
+                  <div className="">username: {user.username}</div>
+                ) : (
+                  <div>username: unknown</div>
+                )}
+
                 {user?.profile?.faculty ? (
                   <div className="text-xl">{user.profile.faculty}</div>
                 ) : (
@@ -287,65 +295,75 @@ export default function ProfileTop({ user }: { user: any }) {
                 ) : null}
 
                 <div className="w-full mt-4 flex flex-row gap-2">
-                  <div className="px-4 py-1 text-base-500 bg-base-200 font-bold rounded-full hover:bg-base-300/80 cursor-pointer">
-                    Get Resume
-                  </div>
+                  <a
+                    className="px-4 py-1 text-base-500 bg-base-200 font-bold rounded-full hover:bg-base-300/80 cursor-pointer"
+                    href={user?.profile?.resume || "#"}
+                    download
+                  >
+                    Get Resume {user?.profile?.resume ? "" : "(not set)"}
+                  </a>
                   <div className="px-4 py-1 text-amber-800/90 font-bold rounded-full border-[1px] border-amber-800/90 hover:bg-amber-800/20 cursor-pointer">
                     Add Friend
+                  </div>
+                  <div className="px-4 py-1 text-amber-800/90 font-bold rounded-full border-[1px] border-amber-800/90 hover:bg-amber-800/20 cursor-pointer">
+                    <div className="flex flex-row gap-2 justify-center items-center font-bold">
+                      <div>+</div>
+                      <div>Follow</div>
+                    </div>
                   </div>
                   <div className="px-4 py-1 text-base-400 font-bold rounded-full border-[1px] border-base-300 hover:bg-black/10 cursor-pointer">
                     Send Message
                   </div>
                 </div>
               </div>
-              <div className="flex-1 flex xl:justify-end mt-4 xl:mt-0">
-                <div className="w-fit flex flex-col gap-2 border-[1px] border-base-200 rounded-md py-2 px-4">
-                  <div className="ml-2 mt-2 flex flex-row justify-between items-center">
-                    <div className="font-bold">Friend (47 friends)</div>
-                    <div className="font-bold hover:underline underline-offset-2 text-base-400 text-sm mr-2 cursor-pointer">
-                      View all
+            </div>
+            <div className="w-full flex mt-4 ">
+              <div className="w-fit flex flex-col gap-2 border-[1px] border-base-200 rounded-md py-2 px-4">
+                <div className="ml-2 mt-2 flex flex-row justify-between items-center">
+                  <div className="font-bold">Friend (47 friends)</div>
+                  <div className="font-bold hover:underline underline-offset-2 text-base-400 text-sm mr-2 cursor-pointer">
+                    View all
+                  </div>
+                </div>
+
+                <div className="flex flex-row flex-wrap gap-2">
+                  <div className="flex flex-col gap-1 items-center hover:bg-black/10 rounded-md cursor-pointer p-1">
+                    <Image
+                      src={user?.profile?.profile_url || "/golang.webp"}
+                      width={120}
+                      height={120}
+                      alt="profile-pic"
+                      style={{ objectFit: "cover" }}
+                      className="rounded-md h-[120px] w-[120px]"
+                    />
+                    <div className="text-xs font-bold text-base-400">
+                      Example friend name
                     </div>
                   </div>
-
-                  <div className="flex flex-row flex-wrap gap-2">
-                    <div className="flex flex-col gap-1 items-center hover:bg-black/10 rounded-md cursor-pointer p-1">
-                      <Image
-                        src={user?.profile?.profile_url || "/golang.webp"}
-                        width={120}
-                        height={120}
-                        alt="profile-pic"
-                        style={{ objectFit: "cover" }}
-                        className="rounded-md h-[120px] w-[120px]"
-                      />
-                      <div className="text-xs font-bold text-base-400">
-                        Example friend name
-                      </div>
+                  <div className="flex flex-col gap-1 items-center hover:bg-black/10 rounded-md cursor-pointer p-1">
+                    <Image
+                      src={user?.profile?.profile_url || "/golang.webp"}
+                      width={120}
+                      height={120}
+                      alt="profile-pic"
+                      style={{ objectFit: "cover" }}
+                      className="rounded-md h-[120px] w-[120px]"
+                    />
+                    <div className="text-xs font-bold text-base-400">
+                      Example friend name
                     </div>
-                    <div className="flex flex-col gap-1 items-center hover:bg-black/10 rounded-md cursor-pointer p-1">
-                      <Image
-                        src={user?.profile?.profile_url || "/golang.webp"}
-                        width={120}
-                        height={120}
-                        alt="profile-pic"
-                        style={{ objectFit: "cover" }}
-                        className="rounded-md h-[120px] w-[120px]"
-                      />
-                      <div className="text-xs font-bold text-base-400">
-                        Example friend name
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-1 items-center hover:bg-black/10 rounded-md cursor-pointer p-1">
-                      <Image
-                        src={user?.profile?.profile_url || "/golang.webp"}
-                        width={120}
-                        height={120}
-                        alt="profile-pic"
-                        style={{ objectFit: "cover" }}
-                        className="rounded-md h-[120px] w-[120px]"
-                      />
-                      <div className="text-xs font-bold text-base-400">
-                        Example friend name
-                      </div>
+                  </div>
+                  <div className="flex flex-col gap-1 items-center hover:bg-black/10 rounded-md cursor-pointer p-1">
+                    <Image
+                      src={user?.profile?.profile_url || "/golang.webp"}
+                      width={120}
+                      height={120}
+                      alt="profile-pic"
+                      style={{ objectFit: "cover" }}
+                      className="rounded-md h-[120px] w-[120px]"
+                    />
+                    <div className="text-xs font-bold text-base-400">
+                      Example friend name
                     </div>
                   </div>
                 </div>

@@ -10,6 +10,7 @@ export interface Profile {
   is_graduated?: boolean;
   profile_url?: string;
   background_url?: string;
+  resume?: string;
   created_at?: string; // ISO date string
   updated_at?: string; // ISO date string
 }
@@ -26,6 +27,7 @@ export interface ProfileCamelCase {
   isGraduated?: boolean;
   profileUrl?: string;
   backgroundUrl?: string;
+  resume?: string;
   createdAt?: string; // ISO date string
   updatedAt?: string; // ISO date string
 }

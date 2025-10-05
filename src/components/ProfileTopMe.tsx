@@ -16,6 +16,8 @@ export default function ProfileTopMe({ user }: { user: User }) {
   const [profile, setProfile] = useState<Profile>(user.profile || {});
   const [newProfile, setNewProfile] = useState<Profile>(user.profile || {});
 
+  console.log("user profile:", user.profile);
+
   const [selectedProfileFile, setSelectedProfileFile] = useState<
     File | undefined
   >(undefined);
@@ -29,6 +31,14 @@ export default function ProfileTopMe({ user }: { user: User }) {
   const [previewBackgroundUrl, setPreviewBackgroundUrl] = useState<
     string | null
   >(null);
+
+  const [selectedResumeFile, setSelectedResumeFile] = useState<
+    File | undefined
+  >(undefined);
+  const [isUploadedResume, setIsUploadedResume] = useState(false);
+  const [previewResumeUrl, setPreviewResumeUrl] = useState<string | null>(null);
+
+  const [fileUploadError, setFileUploadError] = useState<string | null>(null);
 
   const [filteredUniversitys, setFilteredUniversitys] =
     useState<string[]>(UNIVERSITYS);
@@ -46,45 +56,12 @@ export default function ProfileTopMe({ user }: { user: User }) {
   };
 
   const handleOnSave = () => {
-    // Upload profile picture
-    // if (selectedProfileFile) {
-    //   const fileExt = selectedProfileFile.name.split(".").pop();
-    //   const fileName = `profile-${user.id}-${Date.now()}.${fileExt}`;
-    //   const filePath = `profiles/${fileName}`;
-
-    //   const { error } = await supabase.storage
-    //     .from("profile-pictures")
-    //     .upload(filePath, selectedProfileFile, { upsert: true });
-    //   if (error) return console.error("Profile upload error:", error);
-
-    //   const { data } = supabase.storage
-    //     .from("profile-pictures")
-    //     .getPublicUrl(filePath);
-    //   updatedProfile.profile_url = data.publicUrl;
-    // }
-
-    // // Upload background image
-    // if (selectedBackgroundFile) {
-    //   const fileExt = selectedBackgroundFile.name.split(".").pop();
-    //   const fileName = `background-${user.id}-${Date.now()}.${fileExt}`;
-    //   const filePath = `backgrounds/${fileName}`;
-
-    //   const { error } = await supabase.storage
-    //     .from("profile-pictures")
-    //     .upload(filePath, selectedBackgroundFile, { upsert: true });
-    //   if (error) return console.error("Background upload error:", error);
-
-    //   const { data } = supabase.storage
-    //     .from("profile-pictures")
-    //     .getPublicUrl(filePath);
-    //   updatedProfile.background_url = data.publicUrl;
-    // }
-
     updateUserProfile(
       user.id,
       newProfile,
       selectedProfileFile,
-      selectedBackgroundFile
+      selectedBackgroundFile,
+      selectedResumeFile
     )
       .then((data) => {
         console.log("Profile updated:", data);
@@ -106,10 +83,18 @@ export default function ProfileTopMe({ user }: { user: User }) {
 
   const handleFileSelect = (
     e: React.ChangeEvent<HTMLInputElement>,
-    type: "profile" | "background"
+    type: "profile" | "background" | "resume"
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // check file size less than 1MB
+    if (file.size > 1 * 1024 * 1024) {
+      setFileUploadError("File size should be less than 1MB");
+      return;
+    } else {
+      setFileUploadError(null);
+    }
 
     if (type === "profile") {
       setSelectedProfileFile(file);
@@ -121,6 +106,13 @@ export default function ProfileTopMe({ user }: { user: User }) {
       const reader = new FileReader();
       reader.onload = () => setPreviewBackgroundUrl(reader.result as string);
       reader.readAsDataURL(file);
+    } else if (type === "resume") {
+      // Handle resume file if needed
+      setSelectedResumeFile(file);
+      const reader = new FileReader();
+      reader.onload = () => setPreviewResumeUrl(reader.result as string);
+      reader.readAsDataURL(file);
+      setIsUploadedResume(true);
     }
   };
 
@@ -214,6 +206,13 @@ export default function ProfileTopMe({ user }: { user: User }) {
                   isEditing ? "hidden" : ""
                 }`}
               >
+                12 followers
+              </div>
+              <div
+                className={`text-lg text-base-400 font-bold ${
+                  isEditing ? "hidden" : ""
+                }`}
+              >
                 4 posts
               </div>
             </div>
@@ -227,7 +226,11 @@ export default function ProfileTopMe({ user }: { user: User }) {
           </div>
           <div className="flex flex-col xl:flex-row gap-4">
             <div className="flex flex-col relative top-1 gap-2 ml-4">
-              <div className="">username: mingpv</div>
+              {user?.username ? (
+                <div className="">username: {user.username}</div>
+              ) : (
+                <div>username: unknown</div>
+              )}
               {isEditing ? (
                 <div className="flex flex-row gap-2 items-center">
                   <div className="font-bold text-base-400">Major: </div>
@@ -332,14 +335,58 @@ export default function ProfileTopMe({ user }: { user: User }) {
                 </div>
               )}
 
+              {isEditing ? (
+                <div className="flex flex-row gap-2 items-center">
+                  <div className="font-bold text-base-400">
+                    Resume / Portfolio:{" "}
+                  </div>
+                  <div className="p-1">
+                    <div
+                      className="px-4 py-1 bg-amber-800 text-white font-bold rounded-full cursor-pointer hover:bg-amber-900 transition-all duration-300"
+                      onClick={() =>
+                        document.getElementById("resumeUpload")?.click()
+                      }
+                    >
+                      {isUploadedResume ? "File Uploaded" : "Upload File"}
+                    </div>
+                    <input
+                      id="resumeUpload"
+                      type="file"
+                      accept="image/*,.pdf,.doc,.docx"
+                      className="hidden"
+                      onChange={(e) => handleFileSelect(e, "resume")}
+                    />
+                  </div>
+                  {isUploadedResume && (
+                    // click to download the file
+                    <a
+                      className="p-2 rounded-full cursor-pointer hover:underline underline-offset-2"
+                      href={previewResumeUrl || "#"}
+                      download
+                    >
+                      {selectedResumeFile?.name}
+                    </a>
+                  )}
+                </div>
+              ) : null}
+
+              {/* file upload error */}
+              {fileUploadError && isEditing && (
+                <div className="text-red-500 text-sm">{fileUploadError}</div>
+              )}
+
               <div
                 className={`w-full mt-4 flex flex-row gap-2 ${
                   isEditing ? "hidden" : ""
                 }`}
               >
-                <div className="px-4 py-1 text-base-500 bg-base-200 font-bold rounded-full hover:bg-base-300/80 cursor-pointer">
-                  Get Resume
-                </div>
+                <a
+                  className="px-4 py-1 text-base-500 bg-base-200 font-bold rounded-full hover:bg-base-300/80 cursor-pointer"
+                  href={profile?.resume || "#"}
+                  download
+                >
+                  Get Resume {profile?.resume ? "" : "(not set)"}
+                </a>
                 <div className="px-4 py-1 text-amber-800/90 font-bold rounded-full border-[1px] border-amber-800/90 hover:bg-amber-800/20 cursor-pointer">
                   Check Team Requests (0)
                 </div>

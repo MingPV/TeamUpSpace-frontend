@@ -31,6 +31,7 @@ export default function Home() {
       }
       console.log(res);
       console.log("Sign in successful");
+      console.log(res.user);
       setUser(res.user); // Update user context
       router.push("/");
       //redirect with reload browser

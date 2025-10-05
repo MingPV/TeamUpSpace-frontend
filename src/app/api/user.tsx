@@ -8,7 +8,8 @@ export async function updateUserProfile(
   userID: string,
   profile: Profile,
   profileFile?: File,
-  backgroundFile?: File
+  backgroundFile?: File,
+  resumeFile?: File
 ) {
   console.log("Updating profile for userID:", userID, profile);
 
@@ -46,6 +47,21 @@ export async function updateUserProfile(
       .from("profile-pictures")
       .getPublicUrl(filePath);
     profile.background_url = data.publicUrl;
+  }
+
+  // Upload resume file
+  if (resumeFile) {
+    const fileExt = resumeFile.name.split(".").pop();
+    const fileName = `resume-${userID}-${Date.now()}.${fileExt}`;
+    const filePath = `resumes/${fileName}`;
+
+    const { error } = await supabase.storage
+      .from("user-files")
+      .upload(filePath, resumeFile, { upsert: true });
+    if (error) return console.error("Resume upload error:", error);
+
+    const { data } = supabase.storage.from("user-files").getPublicUrl(filePath);
+    profile.resume = data.publicUrl;
   }
 
   return fetchApi(`/api/v1/profiles/${userID}`, {
