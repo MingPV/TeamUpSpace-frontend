@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import { FaPencilAlt } from "react-icons/fa";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
@@ -7,6 +7,8 @@ import { RxCross2 } from "react-icons/rx";
 import { reportUser } from "@/app/api/report";
 import { useUser } from "@/context/UserContext";
 import { IoWarning } from "react-icons/io5";
+import { followUser, getFollowers, unfollowUser } from "@/app/api/user";
+import { UserFollow } from "@/app/types/user";
 
 export default function ProfileTop({ user }: { user: any }) {
   const { user: currentUser } = useUser();
@@ -15,6 +17,10 @@ export default function ProfileTop({ user }: { user: any }) {
   const [selectedReportIndex, setSelectedReportIndex] = React.useState(0);
   const [reason, setReason] = React.useState("");
   const [otherReportText, setOtherReportText] = React.useState("");
+
+  const [isFollowed, setIsFollowed] = React.useState(false);
+
+  const [userFollows, setUserFollows] = React.useState<UserFollow[]>([]);
 
   const handleReport = () => {
     if (!user || !currentUser) {
@@ -29,6 +35,47 @@ export default function ProfileTop({ user }: { user: any }) {
     setSelectedReportIndex(0);
     setOtherReportText("");
     setReason("");
+  };
+
+  useEffect(() => {
+    const loadFollowers = async () => {
+      if (!user || !user.id) {
+        return;
+      }
+      const res = await getFollowers(user.id);
+      setUserFollows(res);
+      console.log("followers", res);
+      if (currentUser) {
+        setIsFollowed(res.some((f: UserFollow) => f.userId === currentUser.id));
+      }
+    };
+
+    loadFollowers();
+  }, [currentUser, user]);
+
+  const handleFollow = () => {
+    if (currentUser?.id == user.id) return;
+    if (!currentUser) return;
+    if (!user) return;
+    if (isFollowed) {
+      // if already follow, do unfollow
+      unfollowUser(currentUser.id, user.id);
+      setUserFollows(userFollows.filter((f) => f.userId !== currentUser.id));
+      setIsFollowed(false);
+    } else {
+      // if already follow, do nothing
+      if (userFollows.find((f) => f.followTo === currentUser.id)) return;
+      followUser(currentUser.id, user.id);
+      setUserFollows([
+        ...userFollows,
+        {
+          userId: user.id,
+          followTo: currentUser.id,
+          createdAt: new Date().toISOString(),
+        },
+      ]);
+      setIsFollowed(true);
+    }
   };
 
   if (!user) {
@@ -210,7 +257,7 @@ export default function ProfileTop({ user }: { user: any }) {
                   47 friends
                 </div>
                 <div className="text-lg text-base-400 font-bold">
-                  12 followers
+                  {userFollows.length} followers
                 </div>
                 <div className="text-lg text-base-400 font-bold">4 posts</div>
               </div>
@@ -305,11 +352,23 @@ export default function ProfileTop({ user }: { user: any }) {
                   <div className="px-4 py-1 text-amber-800/90 font-bold rounded-full border-[1px] border-amber-800/90 hover:bg-amber-800/20 cursor-pointer">
                     Add Friend
                   </div>
-                  <div className="px-4 py-1 text-amber-800/90 font-bold rounded-full border-[1px] border-amber-800/90 hover:bg-amber-800/20 cursor-pointer">
-                    <div className="flex flex-row gap-2 justify-center items-center font-bold">
-                      <div>+</div>
-                      <div>Follow</div>
-                    </div>
+                  <div
+                    className={`px-4 py-1 text-amber-800/90 font-bold rounded-full border-[1px] border-amber-800/90 
+                      cursor-pointer hover:bg-amber-800/20
+                     `}
+                    onClick={handleFollow}
+                  >
+                    {isFollowed ? (
+                      <div className="flex flex-row gap-2 justify-center items-center font-bold">
+                        <div>✓</div>
+                        <div>Following</div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-row gap-2 justify-center items-center font-bold">
+                        <div>+</div>
+                        <div>Follow</div>
+                      </div>
+                    )}
                   </div>
                   <div className="px-4 py-1 text-base-400 font-bold rounded-full border-[1px] border-base-300 hover:bg-black/10 cursor-pointer">
                     Send Message

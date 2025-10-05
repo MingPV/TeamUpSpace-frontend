@@ -11,3 +11,9 @@ export interface User {
   updated_at: string; // ISO date string
   profile: Profile; // Optional Profile object
 }
+
+export interface UserFollow {
+  userId: string;
+  followTo: string;
+  createdAt: string; // ISO date string
+}

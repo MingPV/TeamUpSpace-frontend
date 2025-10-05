@@ -91,3 +91,30 @@ export async function banUser(userID: string, duration_day?: number) {
 //     body: JSON.stringify({ status }),
 //   });
 // }
+
+export async function followUser(follower: string, follow_to: string) {
+  return fetchApi(`/api/v1/userFollows`, {
+    method: "POST",
+    body: JSON.stringify({ user_id: follower, follow_to }),
+  });
+}
+
+export async function unfollowUser(follower: string, follow_to: string) {
+  return fetchApi(`/api/v1/userFollows/${follower}/${follow_to}`, {
+    method: "DELETE",
+  });
+}
+
+export async function getFollowers(userID: string) {
+  const res = await fetchApi(`/api/v1/userFollows/followers/${userID}`, {
+    method: "GET",
+  });
+  return res.userFollows;
+}
+
+export async function getFollowing(userID: string) {
+  const res = await fetchApi(`/api/v1/userFollows/followings/${userID}`, {
+    method: "GET",
+  });
+  return res.userFollows;
+}
