@@ -26,6 +26,7 @@ interface ChatroomContextType {
 
   //group
   groups: Chatroom[];
+  setGroups: React.Dispatch<React.SetStateAction<Chatroom[]>>;
   createChatroom: (roomName: string) => Promise<void>;
   refreshGroups: () => Promise<void>;
   leaveGroup: (roomId: string) => Promise<void>;
@@ -37,6 +38,7 @@ interface ChatroomContextType {
 
   //friendgroup
   friendChatrooms: Chatroom[];
+  setFriendChatrooms: React.Dispatch<React.SetStateAction<Chatroom[]>>;
   refreshFriendChatrooms: () => Promise<void>;
 }
 
@@ -110,10 +112,12 @@ export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
         selectedChatroom,
         setSelectedChatroom,
         groups,
+        setGroups,
         createChatroom,
         refreshGroups,
         leaveGroup,
         friendChatrooms,
+        setFriendChatrooms,
         refreshFriendChatrooms,
         groupInvites,
         acceptInvite,

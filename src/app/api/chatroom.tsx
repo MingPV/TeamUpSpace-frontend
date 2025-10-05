@@ -44,15 +44,25 @@ export async function getAllGroupsByUserId(user: any) {
     method: "GET",
   });
 
-  const adaptedGroups = allGroups.chatrooms
-    .filter((group: any) => group.chatroom.isGroup === true)
-    .map((group: any) => ({
-      roomName: group.chatroom.roomName,
-      id: group.roomId,
-      isGroup: group.chatroom.isGroup,
-      owner: group.chatroom.owner,
-      updatedAt: group.chatroom.updatedAt,
-    }));
+  const groups = allGroups.chatrooms.filter(
+    (group: any) => group.chatroom.isGroup
+  );
+
+  const adaptedGroups = await Promise.all(
+    groups.map(async (group: any) => {
+      const latestMessage = await getLatestMessageByRoomId(group.roomId);
+
+      return {
+        roomName: group.chatroom.roomName,
+        id: group.roomId,
+        isGroup: group.chatroom.isGroup,
+        owner: group.chatroom.owner,
+        updatedAt: group.chatroom.updatedAt,
+        latestMessage: latestMessage?.text ?? null,
+        latestMessageTimestamp: latestMessage?.timestamp ?? null,
+      };
+    })
+  );
   console.log(adaptedGroups);
   return adaptedGroups;
 }
@@ -70,7 +80,7 @@ export async function getAllFriendChatroomsByUserId(user: any) {
       .filter((group: any) => group.chatroom.isGroup === false)
       .map(async (group: any) => {
         const members = await getAllMembersInGroup(group.roomId);
-
+        const latestMessage = await getLatestMessageByRoomId(group.roomId);
         const otherMember = members.find(
           (m: any) => m.profile.user_id !== user.id
         );
@@ -81,6 +91,9 @@ export async function getAllFriendChatroomsByUserId(user: any) {
           id: group.roomId,
           isGroup: group.chatroom.isGroup,
           updatedAt: group.chatroom.updatedAt,
+          latestMessage: latestMessage?.text ?? null,
+          latestMessageTimestamp: latestMessage?.timestamp ?? null,
+          imageUrl: otherMember.profile.profile_url,
         };
       })
   );
@@ -221,4 +234,19 @@ export async function denyGroupInvite(id: string) {
     method: "DELETE",
   });
   return;
+}
+
+export async function getLatestMessageByRoomId(roomId: string) {
+  const message = await fetchApi(`${BASE_URL}/message/latest/${roomId}`, {
+    method: "GET",
+  });
+
+  if (message.code == 5) return;
+
+  return {
+    id: message.message.id,
+    text: message.message.message,
+    sender: message.message.sender,
+    timestamp: message.message.createdAt,
+  };
 }

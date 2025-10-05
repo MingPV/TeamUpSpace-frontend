@@ -7,19 +7,12 @@ import { IoMdSearch } from "react-icons/io";
 import ChatDisplay from "@/components/ChatDisplay";
 import { RxCross2 } from "react-icons/rx";
 import { useUser } from "@/context/UserContext";
-//api
-import {
-  createChatGroup,
-  getAllFriendChatroomsByUserId,
-  getAllGroupsByUserId,
-} from "../api/chatroom";
-import { Chatroom } from "../types/chatroom";
 import { addFriend } from "../api/friend";
 import { useChatroom } from "@/context/ChatroomContext";
 export default function FriendPage() {
   const { user } = useUser();
   const { groups, friendChatrooms, createChatroom } = useChatroom();
-  const { selectedChatroom, setSelectedChatroom } = useChatroom();
+  const { selectedChatroom } = useChatroom();
 
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
@@ -31,7 +24,6 @@ export default function FriendPage() {
   const [searchFriend, setSearchFriend] = useState<string>("");
   const [addFriendByUsername, setAddFriendByUsername] = useState<string>("");
 
-  console.log(friendChatrooms);
   useEffect(() => {
     setIsAddFriendOpen(false);
     setIsCreateGroupOpen(false);
@@ -86,9 +78,6 @@ export default function FriendPage() {
             </div>
 
             <div className="w-full mt-4">
-              {/* <div className="mx-4 border-[1px] border-base-300/30 rounded-full flex flex-row">
-              <input type="text" className="p-1 ring-0 focus:outline-0" />
-            </div> */}
               <div className="flex flex-row bg-base-100/50 items-center rounded-md mx-4">
                 <IoMdSearch className="text-base-400 ml-4 text-lg" />
                 <input
@@ -100,15 +89,6 @@ export default function FriendPage() {
                 />
               </div>
               <div className="flex flex-row w-full border-b-[1px] border-b-base-300/30 mt-5">
-                {/* <div className="flex-1 py-1 flex items-center justify-center border-b-2 border-b-transparent cursor-pointer text-base-300 font-bold select-none">
-                  Chat
-                </div> */}
-                {/* <div className="flex-1 py-1 flex items-center justify-center border-b-2 border-b-lime-700 cursor-pointer text-lime-700 font-bold select-none">
-                  Friend
-                </div> */}
-                {/* <div className="flex-1 py-1 flex items-center justify-center border-b-2 border-b-transparent cursor-pointer text-base-300 font-bold select-none">
-                  Group
-                </div> */}
                 <div
                   className={`flex-1 py-1 flex items-center justify-center border-b-2 ${
                     selectedTab == "chat"
@@ -141,61 +121,59 @@ export default function FriendPage() {
                 </div>
               </div>
             </div>
-            <div className="h-full">
-              <div className="w-full flex flex-col overflow-y-scroll px-2">
-                {selectedTab === "chat" && (
-                  <div>
-                    <ChatCard
-                      chat={"chat1"}
-                      chatDisplays={undefined}
-                      setChatDisplays={undefined}
-                      chatInfo={{
-                        id: "12",
-                        roomName: "Chat Test Room",
-                        isGroup: true,
-                      }}
-                    />
+            <div className="w-full flex flex-col overflow-y-scroll px-2">
+              {selectedTab === "chat" && (
+                <div>
+                  <ChatCard
+                    chat={"chat1"}
+                    chatDisplays={undefined}
+                    setChatDisplays={undefined}
+                    chatInfo={{
+                      id: "12",
+                      roomName: "Chat Test Room",
+                      isGroup: true,
+                    }}
+                  />
 
-                    <div className="border-b-[1px] border-b-base-300/50"></div>
-                  </div>
-                )}
-              </div>
-              <div className="w-full flex flex-col overflow-y-scroll px-2">
-                {selectedTab === "friend" &&
-                  friendChatrooms
-                    ?.filter((friend) =>
-                      (friend.roomName ?? "").includes(searchFriend)
-                    )
-                    .map((friend, index) => (
-                      <div key={index}>
-                        <ChatCard
-                          chat={"chat1"}
-                          chatDisplays={undefined}
-                          setChatDisplays={undefined}
-                          chatInfo={friend}
-                        />
-                        <div className="border-b-[1px] border-b-base-300/50"></div>
-                      </div>
-                    ))}
-              </div>
-              <div className="w-full flex flex-col overflow-y-scroll px-2">
-                {selectedTab === "group" &&
-                  groups
-                    ?.filter((group) =>
-                      (group.roomName ?? "").includes(searchFriend)
-                    )
-                    .map((g, index) => (
-                      <div key={index}>
-                        <ChatCard
-                          chat={"chat1"}
-                          chatDisplays={undefined}
-                          setChatDisplays={undefined}
-                          chatInfo={g}
-                        />
-                        <div className="border-b-[1px] border-b-base-300/50"></div>
-                      </div>
-                    ))}
-              </div>
+                  <div className="border-b-[1px] border-b-base-300/50"></div>
+                </div>
+              )}
+            </div>
+            <div className="w-full flex flex-col overflow-y-scroll px-2">
+              {selectedTab === "friend" &&
+                friendChatrooms
+                  ?.filter((friend) =>
+                    (friend.roomName ?? "").includes(searchFriend)
+                  )
+                  .map((friend, index) => (
+                    <div key={index}>
+                      <ChatCard
+                        chat={"chat1"}
+                        chatDisplays={undefined}
+                        setChatDisplays={undefined}
+                        chatInfo={friend}
+                      />
+                      <div className="border-b-[1px] border-b-base-300/50"></div>
+                    </div>
+                  ))}
+            </div>
+            <div className="w-full flex flex-col overflow-y-scroll px-2">
+              {selectedTab === "group" &&
+                groups
+                  ?.filter((group) =>
+                    (group.roomName ?? "").includes(searchFriend)
+                  )
+                  .map((g, index) => (
+                    <div key={index}>
+                      <ChatCard
+                        chat={"chat1"}
+                        chatDisplays={undefined}
+                        setChatDisplays={undefined}
+                        chatInfo={g}
+                      />
+                      <div className="border-b-[1px] border-b-base-300/50"></div>
+                    </div>
+                  ))}
             </div>
           </div>
           {isAddFriendOpen ? (

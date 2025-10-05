@@ -107,12 +107,17 @@ export default function ChatDisplayMini({ chatroom }: { chatroom: Chatroom }) {
                   key={msg.id}
                   className="flex flex-row-reverse gap-2 items-end"
                 >
-                  <div className="text-base-400 flex flex-col">
-                    <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                      <div className="text-sm">{msg.text}</div>
-                      <span className="text-xs opacity-70 block">
-                        {new Date(msg.timestamp).toLocaleTimeString()}
+                  <div className="text-base-400 flex flex-col justify-end">
+                    <div className="flex flex-row gap-2 ">
+                      <span className="text-[0.5rem] flex items-end opacity-70">
+                        {new Date(msg.timestamp).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                       </span>
+                      <div className="text-sm mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
+                        {msg.text}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -134,10 +139,15 @@ export default function ChatDisplayMini({ chatroom }: { chatroom: Chatroom }) {
                       {members.get(msg.sender)?.profile.display_name || "User"}{" "}
                       {/* Replace with sender name */}
                     </div>
-                    <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-100/50 rounded-xl">
-                      <div className="text-base">{msg.text}</div>
-                      <span className="text-xs opacity-70 block">
-                        {new Date(msg.timestamp).toLocaleTimeString()}
+                    <div className="flex flex-row gap-2">
+                      <div className="text-sm  mt-1 p-2 px-4 bg-base-100/50 rounded-xl">
+                        {msg.text}
+                      </div>
+                      <span className="text-[0.5rem] opacity-70 flex items-end">
+                        {new Date(msg.timestamp).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                       </span>
                     </div>
                   </div>
