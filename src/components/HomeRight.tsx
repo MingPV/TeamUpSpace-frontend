@@ -1,10 +1,30 @@
-import React from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import { BsFillInfoSquareFill } from "react-icons/bs";
 import RecommendedFriendCard from "./RecommendedFriendCard";
 import { FaRightLong } from "react-icons/fa6";
 import IncomingEventCard from "./IncomingEventCard";
+import { fetchAllEvents } from "@/app/api/event";
+import { Event } from "@/app/types/event";
+import { useRouter } from "next/navigation";
 
 export default function HomeRight() {
+  const [inCommingEvents, setIncomingEvents] = useState<Event[]>([]);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const loadEvents = async () => {
+      fetchAllEvents().then((res) => {
+        // select first 7 events
+        const res7 = res.slice(0, 7);
+        setIncomingEvents(res7);
+      });
+    };
+    loadEvents();
+  }, []);
+
   return (
     <div className="w-full flex flex-col gap-2 md:mb-4 md:mt-2 lg:mb-0 lg:mt-0">
       <div className="hidden lg:flex w-4/5 flex-col rounded-lg bg-white">
@@ -30,18 +50,15 @@ export default function HomeRight() {
             <BsFillInfoSquareFill className="text-xs" />
           </div>
           <div className="flex md:flex-row lg:flex-col md:border-t-1 md:border-b-1 md:py-2 lg:py-0 border-base-200 lg:border-none gap-2 md:overflow-x-scroll lg:overflow-visible">
-            <IncomingEventCard />
-            <IncomingEventCard />
-            <IncomingEventCard />
-            <IncomingEventCard />
-            <IncomingEventCard />
-            {/* <div className="gap-2 md:flex-row lg:flex-col hidden lg:flex"> */}
-            <IncomingEventCard />
-            <IncomingEventCard />
-            {/* </div> */}
+            {inCommingEvents.map((event: Event) => (
+              <IncomingEventCard key={event.id} event={event} />
+            ))}
           </div>
 
-          <div className="my-1 flex gap-2 items-center cursor-pointer py-1 px-2 hover:bg-black/10 rounded-lg w-fit transition-all duration-300">
+          <div
+            className="my-1 flex gap-2 items-center cursor-pointer py-1 px-2 hover:bg-black/10 rounded-lg w-fit transition-all duration-300"
+            onClick={() => router.push("/event")}
+          >
             <div className="text-sm text-base-400 font-bold">View all</div>
             <FaRightLong />
           </div>
