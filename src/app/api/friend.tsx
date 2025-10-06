@@ -1,7 +1,9 @@
+import { useUser } from "@/context/UserContext";
 import { FriendRequest } from "../types/friend";
 import { getUserByUserId, getUserByUsername } from "./auth";
-import { getAllFriendChatroomsByUserId } from "./chatroom";
+import { deleteChatroom, getAllFriendChatroomsByUserId } from "./chatroom";
 import { fetchApi } from "./utils";
+import { Friend } from "../types/friend";
 const BASE_URL = "/api/v1";
 
 export async function getAllFriendsByUserId(user: any) {
@@ -87,10 +89,19 @@ export async function acceptFriendRequest(id: string) {
   return;
 }
 
-export async function deleteFriend(id: string) {
+export async function deleteFriend(id: string, friends?: Friend[]) {
   await fetchApi(`${BASE_URL}/friends/${id}`, {
     method: "DELETE",
   });
+  console.log(friends);
+
+  if (friends) {
+    const friend = friends.find((f) => f.id == id);
+    console.log("delete friendm chat", friend);
+    if (friend) {
+      await deleteChatroom(friend?.roomId);
+    }
+  }
   return;
 }
 

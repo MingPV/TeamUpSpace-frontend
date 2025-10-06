@@ -23,7 +23,7 @@ type UserContextType = {
   //friend
   friends: Friend[];
   acceptFriend: (id: string) => Promise<void>;
-  denyFriend: (id: string) => Promise<void>;
+  denyFriend: (friend: string) => Promise<void>;
   friendRequests: FriendRequest[];
 };
 
@@ -52,7 +52,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   };
 
   const denyFriend = async (id: string): Promise<void> => {
-    await deleteFriend(id);
+    await deleteFriend(id, friends);
     refreshFriends();
     refreshFriendRequests();
   };

@@ -427,7 +427,7 @@ export default function ProfileTop({ user }: { user: any }) {
                       friends={friends}
                       friendRequests={friendRequests}
                       fetchFriendStatus={fetchFriendStatus}
-                      deleteFriend={deleteFriend}
+                      deleteFriend={denyFriend}
                       acceptFriend={acceptFriend}
                       addFriend={addFriend}
                       getAllFriendRequests={getAllFriendRequests}

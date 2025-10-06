@@ -250,3 +250,9 @@ export async function getLatestMessageByRoomId(roomId: string) {
     timestamp: message.message.createdAt,
   };
 }
+
+export async function deleteChatroom(id: string) {
+  return await fetchApi(`${BASE_URL}/chatrooms/${id}`, {
+    method: "DELETE",
+  });
+}
