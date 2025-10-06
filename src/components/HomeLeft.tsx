@@ -150,7 +150,7 @@ export default function HomeLeft() {
             <FaBookmark />
             <div
               className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer"
-              onClick={() => router.push("/event/saved")}
+              onClick={() => router.push("/event?saved=true")}
             >
               Saved Events (9)
             </div>

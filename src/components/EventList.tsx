@@ -31,10 +31,10 @@ export default function EventList({ events }: EventListProps) {
         ? eventList.map((event) => <EventCard key={event.id} event={event} />)
         : null}
       {/* Mock Event */}
+      {/* <EventCard event={mockEvent} />
       <EventCard event={mockEvent} />
       <EventCard event={mockEvent} />
-      <EventCard event={mockEvent} />
-      <EventCard event={mockEvent} />
+      <EventCard event={mockEvent} /> */}
     </div>
   );
 }

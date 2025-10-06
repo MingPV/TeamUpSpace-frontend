@@ -13,8 +13,12 @@ import { useUser } from "@/context/UserContext";
 import { Tag } from "../types/tag";
 import { EventTag } from "../types/eventTag";
 import { useDebouncedCallback } from "use-debounce";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function EventPage() {
+  const searchParams = useSearchParams();
+  const { saved } = Object.fromEntries([...searchParams.entries()]);
+
   const [isLoadingEvent, setIsLoadingEvent] = useState(true);
   const [allEvents, setAllEvents] = useState<Event[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(true);
@@ -23,8 +27,9 @@ export default function EventPage() {
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [eventTags, setEventTags] = useState<EventTag[]>([]);
   const [searchText, setSearchText] = useState<string>("");
+  const [isSavedMode, setIsSavedMode] = useState<boolean>(saved === "true");
 
-  const { user, setUser } = useUser();
+  const router = useRouter();
 
   // const [user, setUser] = useState(null);
 
@@ -167,14 +172,33 @@ export default function EventPage() {
               </div>
             </div>
             <div
-              className="bg-white px-6 py-2 text-center rounded-md flex flex-row items-center gap-2 font-bold text-base-400/80 border-[1px] border-base-300/50 hover:bg-black/5 cursor-pointer"
+              className="bg-white px-6 py-2 text-center rounded-md flex flex-row items-center gap-2 font-bold text-base-400/80 border-[1px] border-base-300/50 hover:bg-black/5 cursor-pointer select-none"
               onClick={() => setIsFilterOpen(!isFilterOpen)}
             >
-              <FaFilter className="text-lg text-amber-800/50" />
+              <FaFilter
+                className={`text-lg ${
+                  isFilterOpen ? "text-amber-800/50" : "text-base-300"
+                } `}
+              />
               Filter
             </div>
-            <div className="bg-white px-6 py-2 text-center rounded-md flex flex-row items-center gap-2 font-bold text-base-400/80 border-[1px] border-base-300/50 hover:bg-black/5 cursor-pointer">
-              <FaBookmark className="text-lg  text-amber-800" /> Saved Events
+            <div
+              className="bg-white px-6 py-2 text-center rounded-md flex flex-row items-center gap-2 font-bold text-base-400/80 border-[1px] border-base-300/50 hover:bg-black/5 cursor-pointer select-none"
+              onClick={() => {
+                if (isSavedMode) {
+                  router.push("/event");
+                } else {
+                  router.push("/event?saved=true");
+                }
+                setIsSavedMode(!isSavedMode);
+              }}
+            >
+              <FaBookmark
+                className={`text-lg  ${
+                  isSavedMode ? "text-amber-800" : "text-base-300"
+                }`}
+              />{" "}
+              Saved Events
             </div>
           </div>
           <div className="flex justify-center w-full flex-row gap-6">

@@ -31,11 +31,6 @@ export default function ManageEventList({ events }: EventListProps) {
             <ManageEventCard key={event.id} event={event} />
           ))
         : null}
-      {/* Mock Event */}
-      <ManageEventCard event={mockEvent} />
-      <ManageEventCard event={mockEvent} />
-      <ManageEventCard event={mockEvent} />
-      <ManageEventCard event={mockEvent} />
     </div>
   );
 }

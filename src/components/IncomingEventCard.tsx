@@ -37,8 +37,8 @@ export default function IncomingEventCard({ event }: EventProps) {
           <div className="text-xs font-bold text-base-400">Closes in</div>
           <div className="text-xs font-bold text-red-700">
             {(() => {
-              if (!event.endAt) return "N/A";
-              const endDate = new Date(event.endAt);
+              if (!event.registerCloseDt) return "N/A";
+              const endDate = new Date(event.registerCloseDt);
               const today = new Date();
               const diffTime = endDate.getTime() - today.getTime();
               const diffDays = Math.max(
