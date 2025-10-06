@@ -16,6 +16,7 @@ import { IoWarning } from "react-icons/io5";
 import { FaCheck } from "react-icons/fa";
 import {
   createAnswer,
+  deletePost,
   fetchAllComments,
   fetchAnswerByPostIdUserId,
   fetchQuestionByPostId,
@@ -45,6 +46,8 @@ export default function PostBox({ post }: PostProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const [isPostDeleted, setIsPostDeleted] = useState(false);
 
   const [isAnswered, setIsAnswered] = useState(false);
 
@@ -224,6 +227,20 @@ export default function PostBox({ post }: PostProps) {
     setIsAnswered(true);
   };
 
+  const handleDeletePost = () => {
+    if (!user || !post || !post.id || user.id != post.postBy) {
+      return;
+    }
+    deletePost(post.id).then((res) => {
+      if (res) {
+        setIsDeleteOpen(false);
+        setIsPostDeleted(true);
+      } else {
+        alert("Failed to delete post");
+      }
+    });
+  };
+
   if (!post || (!post.detail && !post.imageUrl)) {
     return <></>;
   }
@@ -392,7 +409,10 @@ export default function PostBox({ post }: PostProps) {
               >
                 Cancel
               </div>
-              <div className="px-4 py-2 bg-red-700 text-white hover:bg-red-800 font-bold rounded-md cursor-pointer transition-all duration-300">
+              <div
+                className="px-4 py-2 bg-red-700 text-white hover:bg-red-800 font-bold rounded-md cursor-pointer transition-all duration-300"
+                onClick={handleDeletePost}
+              >
                 Delete
               </div>
             </div>
@@ -518,7 +538,11 @@ export default function PostBox({ post }: PostProps) {
         setComments={setComments}
         comments={comments}
       >
-        <div className="bg-white px-4 pt-4 pb-1 flex flex-col w-full rounded-lg">
+        <div
+          className={`bg-white px-4 pt-4 pb-1 flex flex-col w-full rounded-lg ${
+            isPostDeleted ? "hidden" : ""
+          }`}
+        >
           <div className="flex gap-3 mb-3">
             <Image
               src={poster?.profile?.profile_url || "/golang.webp"}

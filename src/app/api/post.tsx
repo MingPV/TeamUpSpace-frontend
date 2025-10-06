@@ -55,7 +55,9 @@ export async function createPost(
 }
 
 export async function deletePost(postId: number) {
-  const res = await fetchApi(`/api/v1/posts/${postId}`);
+  const res = await fetchApi(`/api/v1/posts/${postId}`, {
+    method: "DELETE",
+  });
   return res;
 }
 
