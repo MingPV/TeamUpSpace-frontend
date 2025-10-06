@@ -43,14 +43,18 @@ export async function getAllFriendsByUserId(user: any) {
 
 export async function addFriend(username: string, userId: string) {
   const friendId = await getUserByUsername(username);
-  const addedFriend = await fetchApi(`${BASE_URL}/friends`, {
-    method: "POST",
-    body: JSON.stringify({
-      user_id: userId,
-      friend_id: friendId.id,
-      status: "pending",
-    }),
-  });
+  const isFriend = await isMyFriend({ id: userId }, friendId.id);
+
+  if (isFriend === "not friend") {
+    return await fetchApi(`${BASE_URL}/friends`, {
+      method: "POST",
+      body: JSON.stringify({
+        user_id: userId,
+        friend_id: friendId.id,
+        status: "pending",
+      }),
+    });
+  }
 
   return;
 }

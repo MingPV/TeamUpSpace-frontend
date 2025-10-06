@@ -28,6 +28,23 @@ export function useRoomChat(roomId: string) {
         const data = JSON.parse(ev.data);
         console.log("Received message:", data); // Debug log
         setEvents((prev) => [...prev, data]);
+        console.log(
+          "data.Payload?.Delivered?.text",
+          data.Payload?.Delivered?.text
+        );
+        if (data.Payload?.Delivered?.text) {
+          setFriendChatrooms((prevGroups) =>
+            prevGroups.map((friendChatroom) =>
+              friendChatroom.id === roomId
+                ? {
+                    ...friendChatroom,
+                    latestMessage: data.Payload?.Delivered?.text ?? "",
+                    latestMessageTimestamp: new Date().toISOString(),
+                  }
+                : friendChatroom
+            )
+          );
+        }
       } catch (err) {
         console.log("Failed to parse message:", err);
       }

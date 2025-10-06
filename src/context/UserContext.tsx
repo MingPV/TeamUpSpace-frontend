@@ -14,6 +14,7 @@ import {
   getAllFriendRequests,
   getAllFriendsByUserId,
 } from "@/app/api/friend";
+import { useChatroom } from "./ChatroomContext";
 
 type UserContextType = {
   user: User | undefined;
