@@ -95,7 +95,7 @@ export default function PostBox({ post }: PostProps) {
       if (post && post.id) {
         // Fetch comments for the post
         const res = await fetchAllComments(post.id);
-        console.log("comments", res);
+
         setComments(res);
       }
     };
@@ -104,7 +104,7 @@ export default function PostBox({ post }: PostProps) {
       if (post && post.id && user && user.id) {
         const res = await getLikeByUserId(user.id);
         const postLikes = res.postlikes as PostLike[];
-        console.log("likePosts", postLikes);
+
         postLikes.map((pl) => {
           if (pl.postId == post.id) {
             setIsLiked(true);
@@ -118,7 +118,7 @@ export default function PostBox({ post }: PostProps) {
       if (post && post.id && user && user.id) {
         const res = await getLikeByPostId(post.id);
         const postLikes = res.postlikes as PostLike[];
-        console.log("likePosts", postLikes);
+
         setLikeCount(postLikes.length);
       }
     };
@@ -126,7 +126,7 @@ export default function PostBox({ post }: PostProps) {
     const loadQuestions = async () => {
       if (post && post.id && user && user.id) {
         const res = await fetchQuestionByPostId(post.id);
-        console.log("questions", res);
+
         setQuestions(res);
       }
     };
@@ -134,8 +134,10 @@ export default function PostBox({ post }: PostProps) {
     const loadAnswered = () => {
       if (post && post.id && user && user.id) {
         // Check if user has answered the questions
+        if (post.id == 22) {
+        }
         fetchAnswerByPostIdUserId(post.id, user.id).then((res) => {
-          if (res) {
+          if (res.length > 0) {
             setIsAnswered(true);
           }
         });
@@ -161,9 +163,7 @@ export default function PostBox({ post }: PostProps) {
       setLikeCount(likeCount + 1);
     } else {
       setIsLiked(false);
-      unLikePost(post.id, user.id).then((data) => {
-        console.log(data, "Mingming");
-      });
+      unLikePost(post.id, user.id).then((data) => {});
 
       setLikeCount(likeCount - 1);
     }
@@ -241,7 +241,7 @@ export default function PostBox({ post }: PostProps) {
     });
   };
 
-  if (!post || (!post.detail && !post.imageUrl)) {
+  if (!post || post.status == "removed" || (!post.detail && !post.imageUrl)) {
     return <></>;
   }
 
@@ -681,22 +681,29 @@ export default function PostBox({ post }: PostProps) {
             {post.eventId != 0 && (
               <div
                 className={`flex justify-center items-center font-bold text-base-400 text-xs md:text-sm ${
-                  isAnswered
+                  isAnswered || post.postBy == user?.id
                     ? "cursor-default"
                     : "cursor-pointer hover:bg-base-300/20"
                 }  rounded-md py-2 col-span-2`}
                 onClick={() => {
-                  if (isAnswered) {
+                  if (isAnswered || post.postBy == user?.id) {
                     return;
                   }
                   setIsQuestionBoxOpen(true);
                 }}
               >
                 {!isAnswered ? (
-                  <div className="flex gap-1">
-                    <FaPersonWalkingArrowRight className="text-xl" />
-                    Request to join team
-                  </div>
+                  post.postBy == user?.id ? (
+                    <div className="flex gap-1 text-base-400/50">
+                      <FaPersonWalkingArrowRight className="text-xl" />
+                      Request to join team
+                    </div>
+                  ) : (
+                    <div className="flex gap-1">
+                      <FaPersonWalkingArrowRight className="text-xl" />
+                      Request to join team
+                    </div>
+                  )
                 ) : (
                   <div className="flex gap-2 text-green-700 font-bold items-center">
                     <FaCheck className="" />

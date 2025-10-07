@@ -85,6 +85,13 @@ export async function banUser(userID: string, duration_day?: number) {
   return res;
 }
 
+export async function getAllUsers() {
+  const res = await fetchApi(`/api/v1/users`, {
+    method: "GET",
+  });
+  return res;
+}
+
 // export async function updatePostReportStatus(id: number, status: string) {
 //   return fetchApi(`/api/v1/postreports/${id}`, {
 //     method: "PATCH",

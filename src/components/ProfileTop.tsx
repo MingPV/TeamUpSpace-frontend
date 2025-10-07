@@ -9,8 +9,16 @@ import { useUser } from "@/context/UserContext";
 import { IoWarning } from "react-icons/io5";
 import { followUser, getFollowers, unfollowUser } from "@/app/api/user";
 import { UserFollow } from "@/app/types/user";
+import { Post } from "@/app/types/post";
+import { fetchAllPostsByUserID } from "@/app/api/post";
 
-export default function ProfileTop({ user }: { user: any }) {
+export default function ProfileTop({
+  user,
+  postCount,
+}: {
+  user: any;
+  postCount?: number;
+}) {
   const { user: currentUser } = useUser();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isReportOpen, setIsReportOpen] = React.useState(false);
@@ -259,7 +267,9 @@ export default function ProfileTop({ user }: { user: any }) {
                 <div className="text-lg text-base-400 font-bold">
                   {userFollows.length} followers
                 </div>
-                <div className="text-lg text-base-400 font-bold">4 posts</div>
+                <div className="text-lg text-base-400 font-bold">
+                  {postCount} posts
+                </div>
               </div>
 
               <div className="flex-1 flex justify-end">

@@ -33,6 +33,11 @@ export default function Home() {
       console.log("Sign in successful");
       console.log(res.user);
       setUser(res.user); // Update user context
+      if (res.user.is_admin) {
+        console.log("Admin user detected, redirecting to admin manage page");
+        router.push("/admin-manage");
+        return;
+      }
       router.push("/");
       //redirect with reload browser
       // window.location.href = "/";

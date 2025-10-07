@@ -1,17 +1,27 @@
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
 import Image from "next/image";
 import { FaChevronDown, FaPencilAlt } from "react-icons/fa";
 import { useState } from "react";
 import { Profile } from "@/app/types/profile";
-import { User } from "@/app/types/user";
+import { User, UserFollow } from "@/app/types/user";
 import { UNIVERSITYS } from "@/constants/universitys";
-import { updateUserProfile } from "@/app/api/user";
+import { getFollowers, updateUserProfile } from "@/app/api/user";
 
-export default function ProfileTopMe({ user }: { user: User }) {
+export default function ProfileTopMe({
+  user,
+  postCount,
+}: {
+  user: User;
+  postCount: number;
+}) {
   const [isEditing, setIsEditing] = useState(false);
   // const [newProfile, setNewProfile] = useState<Profile>(user?.profile || {});
   const [isUniversityOpen, setIsUniversityOpen] = useState(false);
   const [searchingName, setSearchingName] = useState("");
+
+  const [userFollows, setUserFollows] = React.useState<UserFollow[]>([]);
 
   const [profile, setProfile] = useState<Profile>(user.profile || {});
   const [newProfile, setNewProfile] = useState<Profile>(user.profile || {});
@@ -42,10 +52,6 @@ export default function ProfileTopMe({ user }: { user: User }) {
 
   const [filteredUniversitys, setFilteredUniversitys] =
     useState<string[]>(UNIVERSITYS);
-
-  if (!user) {
-    return <div>not found</div>;
-  }
 
   const handleToggleEdit = () => {
     if (isEditing) {
@@ -115,6 +121,22 @@ export default function ProfileTopMe({ user }: { user: User }) {
       setIsUploadedResume(true);
     }
   };
+
+  useEffect(() => {
+    const loadFollowers = async () => {
+      if (!user || !user.id) {
+        return;
+      }
+      const res = await getFollowers(user.id);
+      setUserFollows(res);
+    };
+
+    loadFollowers();
+  }, [user]);
+
+  if (!user) {
+    return <div>not found</div>;
+  }
 
   return (
     <div className="w-full flex flex-col items-center gap-2">
@@ -206,14 +228,14 @@ export default function ProfileTopMe({ user }: { user: User }) {
                   isEditing ? "hidden" : ""
                 }`}
               >
-                12 followers
+                {userFollows.length} followers
               </div>
               <div
                 className={`text-lg text-base-400 font-bold ${
                   isEditing ? "hidden" : ""
                 }`}
               >
-                4 posts
+                {postCount} posts
               </div>
             </div>
 

@@ -73,7 +73,7 @@ export default function Report() {
               <div className="w-full flex justify-center">Status</div>
             </div>
             <div
-              className={`flex-1 flex flex-col gap-3 ${
+              className={`flex-1 flex flex-col-reverse gap-3 justify-end ${
                 isUserReport ? "" : "hidden"
               }`}
             >
@@ -84,7 +84,7 @@ export default function Report() {
                 ))}
             </div>
             <div
-              className={`flex-1 flex flex-col gap-3 ${
+              className={`flex-1 flex flex-col-reverse gap-3 justify-end ${
                 isUserReport ? "hidden" : ""
               }`}
             >
@@ -94,7 +94,7 @@ export default function Report() {
                   <ReportPostCard key={report.id} report={report} />
                 ))}
             </div>
-            <div className="w-full flex flex-col justify-center items-center font-bold text-base-400/80">
+            {/* <div className="w-full flex flex-col justify-center items-center font-bold text-base-400/80">
               <div className="font-bold text-sm">1/5</div>
               <div className="w-full flex flex-row justify-center items-center gap-1">
                 <div className="p-2 cursor-pointer hover:bg-black/10 rounded-md flex gap-1 items-center">
@@ -106,7 +106,7 @@ export default function Report() {
                   <MdNavigateNext className="text-xl" />
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

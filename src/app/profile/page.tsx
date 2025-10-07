@@ -8,7 +8,9 @@ import { useRouter } from "next/navigation";
 import ProfileTopMe from "@/components/ProfileTopMe";
 import { useUser } from "@/context/UserContext";
 import { Post } from "../types/post";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { fetchAllPostsByUserID } from "../api/post";
+import { User } from "../types/user";
 
 export default function Home() {
   const { user } = useUser();
@@ -16,8 +18,18 @@ export default function Home() {
 
   console.log(user);
 
+  useEffect(() => {
+    const loadPosts = async () => {
+      if (!user) return;
+      if (user) {
+        const res = await fetchAllPostsByUserID(user.id);
+        setPosts(res);
+      }
+    };
+    loadPosts();
+  }, [user]);
+
   if (!user) {
-    // router.push("/sign-in");
     return <div>loading</div>;
   }
 
@@ -25,34 +37,21 @@ export default function Home() {
     <>
       <div className="flex flex-col items-center w-full mt-20">
         <div className="w-[90vw] lg:w-[70vw]">
-          <ProfileTopMe user={user} />
+          <ProfileTopMe user={user} postCount={posts.length} />
         </div>
         <div className="flex flex-col md:w-full lg:w-[55vw] px-8">
           <PostCreateBox user={user} setPosts={setPosts} />
-          <div className="flex flex-row items-center my-2">
-            <div className="flex-1 border-b border-base-300"></div>
-            <div className="flex text-xs gap-1 pl-2 cursor-pointer">
-              Sort by:{" "}
-              <span className="font-bold flex items-center gap-1">
-                Top <IoCaretDownSharp />
-              </span>
-            </div>
-          </div>
-          <div className="flex gap-2 mb-2">
-            <div className="bg-white rounded-full font-bold text-base-400 px-2 py-1 text-sm">
-              All
-            </div>
-            <div className="border-[1px] border-base-300 rounded-full px-2 py-1 text-sm font-bold text-base-400 cursor-pointer hover:bg-black/10">
-              + Filter by
-            </div>
-          </div>
+          <div className="flex-1 border-b border-base-300 my-4"></div>
 
           <div className="flex flex-col gap-2">
-            <PostBox />
-            <PostBox />
-            <PostBox />
-            <PostBox />
-            <PostBox />
+            {posts.length === 0 && (
+              <div className="w-full h-24 flex justify-center items-center text-base-400 font-bold">
+                No posts yet
+              </div>
+            )}
+            {posts.map((post) => (
+              <PostBox key={post.id} post={post} />
+            ))}
           </div>
         </div>
       </div>

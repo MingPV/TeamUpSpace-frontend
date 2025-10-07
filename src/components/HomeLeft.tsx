@@ -78,7 +78,7 @@ export default function HomeLeft() {
     <div className="w-full flex flex-col items-end gap-2">
       <div className="w-2/3 flex flex-col rounded-lg bg-white">
         <Image
-          src={"/golang.webp"}
+          src={user?.profile?.background_url || "/golang.webp"}
           width={100}
           height={100}
           alt="profile-pic"
@@ -152,7 +152,7 @@ export default function HomeLeft() {
               className="text-sm font-bold hover:underline underline-offset-3 cursor-pointer"
               onClick={() => router.push("/event?saved=true")}
             >
-              Saved Events (9)
+              Saved Events
             </div>
           </div>
           <div className="flex gap-2 items-center">
@@ -178,7 +178,7 @@ export default function HomeLeft() {
             onClick={() => router.push("/request")}
           >
             <div className="text-sm font-bold text-white">
-              Check Team Requests (0)
+              Check Team Requests
             </div>
           </div>
         </div>

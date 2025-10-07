@@ -17,8 +17,6 @@ export default function PostCreateBox({
   user: User | undefined;
   setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
 }) {
-  console.log(user);
-
   const [isPostBoxOpen, setIsPostBoxOpen] = useState(false);
   const [postContent, setPostContent] = useState("");
   const [isEnableTeamRequest, setIsEnableTeamRequest] = useState(false);
@@ -73,7 +71,6 @@ export default function PostCreateBox({
       selectedEvent ? selectedEvent.id : 0
     )
       .then((res) => {
-        console.log("Post created:", res);
         setPosts((prevPosts) => [res.post as Post, ...prevPosts]);
 
         // Insert Questions
@@ -98,6 +95,12 @@ export default function PostCreateBox({
               createQuestion(res.post.id, value2);
             }
           }
+        } else {
+          if (res.post && res.post.id) {
+            if (value1.trim() != "") {
+              createQuestion(res.post.id, value1);
+            }
+          }
         }
       })
       .catch((err) => {
@@ -111,13 +114,17 @@ export default function PostCreateBox({
     setIsPostBoxOpen(false);
     setIsEnableTeamRequest(false);
     setValue1("");
+    setValue2("");
+    setValue3("");
+    setIsShowQuestion2(false);
+    setIsShowQuestion3(false);
+    setSelectedEvent(null);
     setOpen(false);
   };
 
   useEffect(() => {
     const loadEvents = async () => {
       fetchAllEvents().then((fetchedEvents) => {
-        console.log("fetchedEvents", fetchedEvents);
         if (fetchedEvents && fetchedEvents.length > 0) {
           setEvents(fetchedEvents);
           setFilteredEvents(fetchedEvents);

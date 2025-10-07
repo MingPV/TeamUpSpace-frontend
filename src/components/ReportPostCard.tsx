@@ -9,6 +9,8 @@ import { User } from "@/app/types/user";
 import { getUserById } from "@/app/api/auth";
 import { updatePostReportStatus } from "@/app/api/report";
 import { banUser } from "@/app/api/user";
+import { useRouter } from "next/navigation";
+import { deletePost, updatePostStatus } from "@/app/api/post";
 
 export default function ReportPostCard({ report }: { report?: PostReport }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,6 +20,8 @@ export default function ReportPostCard({ report }: { report?: PostReport }) {
   const [isRemoved, setIsRemoved] = useState(false);
   const [isResoleved, setIsResolved] = useState(report?.status === "resolved");
   const [banDuration, setBanDuration] = useState(7);
+
+  const router = useRouter();
 
   useEffect(() => {
     const loadReportee = async () => {
@@ -57,6 +61,14 @@ export default function ReportPostCard({ report }: { report?: PostReport }) {
       console.log("mingpv ban duration:", banDuration);
       banUser(reportee?.id || "", banDuration);
       setIsBanned(true);
+    }
+  };
+
+  const handleRemovePost = () => {
+    // handle remove post
+    if (report?.postId) {
+      updatePostStatus(report.postId, "removed");
+      setIsRemoved(true);
     }
   };
 
@@ -196,13 +208,13 @@ export default function ReportPostCard({ report }: { report?: PostReport }) {
                     <div className="flex flex-row gap-2 items-center justify-center">
                       <div
                         className="flex-1 px-3 py-1 border border-base-300/30 rounded-md font-bold text-amber-700 hover:bg-black/5 cursor-pointer flex justify-center items-center mt-2 "
-                        onClick={() => setIsRemoved(true)}
+                        onClick={() => router.push(`/post/${report?.postId}`)}
                       >
                         Go to Post
                       </div>
                       <div
                         className="flex-1 px-3 py-1 border border-base-300/30 rounded-md font-bold text-amber-700 hover:bg-black/5 cursor-pointer flex justify-center items-center mt-2 "
-                        onClick={() => setIsRemoved(true)}
+                        onClick={handleRemovePost}
                       >
                         Remove Post
                       </div>
@@ -261,7 +273,7 @@ export default function ReportPostCard({ report }: { report?: PostReport }) {
         >
           <div className="w-full flex flex-row items-center pl-8 gap-4 py-2 rounded-l-md text-base-400/80 font-bold">
             <Image
-              src={"/golang.webp"}
+              src={reportee?.profile.profile_url || "/golang.webp"}
               width={200}
               height={200}
               alt="profile-pic"

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { use, useEffect, useState } from "react";
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import {
   LineChart,
@@ -15,26 +15,118 @@ import { FaPerson } from "react-icons/fa6";
 import { BsFilePost } from "react-icons/bs";
 import { MdOutlineReport } from "react-icons/md";
 import { useRouter } from "next/navigation";
+import { Post, PostReport, UserReport } from "../types/post";
+import { getAllPostReports, getAllUserReports } from "../api/report";
+import { fetchAllPosts } from "../api/post";
+import { getAllUsers } from "../api/user";
+import { User } from "../types/user";
 
 export default function AdminManage() {
   const router = useRouter();
 
-  const postData = [
-    { month: "Jan", posts: 220 },
-    { month: "Feb", posts: 280 },
-    { month: "Mar", posts: 300 },
-    { month: "Apr", posts: 260 },
-    { month: "May", posts: 310 },
-    { month: "Jun", posts: 400 },
-  ];
-  const userData = [
-    { month: "Jan", users: 120 },
-    { month: "Feb", users: 200 },
-    { month: "Mar", users: 250 },
-    { month: "Apr", users: 300 },
-    { month: "May", users: 350 },
-    { month: "Jun", users: 400 },
-  ];
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [userReports, setUserReports] = useState<UserReport[]>([]);
+  const [postReports, setPostReports] = useState<PostReport[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [postData, setPostData] = useState<{ month: string; posts: number }[]>(
+    []
+  );
+  const [userData, setUserData] = useState<{ month: string; users: number }[]>(
+    []
+  );
+
+  useEffect(() => {
+    if (!posts) return;
+    if (posts.length > 0) {
+      const monthlyPostCount: { [key: string]: number } = {};
+      posts.forEach((post) => {
+        let month = "Unknown";
+        if (post.createdAt) {
+          month = new Date(post.createdAt).toLocaleString("default", {
+            month: "short",
+          });
+        }
+        if (monthlyPostCount[month]) {
+          monthlyPostCount[month] += 1;
+        } else {
+          monthlyPostCount[month] = 1;
+        }
+      });
+      const postDataArray = Object.keys(monthlyPostCount).map((month) => ({
+        month,
+        posts: monthlyPostCount[month],
+      }));
+      setPostData(postDataArray);
+    }
+  }, [posts]);
+
+  useEffect(() => {
+    if (!users) return;
+    if (users.length > 0) {
+      const monthlyUserCount: { [key: string]: number } = {};
+      users.forEach((user) => {
+        let month = "Unknown";
+        if (user.profile && user.profile.created_at) {
+          month = new Date(user.profile.created_at).toLocaleString("default", {
+            month: "short",
+          });
+        }
+        if (monthlyUserCount[month]) {
+          monthlyUserCount[month] += 1;
+        } else {
+          monthlyUserCount[month] = 1;
+        }
+      });
+      const userDataArray = Object.keys(monthlyUserCount).map((month) => ({
+        month,
+        users: monthlyUserCount[month],
+      }));
+      setUserData(userDataArray);
+    }
+  }, [users]);
+
+  useEffect(() => {
+    const loadPostReports = async () => {
+      const res = await getAllPostReports();
+      setPostReports(res);
+      console.log("post reports:", res);
+    };
+    const loadUserReports = async () => {
+      const res = await getAllUserReports();
+      setUserReports(res);
+      console.log("user reports:", res);
+    };
+    const loadPosts = async () => {
+      const posts = await fetchAllPosts();
+      setPosts(posts);
+    };
+    const loadUsers = async () => {
+      const res = await getAllUsers();
+      console.log("all users:", res);
+      setUsers(res);
+    };
+    loadPosts();
+    loadUsers();
+    loadUserReports();
+    loadPostReports();
+  }, []);
+
+  // const postData = [
+  //   { month: "Jan", posts: 220 },
+  //   { month: "Feb", posts: 280 },
+  //   { month: "Mar", posts: 300 },
+  //   { month: "Apr", posts: 260 },
+  //   { month: "May", posts: 310 },
+  //   { month: "Jun", posts: 400 },
+  // ];
+  // const userData = [
+  //   { month: "Jan", users: 120 },
+  //   { month: "Feb", users: 200 },
+  //   { month: "Mar", users: 250 },
+  //   { month: "Apr", users: 300 },
+  //   { month: "May", users: 350 },
+  //   { month: "Jun", users: 400 },
+  // ];
 
   return (
     <div className="w-screen h-screen pt-20 pb-4">
@@ -72,7 +164,7 @@ export default function AdminManage() {
               <div className="flex flex-col justify-center flex-1">
                 <div className="text-base-400 font-bold">Current Users</div>
                 <div className="text-amber-800 font-bold text-lg ml-10">
-                  124
+                  {users ? users.length : "N/A"}
                 </div>
               </div>
             </div>
@@ -82,7 +174,9 @@ export default function AdminManage() {
               </div>
               <div className="flex flex-col justify-center flex-1">
                 <div className="text-base-400 font-bold">Current Posts</div>
-                <div className="text-amber-800 font-bold text-lg ml-10">20</div>
+                <div className="text-amber-800 font-bold text-lg ml-10">
+                  {posts ? posts.length : "N/A"}
+                </div>
               </div>
             </div>
             <div className="flex flex-row gap-2 items-center bg-base-200 p-2 rounded-lg w-56">
@@ -91,7 +185,13 @@ export default function AdminManage() {
               </div>
               <div className="flex flex-col justify-center flex-1">
                 <div className="text-base-400 font-bold">Incoming Reports</div>
-                <div className="text-amber-800 font-bold text-lg ml-10">3</div>
+                <div className="text-amber-800 font-bold text-lg ml-10">
+                  {postReports
+                    ? userReports
+                      ? userReports.length + postReports.length
+                      : "N/A"
+                    : "N/A"}
+                </div>
               </div>
             </div>
           </div>

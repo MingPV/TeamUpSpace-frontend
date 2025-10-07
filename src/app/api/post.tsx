@@ -2,9 +2,28 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { fetchApi } from "./utils";
+import { Answer } from "../types/answer";
+import { fetchEventByID } from "./event";
+import { Event } from "../types/event";
+import { Post } from "../types/post";
 
 export async function fetchAllPosts() {
   const res = await fetchApi(`/api/v1/posts`);
+  return res.posts;
+}
+
+export async function fetchAllPostsByUserID(userID: string) {
+  const res = await fetchApi(`/api/v1/posts/user/${userID}`);
+  return res.posts;
+}
+
+export async function fetchAllEventPostsByUserID(userID: string) {
+  const res = await fetchApi(`/api/v1/posts/user/${userID}`);
+  // filter only post.eventId != null
+  if (res.posts && res.posts.length > 0) {
+    res.posts = res.posts.filter((post: Post) => post.eventId != 0);
+    return res.posts;
+  }
   return res.posts;
 }
 
@@ -51,6 +70,13 @@ export async function createPost(
       image_url: imageUrl,
       event_id: eventId,
     }),
+  });
+}
+
+export async function updatePostStatus(id: number, status: string) {
+  return fetchApi(`/api/v1/posts/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
   });
 }
 
@@ -150,7 +176,7 @@ export async function fetchAnswerByPostIdUserId(
   userId: string
 ) {
   const res = await fetchApi(`/api/v1/answers/post/user/${postId}/${userId}`);
-  return res.answers[0];
+  return res.answers;
 }
 
 export async function fetchAnswerByPostId(postId: number) {
@@ -161,4 +187,46 @@ export async function fetchAnswerByPostId(postId: number) {
 export async function fetchAnswerByUserId(userId: string) {
   const res = await fetchApi(`/api/v1/answers/user/${userId}`);
   return res.answers;
+}
+
+export async function fetchAnswersByPostOnwerId(userId: string) {
+  const res = await fetchAllEventPostsByUserID(userId);
+  const posts = res;
+
+  let allAnswers: Answer[] = [];
+  for (const post of posts) {
+    const answers = await fetchAnswerByPostId(post.id);
+    const postEvent = (await fetchEventByID(post.eventId)) as Event;
+    if (!postEvent) continue;
+    // add post detail to each answer
+    answers.forEach((answer: Answer) => {
+      (answer as Answer).event_name = postEvent.eventName;
+    });
+    allAnswers = allAnswers.concat(answers);
+  }
+  return allAnswers;
+}
+
+export async function updateAnswerStatus(id: number, status: string) {
+  return fetchApi(`/api/v1/answers/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
+}
+
+export async function deleteAnswerByPostIdAndUserId(
+  postId: number,
+  userId: string
+) {
+  const res = (await fetchAnswerByPostIdUserId(postId, userId)) as Answer[];
+  if (res) {
+    // res can be more than 1 answer
+    for (const answer of res) {
+      await fetchApi(`/api/v1/answers/${answer.id}`, {
+        method: "DELETE",
+      });
+    }
+    return res;
+  }
+  return;
 }
