@@ -410,7 +410,7 @@ export default function ProfileTopMe({
                   Get Resume {profile?.resume ? "" : "(not set)"}
                 </a>
                 <div className="px-4 py-1 text-amber-800/90 font-bold rounded-full border-[1px] border-amber-800/90 hover:bg-amber-800/20 cursor-pointer">
-                  Check Team Requests (0)
+                  Check Team Requests
                 </div>
               </div>
             </div>
