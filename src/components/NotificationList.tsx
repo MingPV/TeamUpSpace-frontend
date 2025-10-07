@@ -1,8 +1,30 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import NotificationCard from "./NotificationCard";
 import FriendRequestCard from "./FriendRequestCard";
+import { Notification } from "@/app/types/notification";
+import { getAllNotifications } from "@/app/api/notification";
+import { User } from "@/app/types/user";
 
-export default function NotificationList() {
+export default function NotificationList({
+  user,
+  notifications,
+}: {
+  user?: User;
+  notifications?: Notification[];
+}) {
+  const [notificationSet, setNotificationSet] = useState<Notification[]>([]);
+
+  useEffect(() => {
+    const loadNotification = async () => {
+      if (notifications) {
+        setNotificationSet(notifications);
+      }
+    };
+    loadNotification();
+  }, [notifications]);
+
   return (
     <div className="flex flex-col items-center w-full overflow-y-scroll overflow-x-hidden">
       <div className="w-full flex text-sm font-bold text-base-400/70">
@@ -21,14 +43,19 @@ export default function NotificationList() {
       <div className="w-full flex text-sm font-bold text-base-400/70 mt-2">
         <div className="ml-4 mb-2">Others</div>
       </div>
-      <div className="w-full flex flex-col items-center gap-2">
+      <div className="w-full flex flex-col-reverse items-center gap-2">
+        {notificationSet.length > 0
+          ? notificationSet.map((notif) => (
+              <NotificationCard key={notif.id} notification={notif} />
+            ))
+          : null}
+        {/* <NotificationCard />
         <NotificationCard />
         <NotificationCard />
         <NotificationCard />
         <NotificationCard />
         <NotificationCard />
-        <NotificationCard />
-        <NotificationCard />
+        <NotificationCard /> */}
       </div>
     </div>
   );

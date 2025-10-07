@@ -4,7 +4,7 @@ import { IoHomeSharp } from "react-icons/io5";
 import { FaUserFriends } from "react-icons/fa";
 import { MdEmojiEvents } from "react-icons/md";
 import { IoNotifications } from "react-icons/io5";
-import { AiOutlineMessage } from "react-icons/ai";
+import { AiOutlineFullscreen, AiOutlineMessage } from "react-icons/ai";
 import { FaCaretDown } from "react-icons/fa";
 import { IoMdSearch } from "react-icons/io";
 import Image from "next/image";
@@ -19,6 +19,16 @@ import { FaChevronUp } from "react-icons/fa";
 import { FaChevronDown } from "react-icons/fa";
 import ChatList from "./ChatList";
 import NotificationList from "./NotificationList";
+import { FaUpRightAndDownLeftFromCenter } from "react-icons/fa6";
+import { GoScreenFull } from "react-icons/go";
+import { MdLocalPostOffice } from "react-icons/md";
+import { BsChatDotsFill } from "react-icons/bs";
+
+import {
+  getAllNotifications,
+  markNotificationAsRead,
+} from "@/app/api/notification";
+import { Notification } from "@/app/types/notification";
 
 export default function Navbar() {
   const path = usePathname();
@@ -30,6 +40,9 @@ export default function Navbar() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState<string>("friend");
   const [searchFriend, setSearchFriend] = useState<string>("");
+
+  const [notification, setNotification] = useState<Notification[]>([]);
+  const [unReadCount, setUnreadCount] = useState(0);
 
   const handleLogout = () => {
     logout();
@@ -59,6 +72,19 @@ export default function Navbar() {
       loadUserInfo();
     }
   }, [setUser, user]);
+
+  useEffect(() => {
+    const loadNotification = async () => {
+      if (!user) return;
+      const res = await getAllNotifications(user.id);
+      setNotification(res);
+      const unRead = res.filter((notif: Notification) => !notif.isRead).length;
+      setUnreadCount(unRead);
+      console.log("Unread notifications:", unRead);
+      console.log("All notifications:", res);
+    };
+    loadNotification();
+  }, [user]);
 
   if (path === "/sign-in" || path === "/sign-up") {
     return null;
@@ -104,7 +130,7 @@ export default function Navbar() {
                 onClick={() => router.push("/admin-manage/report")}
               >
                 <FaUserFriends className="text-xl" />
-                <div className="text-sm select-none">Reports</div>
+                <div className="text-sm select-none">Manage Report</div>
               </div>
               <div
                 className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
@@ -113,26 +139,48 @@ export default function Navbar() {
                 <MdEmojiEvents className="text-xl" />
                 <div className="text-sm select-none">Manage Event</div>
               </div>
-              <div
-                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
-                onClick={() => {
-                  setIsChatOpen(!isChatOpen);
-                  setIsNotificationOpen(false);
-                }}
-              >
-                <AiOutlineMessage className="text-xl " />
-                <div className="text-sm select-none">Messages</div>
-              </div>
-              <div
-                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
-                onClick={() => {
-                  setIsNotificationOpen(!isNotificationOpen);
-                  setIsChatOpen(false);
-                }}
-              >
-                <IoNotifications className="text-xl " />
-                <div className="text-sm select-none">Notification</div>
-              </div>
+              {user && (
+                <div
+                  className="hidden lg:flex flex-col p-3 rounded-full bg-black/10 hover:bg-black/20 cursor-pointer items-center text-base-400/70 hover:text-base-500 mx-1 ml-10 relative"
+                  onClick={() => {
+                    setIsChatOpen(!isChatOpen);
+                    setIsNotificationOpen(false);
+                  }}
+                >
+                  <div className="absolute -top-1 -right-2 bg-amber-800 text-white font-bold rounded-full h-5 w-5 flex items-center justify-center text-xs">
+                    1
+                  </div>
+                  <BsChatDotsFill className="text-xl " />
+                  {/* <div className="text-sm select-none">Messages</div> */}
+                </div>
+              )}
+
+              {user && (
+                <div
+                  className="hidden lg:flex flex-col p-2.5 rounded-full bg-black/10 hover:bg-black/20 cursor-pointer items-center text-base-400/70 hover:text-base-500 mx-1 relative"
+                  onClick={() => {
+                    setIsNotificationOpen(!isNotificationOpen);
+                    setIsChatOpen(false);
+                    setUnreadCount(0);
+                    if (user && user.id) {
+                      console.log(
+                        "Marking notifications as read for user ID:",
+                        user.id
+                      );
+                      markNotificationAsRead(user.id);
+                    }
+                  }}
+                >
+                  {unReadCount != 0 && (
+                    <div className="absolute -top-1 -right-2 bg-amber-800 text-white font-bold rounded-full h-5 w-5 flex items-center justify-center text-xs">
+                      {unReadCount}
+                    </div>
+                  )}
+
+                  <IoNotifications className="text-xl " />
+                  {/* <div className="text-sm select-none">Notification</div> */}
+                </div>
+              )}
             </>
           ) : (
             <>
@@ -141,39 +189,68 @@ export default function Navbar() {
                 onClick={() => router.push("/friend-group")}
               >
                 <FaUserFriends className="text-xl" />
-                <div className="text-sm select-none">Friends</div>
+                <div className="text-sm select-none">Friend</div>
               </div>
               <div
                 className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
                 onClick={() => router.push("/event")}
               >
                 <MdEmojiEvents className="text-xl" />
-                <div className="text-sm select-none">Events</div>
+                <div className="text-sm select-none">Event</div>
               </div>
               <div
                 className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
-                onClick={() => {
-                  setIsChatOpen(!isChatOpen);
-                  setIsNotificationOpen(false);
-                }}
+                onClick={() => router.push("/event")}
               >
-                <AiOutlineMessage className="text-xl " />
-                <div className="text-sm select-none">Messages</div>
+                <MdLocalPostOffice className="text-xl" />
+                <div className="text-sm select-none">Team Request</div>
               </div>
-              <div
-                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
-                onClick={() => {
-                  setIsNotificationOpen(!isNotificationOpen);
-                  setIsChatOpen(false);
-                }}
-              >
-                <IoNotifications className="text-xl " />
-                <div className="text-sm select-none">Notification</div>
-              </div>
+              {user && (
+                <div
+                  className="hidden lg:flex flex-col p-3 rounded-full bg-black/10 hover:bg-black/20 cursor-pointer items-center text-base-400/70 hover:text-base-500 mx-1 ml-10 relative"
+                  onClick={() => {
+                    setIsChatOpen(!isChatOpen);
+                    setIsNotificationOpen(false);
+                  }}
+                >
+                  <div className="absolute -top-1 -right-2 bg-amber-800 text-white font-bold rounded-full h-5 w-5 flex items-center justify-center text-xs">
+                    1
+                  </div>
+                  <BsChatDotsFill className="text-xl " />
+                  {/* <div className="text-sm select-none">Messages</div> */}
+                </div>
+              )}
+
+              {user && (
+                <div
+                  className="hidden lg:flex flex-col p-2.5 rounded-full bg-black/10 hover:bg-black/20 cursor-pointer items-center text-base-400/70 hover:text-base-500 mx-1 relative"
+                  onClick={() => {
+                    setIsNotificationOpen(!isNotificationOpen);
+                    setIsChatOpen(false);
+                    setUnreadCount(0);
+                    if (user && user.id) {
+                      console.log(
+                        "Marking notifications as read for user ID:",
+                        user.id
+                      );
+                      markNotificationAsRead(user.id);
+                    }
+                  }}
+                >
+                  {unReadCount != 0 && (
+                    <div className="absolute -top-1 -right-2 bg-amber-800 text-white font-bold rounded-full h-5 w-5 flex items-center justify-center text-xs">
+                      {unReadCount}
+                    </div>
+                  )}
+
+                  <IoNotifications className="text-xl " />
+                  {/* <div className="text-sm select-none">Notification</div> */}
+                </div>
+              )}
             </>
           )}
 
-          <div className="hidden lg:flex flex-col border-b-2 border-b-white items-center px-8 border-r border-r-base-200 relative">
+          <div className="hidden lg:flex flex-col border-b-2 border-b-white items-center pl-2 pr-8 border-r border-r-base-200 relative">
             {user ? (
               <div className="flex flex-col px-0 md:px-4 items-center rounded-md">
                 <div
@@ -257,6 +334,15 @@ export default function Navbar() {
               className="rounded-full h-7 w-7"
             />
             <div className="text-base-400 ">Messaging</div>
+            <div
+              className="p-1 border border-base-300/30 text-base-400 rounded-md hover:bg-amber-800 hover:text-white flex items-center gap-1 z-41"
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push("/chat");
+              }}
+            >
+              Full screen <GoScreenFull className="font-bold" />
+            </div>
           </div>
           <div className="text-lg text-base-400 mr-4">
             <FaChevronUp />
@@ -320,6 +406,13 @@ export default function Navbar() {
           onClick={() => {
             setIsChatOpen(false);
             setIsNotificationOpen(!isNotificationOpen);
+            if (user && user.id) {
+              console.log(
+                "Marking notifications as read for user ID:",
+                user.id
+              );
+              markNotificationAsRead(user.id);
+            }
           }}
         >
           <div className="flex flex-row gap-2 ml-4 font-rollingStone items-center">
@@ -332,7 +425,7 @@ export default function Navbar() {
             {isChatOpen ? <FaChevronDown /> : <FaChevronUp />}
           </div>
         </div>
-        <NotificationList />
+        <NotificationList user={user} notifications={notification} />
       </div>
     </>
   );
