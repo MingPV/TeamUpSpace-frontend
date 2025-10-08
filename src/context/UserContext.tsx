@@ -13,6 +13,8 @@ import {
   deleteFriend,
   getAllFriendRequests,
   getAllFriendsByUserId,
+  getRecommendedFriend,
+  addFriend,
 } from "@/app/api/friend";
 import { useChatroom } from "./ChatroomContext";
 
@@ -26,6 +28,10 @@ type UserContextType = {
   acceptFriend: (id: string) => Promise<void>;
   denyFriend: (friend: string) => Promise<void>;
   friendRequests: FriendRequest[];
+
+  recommemdFriends: Friend[];
+  setRecommendFriends: React.Dispatch<React.SetStateAction<Friend[]>>;
+  addFriendFromRecommend: (username: string) => Promise<void>;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -34,6 +40,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User>();
   const [friends, setFriends] = useState<Friend[]>([]);
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
+  const [recommemdFriends, setRecommendFriends] = useState<Friend[]>([]);
 
   const logout = () => {
     setUser(undefined);
@@ -64,10 +71,23 @@ export function UserProvider({ children }: { children: ReactNode }) {
     console.log("friend request", res);
   };
 
+  const refreshRecommendFriends = async (): Promise<void> => {
+    const res = await getRecommendedFriend(user);
+    setRecommendFriends(res);
+    console.log("recommended friend", res);
+  };
+
+  const addFriendFromRecommend = async (username: string): Promise<void> => {
+    await addFriend(username, user?.id ?? "Unkown User");
+    refreshRecommendFriends();
+  };
+
+  // const addFriends =
   useEffect(() => {
     if (user?.id) {
       refreshFriends();
       refreshFriendRequests();
+      refreshRecommendFriends();
     }
   }, [user?.id]);
 
@@ -81,6 +101,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
         acceptFriend,
         denyFriend,
         friendRequests,
+        recommemdFriends,
+        setRecommendFriends,
+        addFriendFromRecommend,
       }}
     >
       {children}

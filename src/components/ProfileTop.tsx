@@ -11,12 +11,13 @@ import { followUser, getFollowers, unfollowUser } from "@/app/api/user";
 import { UserFollow } from "@/app/types/user";
 import {
   addFriend,
-  deleteFriend,
   getAllFriendRequests,
+  getAllFriendsByUserId,
   isMyFriend,
 } from "@/app/api/friend";
 import { User } from "@/app/types/user";
 import { FriendStatusButton } from "./FriendStatus";
+import { Friend } from "@/app/types/friend";
 
 export default function ProfileTop({ user }: { user: any }) {
   const {
@@ -36,7 +37,7 @@ export default function ProfileTop({ user }: { user: any }) {
   const [friendStatus, setFriendStatus] = React.useState<string>("");
 
   const [userFollows, setUserFollows] = React.useState<UserFollow[]>([]);
-  const [hisFriends, setHisFriends] = React.useState<User[]>([]);
+  const [hisFriends, setHisFriends] = React.useState<Friend[]>([]);
   const [isAccept, setIsAccept] = React.useState<boolean>(true);
 
   const handleReport = () => {
@@ -74,7 +75,14 @@ export default function ProfileTop({ user }: { user: any }) {
       }
     };
 
+    const loadFriends = async () => {
+      const res = await getAllFriendsByUserId(user);
+      setHisFriends(res);
+      console.log("his friends", res);
+    };
+
     loadFollowers();
+    loadFriends();
   }, [currentUser, user]);
 
   const handleFollow = () => {
@@ -101,52 +109,6 @@ export default function ProfileTop({ user }: { user: any }) {
       setIsFollowed(true);
     }
   };
-
-  // const handleClickFriendStatus = async () => {
-  //   switch (friendStatus) {
-  //     case "friend":
-  //       console.log("You are friends and now you want to delete friend");
-  //       console.log(friends);
-  //       const friend = friends.find((f) => f.userInfo.id === user.id);
-  //       if (friend) {
-  //         await deleteFriend(friend?.id);
-  //       }
-  //       break;
-
-  //     case "asked":
-  //       console.log("Friend request sent and you want to acceot or deny");
-  //       const request = friendRequests.find((f) => f.friendId === user.id);
-  //       console.log("request trtertkljert", request, user, currentUser);
-  //       if (request) {
-  //         await acceptFriend(request?.id);
-  //       }
-  //       break;
-
-  //     case "pending":
-  //       console.log(
-  //         "You have a pending friend request and now you dont need to add anymore"
-  //       );
-  //       const hisRequests = await getAllFriendRequests(user); //friendRequest of this user
-  //       const requestId = hisRequests.find(
-  //         (f) => f.friendId === currentUser?.id
-  //       );
-  //       if (requestId) {
-  //         await deleteFriend(requestId.id);
-  //       }
-  //       break;
-
-  //     default: //not friend
-  //       console.log("not my friend and now i want to be friend");
-  //       console.log("user", user);
-  //       await addFriend(user.username, currentUser?.id ?? "");
-  //       break;
-  //   }
-  //   fetchFriendStatus();
-  // };
-
-  // const handleFriendStatusComponent = () => {
-
-  // }
 
   if (!user) {
     return <div>not found</div>;
@@ -470,45 +432,32 @@ export default function ProfileTop({ user }: { user: any }) {
                 </div>
 
                 <div className="flex flex-row flex-wrap gap-2">
-                  <div className="flex flex-col gap-1 items-center hover:bg-black/10 rounded-md cursor-pointer p-1">
-                    <Image
-                      src={user?.profile?.profile_url || "/golang.webp"}
-                      width={120}
-                      height={120}
-                      alt="profile-pic"
-                      style={{ objectFit: "cover" }}
-                      className="rounded-md h-[120px] w-[120px]"
-                    />
-                    <div className="text-xs font-bold text-base-400">
-                      Example friend name
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1 items-center hover:bg-black/10 rounded-md cursor-pointer p-1">
-                    <Image
-                      src={user?.profile?.profile_url || "/golang.webp"}
-                      width={120}
-                      height={120}
-                      alt="profile-pic"
-                      style={{ objectFit: "cover" }}
-                      className="rounded-md h-[120px] w-[120px]"
-                    />
-                    <div className="text-xs font-bold text-base-400">
-                      Example friend name
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1 items-center hover:bg-black/10 rounded-md cursor-pointer p-1">
-                    <Image
-                      src={user?.profile?.profile_url || "/golang.webp"}
-                      width={120}
-                      height={120}
-                      alt="profile-pic"
-                      style={{ objectFit: "cover" }}
-                      className="rounded-md h-[120px] w-[120px]"
-                    />
-                    <div className="text-xs font-bold text-base-400">
-                      Example friend name
-                    </div>
-                  </div>
+                  {hisFriends ? (
+                    hisFriends.map((friend) => (
+                      <div
+                        key={friend.id}
+                        className="flex flex-col gap-1 items-center hover:bg-black/10 rounded-md cursor-pointer p-1"
+                      >
+                        <Image
+                          src={
+                            friend.userInfo.profile.profile_url ||
+                            "/golang.webp"
+                          }
+                          width={120}
+                          height={120}
+                          alt="profile-pic"
+                          style={{ objectFit: "cover" }}
+                          className="rounded-md h-[120px] w-[120px]"
+                        />
+                        <div className="text-xs font-bold text-base-400">
+                          {friend.userInfo.profile.display_name ||
+                            "Example friend name"}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p>This user has no friends</p>
+                  )}
                 </div>
               </div>
             </div>

@@ -5,6 +5,7 @@ import { deleteChatroom, getAllFriendChatroomsByUserId } from "./chatroom";
 import { fetchApi } from "./utils";
 import { Friend } from "../types/friend";
 const BASE_URL = "/api/v1";
+import { User } from "../types/user";
 
 export async function getAllFriendsByUserId(user: any) {
   const allFriends = await fetchApi(`${BASE_URL}/friends/${user?.id}`, {
@@ -46,6 +47,7 @@ export async function addFriend(username: string, userId: string) {
   const isFriend = await isMyFriend({ id: userId }, friendId.id);
 
   if (isFriend === "not friend") {
+    console.log("added");
     return await fetchApi(`${BASE_URL}/friends`, {
       method: "POST",
       body: JSON.stringify({
@@ -117,4 +119,103 @@ export async function isMyFriend(user: any, friendId: string) {
     }
   );
   return res.status;
+}
+
+export async function getRecommendedFriend(user: any) {
+  const myFriends = await fetchApi(`${BASE_URL}/friends/${user?.id}`, {
+    method: "GET",
+  });
+
+  const myAllFriends = await fetchApi(`${BASE_URL}/friends/user/${user?.id}`, {
+    method: "GET",
+  });
+  console.log("myFriends", myFriends);
+  const myAllFriendIds = new Set(
+    myAllFriends.friends?.map((f: any) => f.friendId)
+  );
+
+  const myFriendIds = new Set(myFriends.friends?.map((f: any) => f.friendId));
+  console.log("myFriendIds", myFriendIds);
+
+  const allFriends = await fetchApi(`${BASE_URL}/allfriends`, {
+    method: "GET",
+  });
+
+  const allFriendIds = new Set<string>();
+  allFriends.friends.forEach((f: any) => {
+    allFriendIds.add(f.userId);
+    allFriendIds.add(f.friendId);
+  });
+  console.log("allFriends", allFriendIds);
+
+  const notMyFriendIds = [...allFriendIds].filter(
+    (id: string) => !myAllFriendIds.has(id) && id !== user.id
+  );
+
+  console.log("notMyFriends", notMyFriendIds);
+
+  const recommended: Friend[] = [];
+
+  for (const id of notMyFriendIds) {
+    console.log("id", id);
+    const friend = await fetchApi(`${BASE_URL}/friends/${id}`, {
+      method: "GET",
+    }); //หาเพื่อนของคนที่ไม่ใช่เพื่อน
+    console.log("friend", friend);
+
+    const friendIds = new Set(friend.friends.map((f: any) => f.friendId)); //เอาไอดีทั้งหมดมา
+    const mutualIds = [...friendIds].filter((id) => myFriendIds.has(id)); //หาคนที่เป็น mutual friends กับเรา
+    const mutualCount = mutualIds.length;
+
+    if (recommended.some((r) => r.userInfo?.id === id)) continue;
+
+    const info = await getUserByUserId(id);
+    recommended.push({
+      id: "0",
+      userInfo: info,
+      roomId: "unknown",
+      mutualFriends: mutualCount,
+    });
+  }
+  // const myFriends = await fetchApi(`${BASE_URL}/friends/${user?.id}`, {
+  //   method: "GET",
+  // });
+  // console.log("my friends", myFriends);
+  // const myFriendIds = new Set(myFriends.friends?.map((f: any) => f.friendId));
+  // console.log("myFirend ids", myFriendIds);
+
+  // const recommended: Friend[] = [];
+  // for (const friendId of myFriendIds) {
+  //   if (recommended.length >= 20) break;
+  //   const res = await fetchApi(`${BASE_URL}/friends/${friendId}`, {
+  //     method: "GET",
+  //   });
+
+  //   const ffIds = new Set(res.friends.map((f: any) => f.friendId));
+
+  //   for (const ff_friendId of ffIds) {
+  //     if (recommended.length >= 20) break;
+  //     if (ff_friendId === user?.id) continue;
+
+  //     const res = await fetchApi(`${BASE_URL}/friends/${ff_friendId}`, {
+  //       method: "GET",
+  //     });
+  //     const fffIds = new Set(res.friends.map((f: any) => f.friendId));
+  //     const mutualIds = [...fffIds].filter((id) => myFriendIds.has(id));
+  //     const mutualCount = mutualIds.length;
+  //     const notMutualIds = [...fffIds].filter((id) => !myFriendIds.has(id));
+  //     for (const id of notMutualIds) {
+  //       if (id === user?.id) continue;
+  //       if (recommended.some((r) => r.userInfo?.id === id)) continue;
+  //       const info = await getUserByUserId(String(id));
+  //       recommended.push({
+  //         id: "0",
+  //         userInfo: info,
+  //         roomId: "unknown",
+  //         mutualFriends: mutualCount,
+  //       });
+  //     }
+  //   }
+  // }
+  return recommended;
 }
