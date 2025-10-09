@@ -50,7 +50,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const refreshFriends = async (): Promise<void> => {
     const res = await getAllFriendsByUserId(user);
     setFriends(res);
-    console.log("friends", res);
   };
 
   const acceptFriend = async (id: string): Promise<void> => {
@@ -68,13 +67,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const refreshFriendRequests = async (): Promise<void> => {
     const res = await getAllFriendRequests(user);
     setFriendRequests(res);
-    console.log("friend request", res);
   };
 
   const refreshRecommendFriends = async (): Promise<void> => {
     const res = await getRecommendedFriend(user);
     setRecommendFriends(res);
-    console.log("recommended friend", res);
   };
 
   const addFriendFromRecommend = async (username: string): Promise<void> => {

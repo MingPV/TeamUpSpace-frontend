@@ -47,7 +47,6 @@ export async function addFriend(username: string, userId: string) {
   const isFriend = await isMyFriend({ id: userId }, friendId.id);
 
   if (isFriend === "not friend") {
-    console.log("added");
     return await fetchApi(`${BASE_URL}/friends`, {
       method: "POST",
       body: JSON.stringify({
@@ -68,7 +67,6 @@ export async function getAllFriendRequests(user: any) {
 
   const adaptedRequests: FriendRequest[] = [];
   const friends = await getAllFriendsByUserId(user);
-  console.log(friends);
 
   for (const request of requests.friends) {
     const info = await getUserByUserId(request.friendId); // sequential call
@@ -99,11 +97,9 @@ export async function deleteFriend(id: string, friends?: Friend[]) {
   await fetchApi(`${BASE_URL}/friends/${id}`, {
     method: "DELETE",
   });
-  console.log(friends);
 
   if (friends) {
     const friend = friends.find((f) => f.id == id);
-    console.log("delete friendm chat", friend);
     if (friend) {
       await deleteChatroom(friend?.roomId);
     }
@@ -129,13 +125,11 @@ export async function getRecommendedFriend(user: any) {
   const myAllFriends = await fetchApi(`${BASE_URL}/friends/user/${user?.id}`, {
     method: "GET",
   });
-  console.log("myFriends", myFriends);
   const myAllFriendIds = new Set(
     myAllFriends.friends?.map((f: any) => f.friendId)
   );
 
   const myFriendIds = new Set(myFriends.friends?.map((f: any) => f.friendId));
-  console.log("myFriendIds", myFriendIds);
 
   const allFriends = await fetchApi(`${BASE_URL}/allfriends`, {
     method: "GET",
@@ -146,22 +140,17 @@ export async function getRecommendedFriend(user: any) {
     allFriendIds.add(f.userId);
     allFriendIds.add(f.friendId);
   });
-  console.log("allFriends", allFriendIds);
 
   const notMyFriendIds = [...allFriendIds].filter(
     (id: string) => !myAllFriendIds.has(id) && id !== user.id
   );
 
-  console.log("notMyFriends", notMyFriendIds);
-
   const recommended: Friend[] = [];
 
   for (const id of notMyFriendIds) {
-    console.log("id", id);
     const friend = await fetchApi(`${BASE_URL}/friends/${id}`, {
       method: "GET",
     }); //หาเพื่อนของคนที่ไม่ใช่เพื่อน
-    console.log("friend", friend);
 
     const friendIds = new Set(friend.friends.map((f: any) => f.friendId)); //เอาไอดีทั้งหมดมา
     const mutualIds = [...friendIds].filter((id) => myFriendIds.has(id)); //หาคนที่เป็น mutual friends กับเรา

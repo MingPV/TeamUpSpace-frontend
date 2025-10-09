@@ -9,6 +9,7 @@ import { getAllMessages } from "@/app/api/chatroom";
 import { ChatMessage } from "@/app/types/chatroom";
 import { usePathname } from "next/navigation";
 import { useChatroom } from "@/context/ChatroomContext";
+import { useChat } from "@/context/ChatContext";
 
 type ChatCardProps = {
   chat?: any;
@@ -21,6 +22,7 @@ export default function ChatCard(chatList: ChatCardProps) {
   const { setSelectedChatroom, selectedChatroom } = useChatroom();
   const [chat, setChat] = useState<any>(chatList.chat);
   const pathname = usePathname();
+  const { events, setEvents } = useChat();
   const ischatPage = pathname.includes("/chat");
 
   function formatDate(dateString?: string): string {
@@ -119,8 +121,27 @@ export default function ChatCard(chatList: ChatCardProps) {
               {chatList.chatInfo?.latestMessage ?? ""}
             </div>
           </div>
-          <div className="text-base-400 text-xs text-right">
-            {formatDate(chatList.chatInfo.latestMessageTimestamp ?? "")}
+          <div className="flex flex-col">
+            <div className="text-base-400 text-xs text-right">
+              {formatDate(chatList.chatInfo.latestMessageTimestamp ?? "")}
+            </div>
+            {selectedChatroom?.id !== chatList.chatInfo.id &&
+              (() => {
+                const unread = events.filter(
+                  (ev) =>
+                    ev?.Payload?.Delivered?.room_id ===
+                    Number(chatList.chatInfo.id)
+                ).length;
+
+                if (unread > 0) {
+                  return (
+                    <p className="text-sm text-center bg-base-200/60 text-base-300 rounded-lg p-1">
+                      {unread}
+                    </p>
+                  );
+                }
+                return null;
+              })()}
           </div>
         </div>
       </div>

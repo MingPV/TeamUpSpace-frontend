@@ -63,7 +63,6 @@ export async function getAllGroupsByUserId(user: any) {
       };
     })
   );
-  console.log(adaptedGroups);
   return adaptedGroups;
 }
 
@@ -84,7 +83,6 @@ export async function getAllFriendChatroomsByUserId(user: any) {
         const otherMember = members.find(
           (m: any) => m.profile.user_id !== user.id
         );
-        console.log(otherMember);
 
         return {
           roomName: otherMember?.profile.display_name || "Unknown",
@@ -97,7 +95,6 @@ export async function getAllFriendChatroomsByUserId(user: any) {
         };
       })
   );
-  console.log(adaptedChatrooms);
 
   return adaptedChatrooms;
 }
@@ -123,7 +120,6 @@ export async function getAllMembersInGroup(roomId: string) {
   const allMembers = await fetchApi(`${BASE_URL}/roommembers/room/${roomId}`, {
     method: "GET",
   });
-  console.log(`${BASE_URL}/roommembers/room/${roomId}`);
   const adaptedMembers = await Promise.all(
     allMembers.members.map(async (member: any) => {
       const info = await getUserByUserId(member.userId);
@@ -133,7 +129,6 @@ export async function getAllMembersInGroup(roomId: string) {
       };
     })
   );
-  console.log(adaptedMembers);
   return adaptedMembers;
 }
 
@@ -201,8 +196,6 @@ export async function getAllGroupInvites(user: any) {
     }
   );
 
-  console.log(allInvites);
-
   const adaptedAllInvites = await Promise.all(
     allInvites.invites.map(async (invite: any) => {
       const info = await getUserByUserId(invite.sender);
@@ -221,7 +214,6 @@ export async function getAllGroupInvites(user: any) {
 }
 
 export async function acceptGroupInvite(id: string) {
-  console.log("call accept gropu invite", id);
   await fetchApi(`${BASE_URL}/roominvite/accepted/${id}`, {
     method: "PATCH",
   });
@@ -229,7 +221,6 @@ export async function acceptGroupInvite(id: string) {
 }
 
 export async function denyGroupInvite(id: string) {
-  console.log("call deny group invite", id);
   await fetchApi(`${BASE_URL}/roominvite/${id}`, {
     method: "DELETE",
   });
