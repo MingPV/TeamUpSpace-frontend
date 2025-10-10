@@ -118,3 +118,13 @@ export async function getFollowing(userID: string) {
   });
   return res.userFollows;
 }
+
+export async function timestampLastvisit(userID: string) {
+  console.log("timestamp !!!");
+  return await fetchApi(`/api/v1/lastvisit`, {
+    method: "POST",
+    body: JSON.stringify({
+      user_id: userID,
+    }),
+  });
+}

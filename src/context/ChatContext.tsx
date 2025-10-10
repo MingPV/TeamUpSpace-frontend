@@ -10,6 +10,7 @@ import {
 } from "react";
 import { useChatroom } from "./ChatroomContext";
 import { useUser } from "./UserContext";
+// import { getAllMessagesUnread } from "@/app/api/chatroom";
 
 interface ChatEvent {
   type: string;
@@ -40,6 +41,27 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const { friendChatrooms, groups, setFriendChatrooms, setGroups } =
     useChatroom();
   const { user } = useUser();
+  // useEffect(() => {
+  //   const fetchUnread = async () => {
+  //     if (user) {
+  //       const res = await getAllMessagesUnread(user);
+  //       if (res) {
+  //         setEvents((prev) => {
+  //           const all = [...res];
+
+  //           // Remove duplicates by Delivered.id
+  //           const unique = Array.from(
+  //             new Map(all.map((m: any) => [m.Payload.Delivered.id, m])).values()
+  //           );
+
+  //           return unique;
+  //         });
+  //       }
+  //       console.log("res unread msg", res);
+  //     }
+  //   };
+  //   // fetchUnread();
+  // }, [user]);
 
   useEffect(() => {
     console.log("user", user);

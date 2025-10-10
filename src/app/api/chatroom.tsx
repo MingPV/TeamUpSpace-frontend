@@ -247,3 +247,24 @@ export async function deleteChatroom(id: string) {
     method: "DELETE",
   });
 }
+
+// export async function getAllMessagesUnread(user: any) {
+//   const allMessages = await fetchApi(`${BASE_URL}/messages/unread/${user.id}`);
+//   console.log("allMessages unread", allMessages);
+//   if (allMessages.messages) {
+//     const adaptedMessage = allMessages.messages?.map((m: any) => ({
+//       Payload: {
+//         Delivered: {
+//           id: m.id,
+//           room_id: m.roomId,
+//           text: m.message,
+//           sender_id: m.sender,
+//           created_at_unix: Math.floor(new Date(m.createdAt).getTime() / 1000), // convert to unix timestamp
+//         },
+//       },
+//     }));
+//     console.log("adapt unread messages", adaptedMessage);
+//     return adaptedMessage;
+//   }
+//   return null;
+// }
