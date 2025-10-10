@@ -2,6 +2,7 @@ import { fetchApi } from "./utils";
 import { ChatMessage } from "../types/chatroom";
 import { getUserByUserId } from "./auth";
 import { BASE_URL } from "@/constants/constants";
+import { isMyFriend } from "./friend";
 
 export async function createChatGroup(roomName: string, user: any) {
   const createdChatroom = await fetchApi(`${BASE_URL}/chatrooms`, {
@@ -66,6 +67,39 @@ export async function getAllGroupsByUserId(user: any) {
   return adaptedGroups;
 }
 
+// export async function getAllFriendChatroomsByUserId(user: any) {
+//   const allChatrooms = await fetchApi(
+//     `${BASE_URL}/roommembers/user/${user.id}`,
+//     {
+//       method: "GET",
+//     }
+//   );
+
+//   const adaptedChatrooms = await Promise.all(
+//     allChatrooms.chatrooms
+//       .filter((group: any) => group.chatroom.isGroup === false)
+//       .map(async (group: any) => {
+//         const members = await getAllMembersInGroup(group.roomId);
+//         const latestMessage = await getLatestMessageByRoomId(group.roomId);
+//         const otherMember = members.find(
+//           (m: any) => m.profile.user_id !== user.id
+//         );
+
+//         return {
+//           roomName: otherMember?.profile.display_name || "Unknown",
+//           id: group.roomId,
+//           isGroup: group.chatroom.isGroup,
+//           updatedAt: group.chatroom.updatedAt,
+//           latestMessage: latestMessage?.text ?? null,
+//           latestMessageTimestamp: latestMessage?.timestamp ?? null,
+//           imageUrl: otherMember.profile.profile_url,
+//         };
+//       })
+//   );
+
+//   return adaptedChatrooms;
+// }
+
 export async function getAllFriendChatroomsByUserId(user: any) {
   const allChatrooms = await fetchApi(
     `${BASE_URL}/roommembers/user/${user.id}`,
@@ -74,7 +108,12 @@ export async function getAllFriendChatroomsByUserId(user: any) {
     }
   );
 
-  const adaptedChatrooms = await Promise.all(
+  // Prepare arrays
+  const chatChatrooms: any[] = [];
+  const friendChatrooms: any[] = [];
+
+  // Process each private chat
+  await Promise.all(
     allChatrooms.chatrooms
       .filter((group: any) => group.chatroom.isGroup === false)
       .map(async (group: any) => {
@@ -84,8 +123,11 @@ export async function getAllFriendChatroomsByUserId(user: any) {
           (m: any) => m.profile.user_id !== user.id
         );
 
-        return {
-          roomName: otherMember?.profile.display_name || "Unknown",
+        if (!otherMember) return; // skip if no partner found
+        const friend = await isMyFriend(user, otherMember.profile.user_id);
+
+        const chatroomData = {
+          roomName: otherMember.profile.display_name || "Unknown",
           id: group.roomId,
           isGroup: group.chatroom.isGroup,
           updatedAt: group.chatroom.updatedAt,
@@ -93,10 +135,17 @@ export async function getAllFriendChatroomsByUserId(user: any) {
           latestMessageTimestamp: latestMessage?.timestamp ?? null,
           imageUrl: otherMember.profile.profile_url,
         };
+
+        if (friend.friend.status !== "friend") {
+          chatChatrooms.push(chatroomData);
+        } else if (friend.friend.status === "friend") {
+          friendChatrooms.push(chatroomData);
+        }
       })
   );
 
-  return adaptedChatrooms;
+  // Return both types
+  return { chatChatrooms, friendChatrooms };
 }
 
 export async function getAllMessages(roomId: string) {

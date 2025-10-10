@@ -1,3 +1,4 @@
+import { useChatroom } from "@/context/ChatroomContext";
 import { useState } from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
@@ -29,6 +30,7 @@ export const FriendStatusButton = ({
   getAllFriendRequests,
 }: Props) => {
   const [openDropdown, setOpenDropdown] = useState(false);
+  const { refreshFriendChatrooms } = useChatroom();
 
   const toggleDropdown = () => setOpenDropdown((prev) => !prev);
 
@@ -65,16 +67,21 @@ export const FriendStatusButton = ({
         }
 
         case "not friend":
-        default: {
+        case "meet": {
           if (!action || action === "send") {
             await addFriend(user.username, currentUser.id);
           }
+          break;
+        }
+        default: {
+          // other cases
           break;
         }
       }
 
       fetchFriendStatus();
       setOpenDropdown(false); // close dropdown after action
+      refreshFriendChatrooms();
     } catch (err) {
       console.error("Error handling friend status:", err);
     }
@@ -101,6 +108,10 @@ export const FriendStatusButton = ({
       dropdownOptions = [{ label: "Un Request", action: "unrequest" }];
       break;
     case "not friend":
+      buttonText = "Not Your Friend";
+      dropdownOptions = [{ label: "Send Request", action: "send" }];
+      break;
+    case "meet":
       buttonText = "Not Your Friend";
       dropdownOptions = [{ label: "Send Request", action: "send" }];
       break;

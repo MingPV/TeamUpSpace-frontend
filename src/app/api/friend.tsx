@@ -18,7 +18,7 @@ export async function getAllFriendsByUserId(user: any) {
   const adaptedFriends = await Promise.all(
     allFriends.friends.map(async (friend: any) => {
       const info = await getUserByUserId(friend.friendId);
-      const matchedRoom = chatroom.find(
+      const matchedRoom = chatroom.friendChatrooms.find(
         (room: any) => room.roomName === info.profile.display_name
       );
       const friendFriends = await fetchApi(
@@ -35,7 +35,7 @@ export async function getAllFriendsByUserId(user: any) {
         id: friend.id,
         userInfo: info,
         mutualFriends: intersectCount,
-        roomId: matchedRoom.id ?? "unknown",
+        roomId: matchedRoom?.id ?? "unknown",
       };
     })
   );
@@ -46,7 +46,10 @@ export async function addFriend(username: string, userId: string) {
   const friendId = await getUserByUsername(username);
   const isFriend = await isMyFriend({ id: userId }, friendId.id);
 
-  if (isFriend === "not friend") {
+  if (
+    isFriend.friend.status === "not friend" ||
+    isFriend.friend.status === "meet"
+  ) {
     return await fetchApi(`${BASE_URL}/friends`, {
       method: "POST",
       body: JSON.stringify({
@@ -114,7 +117,7 @@ export async function isMyFriend(user: any, friendId: string) {
       method: "GET",
     }
   );
-  return res.status;
+  return res;
 }
 
 export async function getRecommendedFriend(user: any) {
@@ -207,4 +210,22 @@ export async function getRecommendedFriend(user: any) {
   //   }
   // }
   return recommended;
+}
+
+export async function createFriendToSendMessage(user: any, username: string) {
+  const friendId = await getUserByUsername(username);
+  const isFriend = await isMyFriend({ id: user.id }, friendId.id);
+
+  if (isFriend.friend.status === "not friend") {
+    return await fetchApi(`${BASE_URL}/friends`, {
+      method: "POST",
+      body: JSON.stringify({
+        user_id: user.id,
+        friend_id: friendId.id,
+        status: "meet",
+      }),
+    });
+  }
+
+  return;
 }

@@ -6,6 +6,7 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { RxCross2 } from "react-icons/rx";
 import { reportUser } from "@/app/api/report";
 import { useUser } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
 import { IoWarning } from "react-icons/io5";
 import { followUser, getFollowers, unfollowUser } from "@/app/api/user";
 import { UserFollow } from "@/app/types/user";
@@ -18,6 +19,7 @@ import {
 import { User } from "@/app/types/user";
 import { FriendStatusButton } from "./FriendStatus";
 import { Friend } from "@/app/types/friend";
+import { useChatroom } from "@/context/ChatroomContext";
 
 export default function ProfileTop({ user }: { user: any }) {
   const {
@@ -27,6 +29,14 @@ export default function ProfileTop({ user }: { user: any }) {
     friends,
     friendRequests,
   } = useUser();
+  const router = useRouter();
+  const {
+    friendChatrooms,
+    strangerChatroom,
+    setSelectedChatroom,
+    addStrangerFriend,
+    refreshFriendChatrooms,
+  } = useChatroom();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isReportOpen, setIsReportOpen] = React.useState(false);
   const [selectedReportIndex, setSelectedReportIndex] = React.useState(0);
@@ -55,10 +65,40 @@ export default function ProfileTop({ user }: { user: any }) {
     setReason("");
   };
 
+  const handleSendMessageButton = async () => {
+    console.log("profile user", user);
+    console.log("friendChatrooms", friendChatrooms);
+    console.log("strangerChatroom", strangerChatroom);
+    if (friendStatus === "friend") {
+      const chatroom = friendChatrooms.find(
+        (f) => f.roomName === user.profile.display_name
+      );
+      console.log("chatroom of send message", chatroom);
+      setSelectedChatroom(chatroom ?? null);
+    } else if (friendStatus === "not friend") {
+      console.log("username to add friend", user.username);
+      console.log("have to call addstrangerFriend");
+      await addStrangerFriend(user.username);
+      await refreshFriendChatrooms();
+      const chatroom = strangerChatroom.find(
+        (f) => f.roomName === user.profile.display_name
+      );
+      console.log("chatroom of send message stranger", chatroom);
+      setSelectedChatroom(chatroom ?? null);
+    } else {
+      const chatroom = strangerChatroom.find(
+        (f) => f.roomName === user.profile.display_name
+      );
+      console.log("chatroom of send message", chatroom);
+      setSelectedChatroom(chatroom ?? null);
+    }
+    router.push("/chat");
+  };
+
   const fetchFriendStatus = async () => {
     const status = await isMyFriend(currentUser, user.id);
-    setFriendStatus(status);
-    console.log("status", status);
+    setFriendStatus(status.friend.status);
+    console.log("status", status.friend.status);
   };
 
   useEffect(() => {
@@ -414,9 +454,12 @@ export default function ProfileTop({ user }: { user: any }) {
                       </div>
                     )}
                   </div>
-                  <div className="px-4 py-1 text-base-400 font-bold rounded-full border-[1px] border-base-300 hover:bg-black/10 cursor-pointer">
+                  <button
+                    onClick={handleSendMessageButton}
+                    className="px-4 py-1 text-base-400 font-bold rounded-full border-[1px] border-base-300 hover:bg-black/10 cursor-pointer"
+                  >
                     Send Message
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>

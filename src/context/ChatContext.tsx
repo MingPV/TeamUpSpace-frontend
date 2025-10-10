@@ -38,8 +38,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [events, setEvents] = useState<ChatEvent[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const { friendChatrooms, groups, setFriendChatrooms, setGroups } =
-    useChatroom();
+  const {
+    friendChatrooms,
+    groups,
+    setFriendChatrooms,
+    setGroups,
+    strangerChatroom,
+  } = useChatroom();
   const { user } = useUser();
   // useEffect(() => {
   //   const fetchUnread = async () => {
@@ -72,11 +77,27 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       setConnected(true);
       setError(null);
 
-      if (user && (friendChatrooms || groups)) {
+      if (user && (friendChatrooms || groups || strangerChatroom)) {
         console.log("here");
-        console.log(friendChatrooms.length, groups.length);
+        console.log(
+          friendChatrooms.length,
+          groups.length,
+          strangerChatroom.length
+        );
         // Join all rooms immediately
         friendChatrooms?.forEach((chatroom) => {
+          console.log(chatroom);
+          if (!chatroom?.id) return; // skip invalid room id
+          ws.send(
+            JSON.stringify({
+              type: "join",
+              room_id: Number(chatroom.id), // ensure string type
+              sender: user.id,
+            })
+          );
+          console.log("events", events);
+        });
+        strangerChatroom?.forEach((chatroom) => {
           console.log(chatroom);
           if (!chatroom?.id) return; // skip invalid room id
           ws.send(

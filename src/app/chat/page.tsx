@@ -11,7 +11,8 @@ import { addFriend } from "../api/friend";
 import { useChatroom } from "@/context/ChatroomContext";
 export default function FriendPage() {
   const { user } = useUser();
-  const { groups, friendChatrooms, createChatroom } = useChatroom();
+  const { groups, friendChatrooms, createChatroom, strangerChatroom } =
+    useChatroom();
   const { selectedChatroom } = useChatroom();
 
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
@@ -122,22 +123,22 @@ export default function FriendPage() {
               </div>
             </div>
             <div className="w-full flex flex-col overflow-y-scroll px-2">
-              {selectedTab === "chat" && (
-                <div>
-                  <ChatCard
-                    chat={"chat1"}
-                    chatDisplays={undefined}
-                    setChatDisplays={undefined}
-                    chatInfo={{
-                      id: "12",
-                      roomName: "Chat Test Room",
-                      isGroup: true,
-                    }}
-                  />
-
-                  <div className="border-b-[1px] border-b-base-300/50"></div>
-                </div>
-              )}
+              {selectedTab === "chat" &&
+                strangerChatroom
+                  ?.filter((friend) =>
+                    (friend.roomName ?? "").includes(searchFriend)
+                  )
+                  .map((friend, index) => (
+                    <div key={index}>
+                      <ChatCard
+                        chat={"chat1"}
+                        chatDisplays={undefined}
+                        setChatDisplays={undefined}
+                        chatInfo={friend}
+                      />
+                      <div className="border-b-[1px] border-b-base-300/50"></div>
+                    </div>
+                  ))}
             </div>
             <div className="w-full flex flex-col overflow-y-scroll px-2">
               {selectedTab === "friend" &&
