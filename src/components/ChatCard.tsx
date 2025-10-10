@@ -5,11 +5,13 @@ import Image from "next/image";
 import { Friend } from "@/app/types/friend";
 import { useState } from "react";
 import { Chatroom } from "@/app/types/chatroom";
-import { getAllMessages } from "@/app/api/chatroom";
+import { getAllMessages, getAllMessagesUnread } from "@/app/api/chatroom";
 import { ChatMessage } from "@/app/types/chatroom";
 import { usePathname } from "next/navigation";
 import { useChatroom } from "@/context/ChatroomContext";
 import { useChat } from "@/context/ChatContext";
+import { timestampLastvisit } from "@/app/api/user";
+import { useUser } from "@/context/UserContext";
 
 type ChatCardProps = {
   chat?: any;
@@ -24,6 +26,19 @@ export default function ChatCard(chatList: ChatCardProps) {
   const pathname = usePathname();
   const { events, setEvents } = useChat();
   const ischatPage = pathname.includes("/chat");
+  const [unreadMessages, setUnreadMessages] = useState<any[]>([]);
+  const { user } = useUser();
+
+  useEffect(() => {
+    const fetchUnread = async () => {
+      if (user && chatList) {
+        const res = await getAllMessagesUnread(user, chatList.chatInfo.id);
+        console.log("res unread msg", res);
+        setUnreadMessages(res);
+      }
+    };
+    fetchUnread();
+  }, [user]);
 
   function formatDate(dateString?: string): string {
     if (!dateString) return "";
@@ -49,7 +64,11 @@ export default function ChatCard(chatList: ChatCardProps) {
     return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }
 
-  const handleChatClick = () => {
+  const handleChatClick = async () => {
+    await timestampLastvisit(
+      user?.id ?? "unknown",
+      selectedChatroom?.id ?? "0"
+    );
     if (ischatPage) {
       console.log(chatList.chatInfo);
       console.log("click");
@@ -133,10 +152,10 @@ export default function ChatCard(chatList: ChatCardProps) {
                     Number(chatList.chatInfo.id)
                 ).length;
 
-                if (unread > 0) {
+                if (unread > 0 || unreadMessages.length > 0) {
                   return (
                     <p className="text-sm text-center bg-base-200/60 text-base-300 rounded-lg p-1">
-                      {unread}
+                      {unread + unreadMessages.length}
                     </p>
                   );
                 }
