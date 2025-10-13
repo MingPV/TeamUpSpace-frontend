@@ -75,6 +75,12 @@ export default function ChatCard(chatList: ChatCardProps) {
       setSelectedChatroom(chatList.chatInfo);
     }
 
+    setEvents((prev) =>
+      prev.filter(
+        (event) => event?.Payload.Delivered.room_id !== chatList.chatInfo.id
+      )
+    );
+
     if (chatList.setChatDisplays && chatList.chatDisplays) {
       console.log("here");
       if (!chatList.chatDisplays.includes(chatList.chatInfo)) {
