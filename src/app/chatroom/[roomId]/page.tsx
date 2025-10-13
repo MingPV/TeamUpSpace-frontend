@@ -154,7 +154,10 @@ export default function Page({
             >
               <p>{msg.text}</p>
               <span className="text-xs opacity-70 block">
-                {new Date(msg.timestamp).toLocaleTimeString()}
+                {new Date(msg.timestamp).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </span>
             </div>
           </div>

@@ -23,6 +23,7 @@ import { useUser } from "@/context/UserContext";
 import { useState, useRef, useEffect } from "react";
 import { ChatMessage, Member } from "@/app/types/chatroom";
 import { useChatroom } from "@/context/ChatroomContext";
+import { useChat } from "@/context/ChatContext";
 
 export default function ChatDisplay({
   chatroom,
@@ -30,7 +31,7 @@ export default function ChatDisplay({
   chatroom: Chatroom | null;
 }) {
   const { friends } = useUser();
-  const { selectedChatroom, leaveGroup } = useChatroom();
+  const { selectedChatroom, leaveGroup, setSelectedChatroom } = useChatroom();
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const roomId = String(chatroom?.id);
@@ -40,9 +41,10 @@ export default function ChatDisplay({
   const [invitees, setInvitees] = useState<string[]>([]);
   const [invitedMembers, setInvitedMembers] = useState<InviteTo[]>([]);
   //chat streaming
-  const { connected, events, send } = useRoomChat(
-    selectedChatroom?.id ?? "undefined"
-  );
+  // const { connected, events, send } = useRoomChat(
+  //   selectedChatroom?.id ?? "undefined"
+  // );
+  const { connected, send, events, setEvents } = useChat();
 
   const [inputMessage, setInputMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -56,6 +58,12 @@ export default function ChatDisplay({
     setIsMenuOpen(false);
     console.log(chatroom);
   }, [chatroom]);
+
+  useEffect(() => {
+    setEvents((prev) =>
+      prev.filter((ev) => ev.Payload.Delivered.room_id.toString() !== roomId)
+    );
+  }, [displayMessages]);
 
   const fetchInviteData = async () => {
     const [invitedRes, memberRes] = await Promise.all([
@@ -133,6 +141,10 @@ export default function ChatDisplay({
 
     if (roomId && roomId !== "undefined") {
       fetchData();
+      // setEvents((prev) =>
+      //   prev.filter((ev) => ev.Payload.Delivered.room_id.toString() !== roomId)
+      // );
+      console.log(events);
     } else {
       setLoading(false);
     }
@@ -160,8 +172,9 @@ export default function ChatDisplay({
   useEffect(() => {
     if (events.length > 0) {
       const last = events[events.length - 1];
+      if (last.Payload.Delivered.room_id.toString() !== roomId) return;
       const msg = mapPayloadToMessage(last);
-
+      console.log(events);
       if (msg) {
         setDisplayMessages((prev) => [...prev, msg]);
       }
@@ -174,7 +187,16 @@ export default function ChatDisplay({
 
   const handleSend = (msg: string) => {
     if (msg.trim() && connected) {
-      send(msg, userId ?? "Test");
+      send(chatroom?.id ?? "0", msg, userId ?? "Test");
+      console.log(Math.floor(Date.now() / 1000).toString());
+      const newMsg: ChatMessage = {
+        id: displayMessages.length.toString(), // safer than displayMessages.length
+        text: msg,
+        sender: user?.id ?? "user",
+        timestamp: new Date().toISOString(),
+      };
+      setDisplayMessages((prev) => [...prev, newMsg]);
+
       setInputMessage("");
     }
   };
@@ -430,25 +452,33 @@ export default function ChatDisplay({
               Aug 12
             </div>
             {displayMessages.length > 0 &&
-              displayMessages?.map((msg) =>
+              displayMessages?.map((msg, index) =>
                 msg.sender === userId ? (
                   // My message
                   <div
-                    key={msg.id}
+                    key={`${index}_get`}
                     className="flex flex-row-reverse gap-2 items-end"
                   >
-                    <div className="text-base-400 flex flex-col">
-                      <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                        <div className="text-base">{msg.text}</div>
-                        <span className="text-xs opacity-70 block">
-                          {new Date(msg.timestamp).toLocaleTimeString()}
+                    <div className="text-base-400 flex flex-col justify-end">
+                      <div className="flex flex-row gap-2 ">
+                        <span className="text-xs flex items-end opacity-70">
+                          {new Date(msg.timestamp).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                         </span>
+                        <div className="text-base mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
+                          {msg.text}
+                        </div>
                       </div>
                     </div>
                   </div>
                 ) : (
                   // Other messages
-                  <div key={msg.id} className="flex flex-row gap-3 items-end">
+                  <div
+                    key={`${index}_send`}
+                    className="flex flex-row gap-3 items-end"
+                  >
                     <div>
                       <Image
                         src={"/golang.webp"} // Replace with actual sender profile image
@@ -465,10 +495,15 @@ export default function ChatDisplay({
                           "User"}{" "}
                         {/* Replace with sender name */}
                       </div>
-                      <div className="flex flex-col gap-2 mt-1 p-2 px-4 bg-base-200/40 rounded-xl">
-                        <div className="text-base">{msg.text}</div>
-                        <span className="text-xs opacity-70 block">
-                          {new Date(msg.timestamp).toLocaleTimeString()}
+                      <div className="flex flex-row gap-2">
+                        <div className="text-base  mt-1 p-2 px-4 bg-base-100/50 rounded-xl">
+                          {msg.text}
+                        </div>
+                        <span className="text-xs opacity-70 flex items-end">
+                          {new Date(msg.timestamp).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                         </span>
                       </div>
                     </div>

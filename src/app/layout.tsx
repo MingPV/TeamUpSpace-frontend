@@ -5,7 +5,8 @@ import "./globals.css";
 import { UserProvider } from "@/context/UserContext";
 import Navbar from "@/components/Navbar";
 import { ChatroomProvider } from "@/context/ChatroomContext";
-
+import { ChatProvider } from "@/context/ChatContext";
+import GlobalTracker from "@/components/GlobalTracker";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -33,8 +34,11 @@ export default function RootLayout({
       >
         <UserProvider>
           <ChatroomProvider>
-            <Navbar />
-            {children}
+            <ChatProvider>
+              <GlobalTracker />
+              <Navbar />
+              {children}
+            </ChatProvider>
           </ChatroomProvider>
         </UserProvider>
       </body>

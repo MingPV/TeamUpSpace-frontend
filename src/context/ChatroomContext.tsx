@@ -18,6 +18,7 @@ import {
   deleteMember,
 } from "@/app/api/chatroom";
 import { useUser } from "./UserContext";
+import { createFriendToSendMessage } from "@/app/api/friend";
 
 // Context value type
 interface ChatroomContextType {
@@ -26,6 +27,7 @@ interface ChatroomContextType {
 
   //group
   groups: Chatroom[];
+  setGroups: React.Dispatch<React.SetStateAction<Chatroom[]>>;
   createChatroom: (roomName: string) => Promise<void>;
   refreshGroups: () => Promise<void>;
   leaveGroup: (roomId: string) => Promise<void>;
@@ -37,7 +39,13 @@ interface ChatroomContextType {
 
   //friendgroup
   friendChatrooms: Chatroom[];
+  setFriendChatrooms: React.Dispatch<React.SetStateAction<Chatroom[]>>;
   refreshFriendChatrooms: () => Promise<void>;
+
+  //stranger
+  strangerChatroom: Chatroom[];
+  setStrangerChatroom: React.Dispatch<React.SetStateAction<Chatroom[]>>;
+  addStrangerFriend: (username: string) => Promise<void>;
 }
 
 // Create context with default value
@@ -55,6 +63,7 @@ export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
 
   const [friendChatrooms, setFriendChatrooms] = useState<Chatroom[]>([]);
   const [groupInvites, setGroupInvites] = useState<ChatroomInvite[]>([]);
+  const [strangerChatroom, setStrangerChatroom] = useState<Chatroom[]>([]);
 
   //groups
   const refreshGroups = async (): Promise<void> => {
@@ -70,8 +79,15 @@ export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
 
   const refreshFriendChatrooms = async (): Promise<void> => {
     const res = await getAllFriendChatroomsByUserId(user);
-    setFriendChatrooms(res);
-    setSelectedChatroom(res[0]);
+    setFriendChatrooms(res.friendChatrooms);
+    setStrangerChatroom(res.chatChatrooms);
+    setSelectedChatroom(res.friendChatrooms[0]);
+    console.log("chatroom", res);
+  };
+
+  const addStrangerFriend = async (username: string): Promise<void> => {
+    await createFriendToSendMessage(user, username);
+    refreshFriendChatrooms();
   };
 
   const refreshGroupInvites = async (): Promise<void> => {
@@ -110,14 +126,19 @@ export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
         selectedChatroom,
         setSelectedChatroom,
         groups,
+        setGroups,
         createChatroom,
         refreshGroups,
         leaveGroup,
         friendChatrooms,
+        setFriendChatrooms,
+        strangerChatroom,
+        setStrangerChatroom,
         refreshFriendChatrooms,
         groupInvites,
         acceptInvite,
         denyInvite,
+        addStrangerFriend,
       }}
     >
       {children}

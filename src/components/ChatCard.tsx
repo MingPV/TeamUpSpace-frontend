@@ -5,10 +5,13 @@ import Image from "next/image";
 import { Friend } from "@/app/types/friend";
 import { useState } from "react";
 import { Chatroom } from "@/app/types/chatroom";
-import { getAllMessages } from "@/app/api/chatroom";
+import { getAllMessages, getAllMessagesUnread } from "@/app/api/chatroom";
 import { ChatMessage } from "@/app/types/chatroom";
 import { usePathname } from "next/navigation";
 import { useChatroom } from "@/context/ChatroomContext";
+import { useChat } from "@/context/ChatContext";
+import { timestampLastvisit } from "@/app/api/user";
+import { useUser } from "@/context/UserContext";
 
 type ChatCardProps = {
   chat?: any;
@@ -20,28 +23,63 @@ type ChatCardProps = {
 export default function ChatCard(chatList: ChatCardProps) {
   const { setSelectedChatroom, selectedChatroom } = useChatroom();
   const [chat, setChat] = useState<any>(chatList.chat);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const pathname = usePathname();
+  const { events, setEvents } = useChat();
   const ischatPage = pathname.includes("/chat");
+  const [unreadMessages, setUnreadMessages] = useState<any[]>([]);
+  const { user } = useUser();
 
-  const fetchChatHistory = async () => {
-    const res = await getAllMessages(String(chatList.chatInfo.id));
-    setMessages(res);
-  };
-  function formatDateToMonthDay(dateString: string) {
+  useEffect(() => {
+    const fetchUnread = async () => {
+      if (user && chatList) {
+        const res = await getAllMessagesUnread(user, chatList.chatInfo.id);
+        console.log("res unread msg", res);
+        setUnreadMessages(res);
+      }
+    };
+    fetchUnread();
+  }, [user]);
+
+  function formatDate(dateString?: string): string {
+    if (!dateString) return "";
+
     const date = new Date(dateString);
+    const now = new Date();
 
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-    });
+    // Check if it's today
+    const isToday =
+      date.getFullYear() === now.getFullYear() &&
+      date.getMonth() === now.getMonth() &&
+      date.getDate() === now.getDate();
+
+    if (isToday) {
+      // Return time in HH:MM format
+      return date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+
+    // Return month + day
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   }
-  const handleChatClick = () => {
+
+  const handleChatClick = async () => {
+    await timestampLastvisit(
+      user?.id ?? "unknown",
+      selectedChatroom?.id ?? "0"
+    );
     if (ischatPage) {
       console.log(chatList.chatInfo);
       console.log("click");
       setSelectedChatroom(chatList.chatInfo);
     }
+
+    setEvents((prev) =>
+      prev.filter(
+        (event) => event?.Payload.Delivered.room_id !== chatList.chatInfo.id
+      )
+    );
 
     if (chatList.setChatDisplays && chatList.chatDisplays) {
       console.log("here");
@@ -91,21 +129,45 @@ export default function ChatCard(chatList: ChatCardProps) {
       onClick={handleChatClick}
     >
       <Image
-        src={"/golang.webp"}
+        src={chatList.chatInfo.imageUrl ?? "/golang.webp"}
         width={200}
         height={200}
         alt="profile-pic"
         style={{ objectFit: "cover" }}
         className="rounded-full h-12 w-12"
       />
-      <div className="flex-1 flex flex-col mr-4">
+      <div className="flex-1 flex flex-col mr-2">
         <div className="flex flex-row justify-between items-center">
-          <div className="flex flex-row gap-2">
-            <div className="font-bold text-sm tetx-base-400">
+          <div className="flex flex-col gap-0">
+            <div className="font-bold text-sm text-base-400">
               {chatList.chatInfo?.roomName ?? "null"}
             </div>
+            <div className="text-sm text-base-300 truncate w-48">
+              {chatList.chatInfo?.latestMessage ?? ""}
+            </div>
           </div>
-          <div className="text-base-400 text-sm mr-2">{"date 00"}</div>
+          <div className="flex flex-col">
+            <div className="text-base-400 text-xs text-right">
+              {formatDate(chatList.chatInfo.latestMessageTimestamp ?? "")}
+            </div>
+            {selectedChatroom?.id !== chatList.chatInfo.id &&
+              (() => {
+                const unread = events.filter(
+                  (ev) =>
+                    ev?.Payload?.Delivered?.room_id ===
+                    Number(chatList.chatInfo.id)
+                ).length;
+
+                if (unread > 0 || unreadMessages.length > 0) {
+                  return (
+                    <p className="text-sm text-center bg-base-200/60 text-base-300 rounded-lg p-1">
+                      {unread + unreadMessages.length}
+                    </p>
+                  );
+                }
+                return null;
+              })()}
+          </div>
         </div>
       </div>
     </div>
