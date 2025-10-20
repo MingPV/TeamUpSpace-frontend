@@ -46,6 +46,7 @@ interface ChatroomContextType {
   strangerChatroom: Chatroom[];
   setStrangerChatroom: React.Dispatch<React.SetStateAction<Chatroom[]>>;
   addStrangerFriend: (username: string) => Promise<void>;
+  acceptFriend: (id: string) => Promise<void>;
 }
 
 // Create context with default value
@@ -55,7 +56,7 @@ const ChatroomContext = createContext<ChatroomContextType | undefined>(
 
 // Provider component
 export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
-  const { user } = useUser();
+  const { user, acceptFriend } = useUser();
   const [selectedChatroom, setSelectedChatroom] = useState<Chatroom | null>(
     null
   );
@@ -83,6 +84,11 @@ export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
     setStrangerChatroom(res.chatChatrooms);
     setSelectedChatroom(res.friendChatrooms[0]);
     console.log("chatroom", res);
+  };
+
+  const handleAcceptFriend = async (id: string) => {
+    await acceptFriend(id);
+    await refreshFriendChatrooms();
   };
 
   const addStrangerFriend = async (username: string): Promise<void> => {
@@ -139,6 +145,7 @@ export const ChatroomProvider = ({ children }: { children: ReactNode }) => {
         acceptInvite,
         denyInvite,
         addStrangerFriend,
+        acceptFriend: handleAcceptFriend,
       }}
     >
       {children}
