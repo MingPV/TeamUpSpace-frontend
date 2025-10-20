@@ -18,7 +18,7 @@ export default function ChatList({
   searchFriend: string;
 }) {
   const [chatDisplays, setChatDisplays] = useState<Chatroom[]>([]);
-  const { friendChatrooms, groups } = useChatroom();
+  const { friendChatrooms, groups, strangerChatroom } = useChatroom();
   return (
     <>
       {chatDisplays.length > 0 && (
@@ -95,22 +95,20 @@ export default function ChatList({
       )}
 
       <div className="w-full flex flex-col overflow-y-scroll px-2">
-        {selectedTab === "chat" && (
-          <div>
-            <ChatCard
-              chat={"chat1"}
-              chatDisplays={chatDisplays}
-              setChatDisplays={setChatDisplays}
-              chatInfo={{
-                id: "12",
-                roomName: "Chat Test Room",
-                isGroup: true,
-              }}
-            />
-
-            <div className="border-b-[1px] border-b-base-300/50"></div>
-          </div>
-        )}
+        {selectedTab === "chat" &&
+          strangerChatroom
+            ?.filter((friend) => (friend.roomName ?? "").includes(searchFriend))
+            .map((friend, index) => (
+              <div key={index}>
+                <ChatCard
+                  chat={"chat1"}
+                  chatDisplays={undefined}
+                  setChatDisplays={undefined}
+                  chatInfo={friend}
+                />
+                <div className="border-b-[1px] border-b-base-300/50"></div>
+              </div>
+            ))}
       </div>
       <div className="w-full flex flex-col overflow-y-scroll px-2">
         {selectedTab === "friend" &&
