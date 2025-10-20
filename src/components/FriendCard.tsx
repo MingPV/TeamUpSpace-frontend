@@ -62,7 +62,13 @@ export default function FriendCard({ friend }: { friend: Friend }) {
         onClick={handleChatClick}
       >
         <Image
-          src={friend.userInfo.profile.profile_url ?? "/golang.webp"}
+          // src={friend.userInfo.profile.profile_url ?? "/golang.webp"}
+          src={
+            friend.userInfo.profile.profile_url != "" &&
+            friend.userInfo.profile.profile_url
+              ? friend.userInfo.profile.profile_url
+              : "/golang.webp"
+          }
           width={200}
           height={200}
           alt="profile-pic"

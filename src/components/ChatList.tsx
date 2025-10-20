@@ -102,8 +102,8 @@ export default function ChatList({
               <div key={index}>
                 <ChatCard
                   chat={"chat1"}
-                  chatDisplays={undefined}
-                  setChatDisplays={undefined}
+                  chatDisplays={chatDisplays}
+                  setChatDisplays={setChatDisplays}
                   chatInfo={friend}
                 />
                 <div className="border-b-[1px] border-b-base-300/50"></div>

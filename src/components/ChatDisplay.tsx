@@ -256,7 +256,13 @@ export default function ChatDisplay({
                     className="w-full p-2 border-[1px] border-base-300/30 rounded-md flex flex-row items-center gap-3 px-3"
                   >
                     <Image
-                      src={member.profile.profile_url ?? "/golang.webp"}
+                      // src={member.profile.profile_url ?? "/golang.webp"}
+                      src={
+                        member.profile.profile_url != "" &&
+                        member.profile.profile_url
+                          ? member.profile.profile_url
+                          : "/golang.webp"
+                      }
                       width={200}
                       height={200}
                       alt="profile-pic"
@@ -310,7 +316,13 @@ export default function ChatDisplay({
                     className="w-full p-2 border-[1px] border-base-300/30 rounded-md flex flex-row items-center gap-3 px-3"
                   >
                     <Image
-                      src={member.profile.profile_url ?? "/golang.webp"}
+                      // src={member.profile.profile_url ?? "/golang.webp"}
+                      src={
+                        member.profile.profile_url != "" &&
+                        member.profile.profile_url
+                          ? member.profile.profile_url
+                          : "/golang.webp"
+                      }
                       width={200}
                       height={200}
                       alt="profile-pic"
@@ -334,7 +346,13 @@ export default function ChatDisplay({
                     className="w-full p-2 border-[1px] border-base-300/30 rounded-md flex flex-row items-center gap-3 px-3"
                   >
                     <Image
-                      src={invite.invitee.profile_url ?? "/golang.webp"}
+                      // src={invite.invitee.profile_url ?? "/golang.webp"}
+                      src={
+                        invite.invitee.profile_url != "" &&
+                        invite.invitee.profile_url
+                          ? invite.invitee.profile_url
+                          : "/golang.webp"
+                      }
                       width={200}
                       height={200}
                       alt="profile-pic"
@@ -393,8 +411,14 @@ export default function ChatDisplay({
                       className="w-full p-2 border-[1px] border-base-300/30 rounded-md flex flex-row items-center gap-3 px-3"
                     >
                       <Image
+                        // src={
+                        //   friend.userInfo.profile.profile_url ?? "/golang.webp"
+                        // }
                         src={
-                          friend.userInfo.profile.profile_url ?? "/golang.webp"
+                          friend.userInfo.profile.profile_url != "" &&
+                          friend.userInfo.profile.profile_url
+                            ? friend.userInfo.profile.profile_url
+                            : "/golang.webp"
                         }
                         width={200}
                         height={200}

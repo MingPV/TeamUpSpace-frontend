@@ -38,7 +38,7 @@ export default function ChatCard(chatList: ChatCardProps) {
       }
     };
     fetchUnread();
-  }, [user, unreadMessages]);
+  }, [user, chatList]);
 
   function formatDate(dateString?: string): string {
     if (!dateString) return "";
@@ -81,6 +81,10 @@ export default function ChatCard(chatList: ChatCardProps) {
         (event) => event?.Payload.Delivered.room_id !== chatList.chatInfo.id
       )
     );
+
+    console.log("ming");
+    console.log(chatList);
+    console.log(chatList.chatDisplays);
 
     if (chatList.setChatDisplays && chatList.chatDisplays) {
       console.log("here");
@@ -130,7 +134,11 @@ export default function ChatCard(chatList: ChatCardProps) {
       onClick={handleChatClick}
     >
       <Image
-        src={chatList.chatInfo.imageUrl ?? "/golang.webp"}
+        src={
+          chatList.chatInfo.imageUrl != "" && chatList.chatInfo.imageUrl
+            ? chatList.chatInfo.imageUrl
+            : "/golang.webp"
+        }
         width={200}
         height={200}
         alt="profile-pic"
