@@ -38,7 +38,7 @@ export default function ChatCard(chatList: ChatCardProps) {
       }
     };
     fetchUnread();
-  }, [user]);
+  }, [user, unreadMessages]);
 
   function formatDate(dateString?: string): string {
     if (!dateString) return "";
@@ -74,6 +74,7 @@ export default function ChatCard(chatList: ChatCardProps) {
       console.log("click");
       setSelectedChatroom(chatList.chatInfo);
     }
+    console.log("unread fddfsd", unreadMessages);
 
     setEvents((prev) =>
       prev.filter(
