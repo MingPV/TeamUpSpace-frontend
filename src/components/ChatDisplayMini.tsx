@@ -50,6 +50,14 @@ export default function ChatDisplayMini({ chatroom }: { chatroom: Chatroom }) {
   }, [chatroom.id]);
 
   useEffect(() => {
+    setEvents((prev) =>
+      prev.filter(
+        (ev) => ev.Payload.Delivered.room_id.toString() !== chatroom.id
+      )
+    );
+  }, [displayMessages]);
+
+  useEffect(() => {
     if (user) {
       setUserId(user.id);
     }

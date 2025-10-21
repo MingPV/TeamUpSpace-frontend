@@ -38,7 +38,7 @@ export default function ChatCard(chatList: ChatCardProps) {
       }
     };
     fetchUnread();
-  }, [user, chatList]);
+  }, [user]);
 
   function formatDate(dateString?: string): string {
     if (!dateString) return "";
@@ -65,14 +65,32 @@ export default function ChatCard(chatList: ChatCardProps) {
   }
 
   const handleChatClick = async () => {
-    await timestampLastvisit(
-      user?.id ?? "unknown",
-      selectedChatroom?.id ?? "0"
-    );
+    // const res = await timestampLastvisit(
+    //   user?.id ?? "unknown",
+    //   selectedChatroom?.id ?? "0"
+    // );
+    if (ischatPage) {
+      const res = await timestampLastvisit(
+        user?.id ?? "unknown",
+        selectedChatroom?.id ?? "0"
+      );
+      console.log("timestamp last visit response: Chat page", res);
+    } else {
+      const res = await timestampLastvisit(
+        user?.id ?? "unknown",
+        chatList.chatInfo.id ?? "0"
+      );
+      console.log("timestamp last visit response: new mini", res);
+    }
     if (ischatPage) {
       console.log(chatList.chatInfo);
       console.log("click");
       setSelectedChatroom(chatList.chatInfo);
+      const res = await timestampLastvisit(
+        user?.id ?? "unknown",
+        chatList.chatInfo.id ?? "0"
+      );
+      console.log("timestamp last visit response:new Chat page", res);
     }
     console.log("unread fddfsd", unreadMessages);
 
@@ -81,6 +99,7 @@ export default function ChatCard(chatList: ChatCardProps) {
         (event) => event?.Payload.Delivered.room_id !== chatList.chatInfo.id
       )
     );
+    setUnreadMessages([]);
 
     console.log("ming");
     console.log(chatList);
@@ -110,6 +129,12 @@ export default function ChatCard(chatList: ChatCardProps) {
         }
       } else {
         console.log("here5");
+
+        const res = await timestampLastvisit(
+          user?.id ?? "unknown",
+          chatList.chatInfo.id ?? "0"
+        );
+        console.log("timestamp last visit response: new mini", res);
 
         // remove chat from chatDisplays
         const newChatDisplays = chatList.chatDisplays.filter(
@@ -171,6 +196,9 @@ export default function ChatCard(chatList: ChatCardProps) {
                   return (
                     <p className="text-sm text-center bg-base-200/60 text-base-300 rounded-lg p-1">
                       {unread + unreadMessages.length}
+                      {"ming"}
+                      {unread}
+                      {unreadMessages.length}
                     </p>
                   );
                 }
