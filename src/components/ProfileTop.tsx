@@ -6,11 +6,22 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { RxCross2 } from "react-icons/rx";
 import { reportUser } from "@/app/api/report";
 import { useUser } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
 import { IoWarning } from "react-icons/io5";
 import { followUser, getFollowers, unfollowUser } from "@/app/api/user";
 import { UserFollow } from "@/app/types/user";
 import { Post } from "@/app/types/post";
 import { fetchAllPostsByUserID } from "@/app/api/post";
+import {
+  addFriend,
+  getAllFriendRequests,
+  getAllFriendsByUserId,
+  isMyFriend,
+} from "@/app/api/friend";
+import { User } from "@/app/types/user";
+import { FriendStatusButton } from "./FriendStatus";
+import { Friend } from "@/app/types/friend";
+import { useChatroom } from "@/context/ChatroomContext";
 
 export default function ProfileTop({
   user,
@@ -19,7 +30,21 @@ export default function ProfileTop({
   user: any;
   postCount?: number;
 }) {
-  const { user: currentUser } = useUser();
+  const {
+    user: currentUser,
+    denyFriend,
+    acceptFriend,
+    friends,
+    friendRequests,
+  } = useUser();
+  const router = useRouter();
+  const {
+    friendChatrooms,
+    strangerChatroom,
+    setSelectedChatroom,
+    addStrangerFriend,
+    refreshFriendChatrooms,
+  } = useChatroom();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isReportOpen, setIsReportOpen] = React.useState(false);
   const [selectedReportIndex, setSelectedReportIndex] = React.useState(0);
@@ -27,8 +52,11 @@ export default function ProfileTop({
   const [otherReportText, setOtherReportText] = React.useState("");
 
   const [isFollowed, setIsFollowed] = React.useState(false);
+  const [friendStatus, setFriendStatus] = React.useState<string>("");
 
   const [userFollows, setUserFollows] = React.useState<UserFollow[]>([]);
+  const [hisFriends, setHisFriends] = React.useState<Friend[]>([]);
+  const [isAccept, setIsAccept] = React.useState<boolean>(true);
 
   const handleReport = () => {
     if (!user || !currentUser) {
@@ -45,6 +73,42 @@ export default function ProfileTop({
     setReason("");
   };
 
+  const handleSendMessageButton = async () => {
+    console.log("profile user", user);
+    console.log("friendChatrooms", friendChatrooms);
+    console.log("strangerChatroom", strangerChatroom);
+    if (friendStatus === "friend") {
+      const chatroom = friendChatrooms.find(
+        (f) => f.roomName === user.profile.display_name
+      );
+      console.log("chatroom of send message", chatroom);
+      setSelectedChatroom(chatroom ?? null);
+    } else if (friendStatus === "not friend") {
+      console.log("username to add friend", user.username);
+      console.log("have to call addstrangerFriend");
+      await addStrangerFriend(user.username);
+      await refreshFriendChatrooms();
+      const chatroom = strangerChatroom.find(
+        (f) => f.roomName === user.profile.display_name
+      );
+      console.log("chatroom of send message stranger", chatroom);
+      setSelectedChatroom(chatroom ?? null);
+    } else {
+      const chatroom = strangerChatroom.find(
+        (f) => f.roomName === user.profile.display_name
+      );
+      console.log("chatroom of send message", chatroom);
+      setSelectedChatroom(chatroom ?? null);
+    }
+    router.push("/chat");
+  };
+
+  const fetchFriendStatus = async () => {
+    const status = await isMyFriend(currentUser, user.id);
+    setFriendStatus(status.friend.status);
+    console.log("status", status.friend.status);
+  };
+
   useEffect(() => {
     const loadFollowers = async () => {
       if (!user || !user.id) {
@@ -55,10 +119,18 @@ export default function ProfileTop({
       console.log("followers", res);
       if (currentUser) {
         setIsFollowed(res.some((f: UserFollow) => f.userId === currentUser.id));
+        fetchFriendStatus();
       }
     };
 
+    const loadFriends = async () => {
+      const res = await getAllFriendsByUserId(user);
+      setHisFriends(res);
+      console.log("his friends", res);
+    };
+
     loadFollowers();
+    loadFriends();
   }, [currentUser, user]);
 
   const handleFollow = () => {
@@ -262,7 +334,7 @@ export default function ProfileTop({
                   )}
                 </div>
                 <div className="text-lg text-base-400 font-bold">
-                  47 friends
+                  {hisFriends.length} friends
                 </div>
                 <div className="text-lg text-base-400 font-bold">
                   {userFollows.length} followers
@@ -359,9 +431,21 @@ export default function ProfileTop({
                   >
                     Get Resume {user?.profile?.resume ? "" : "(not set)"}
                   </a>
-                  <div className="px-4 py-1 text-amber-800/90 font-bold rounded-full border-[1px] border-amber-800/90 hover:bg-amber-800/20 cursor-pointer">
-                    Add Friend
-                  </div>
+                  {user && currentUser && (
+                    <FriendStatusButton
+                      friendStatus={friendStatus}
+                      user={user}
+                      currentUser={currentUser}
+                      friends={friends}
+                      friendRequests={friendRequests}
+                      fetchFriendStatus={fetchFriendStatus}
+                      deleteFriend={denyFriend}
+                      acceptFriend={acceptFriend}
+                      addFriend={addFriend}
+                      getAllFriendRequests={getAllFriendRequests}
+                    />
+                  )}
+
                   <div
                     className={`px-4 py-1 text-amber-800/90 font-bold rounded-full border-[1px] border-amber-800/90 
                       cursor-pointer hover:bg-amber-800/20
@@ -380,61 +464,53 @@ export default function ProfileTop({
                       </div>
                     )}
                   </div>
-                  <div className="px-4 py-1 text-base-400 font-bold rounded-full border-[1px] border-base-300 hover:bg-black/10 cursor-pointer">
+                  <button
+                    onClick={handleSendMessageButton}
+                    className="px-4 py-1 text-base-400 font-bold rounded-full border-[1px] border-base-300 hover:bg-black/10 cursor-pointer"
+                  >
                     Send Message
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
             <div className="w-full flex mt-4 ">
               <div className="w-fit flex flex-col gap-2 border-[1px] border-base-200 rounded-md py-2 px-4">
                 <div className="ml-2 mt-2 flex flex-row justify-between items-center">
-                  <div className="font-bold">Friend (47 friends)</div>
+                  <div className="font-bold">
+                    Friend ({hisFriends.length} friends)
+                  </div>
                   <div className="font-bold hover:underline underline-offset-2 text-base-400 text-sm mr-2 cursor-pointer">
                     View all
                   </div>
                 </div>
 
                 <div className="flex flex-row flex-wrap gap-2">
-                  <div className="flex flex-col gap-1 items-center hover:bg-black/10 rounded-md cursor-pointer p-1">
-                    <Image
-                      src={user?.profile?.profile_url || "/golang.webp"}
-                      width={120}
-                      height={120}
-                      alt="profile-pic"
-                      style={{ objectFit: "cover" }}
-                      className="rounded-md h-[120px] w-[120px]"
-                    />
-                    <div className="text-xs font-bold text-base-400">
-                      Example friend name
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1 items-center hover:bg-black/10 rounded-md cursor-pointer p-1">
-                    <Image
-                      src={user?.profile?.profile_url || "/golang.webp"}
-                      width={120}
-                      height={120}
-                      alt="profile-pic"
-                      style={{ objectFit: "cover" }}
-                      className="rounded-md h-[120px] w-[120px]"
-                    />
-                    <div className="text-xs font-bold text-base-400">
-                      Example friend name
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1 items-center hover:bg-black/10 rounded-md cursor-pointer p-1">
-                    <Image
-                      src={user?.profile?.profile_url || "/golang.webp"}
-                      width={120}
-                      height={120}
-                      alt="profile-pic"
-                      style={{ objectFit: "cover" }}
-                      className="rounded-md h-[120px] w-[120px]"
-                    />
-                    <div className="text-xs font-bold text-base-400">
-                      Example friend name
-                    </div>
-                  </div>
+                  {hisFriends ? (
+                    hisFriends.map((friend) => (
+                      <div
+                        key={friend.id}
+                        className="flex flex-col gap-1 items-center hover:bg-black/10 rounded-md cursor-pointer p-1"
+                      >
+                        <Image
+                          src={
+                            friend.userInfo.profile.profile_url ||
+                            "/golang.webp"
+                          }
+                          width={120}
+                          height={120}
+                          alt="profile-pic"
+                          style={{ objectFit: "cover" }}
+                          className="rounded-md h-[120px] w-[120px]"
+                        />
+                        <div className="text-xs font-bold text-base-400">
+                          {friend.userInfo.profile.display_name ||
+                            "Example friend name"}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p>This user has no friends</p>
+                  )}
                 </div>
               </div>
             </div>

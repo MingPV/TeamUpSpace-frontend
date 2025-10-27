@@ -3,12 +3,14 @@ import Image from "next/image";
 import { FriendRequest } from "@/app/types/friend";
 import { useUser } from "@/context/UserContext";
 import { acceptFriendRequest, deleteFriend } from "@/app/api/friend";
+import { useChatroom } from "@/context/ChatroomContext";
 export default function FriendRequestCard({
   friendRequest,
 }: {
   friendRequest: FriendRequest;
 }) {
-  const { acceptFriend, denyFriend } = useUser();
+  const { denyFriend } = useUser();
+  const { acceptFriend } = useChatroom();
   const handleAcceptFriend = async () => {
     try {
       await acceptFriend(friendRequest.id);

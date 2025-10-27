@@ -111,37 +111,40 @@ export default function FriendPage() {
                 </div>
               </div>
             </div>
-            <div className="h-full">
-              <div
-                className={`w-full flex flex-col overflow-y-scroll px-2 ${
-                  selectedTab == "friend" ? "h-full" : "hidden"
-                }`}
-              >
-                {selectedTab == "friend" &&
-                  friends
-                    .filter((friend) =>
-                      friend.userInfo.profile.display_name?.includes(
-                        searchFriend
-                      )
-                    )
-                    .map((friend) => (
-                      <div key={friend.userInfo.username}>
-                        <FriendCard friend={friend} />
-                        <div className="border-b-[1px] border-b-base-300/50"></div>
-                      </div>
-                    ))}
-              </div>
-              <div className="w-full flex flex-col overflow-y-scroll px-2  h-full">
-                {selectedTab == "group" &&
-                  groups
-                    .filter((group) => group.roomName.includes(searchFriend))
-                    .map((group) => (
-                      <div key={group.roomName}>
-                        <GroupCard group={group} />
-                        <div className="border-b-[1px] border-b-base-300/50"></div>
-                      </div>
-                    ))}
-              </div>
+
+            <div
+              className={`w-full flex flex-col overflow-y-scroll px-2 ${
+                selectedTab == "friend" ? "h-full" : "hidden"
+              }`}
+            >
+              {selectedTab == "friend" &&
+                friends
+                  .filter((friend) =>
+                    friend.userInfo.profile.display_name?.includes(searchFriend)
+                  )
+                  .map((friend) => (
+                    <div key={friend.userInfo.username}>
+                      <FriendCard friend={friend} />
+                      <div className="border-b-[1px] border-b-base-300/50"></div>
+                    </div>
+                  ))}
+            </div>
+            <div
+              className={`w-full flex flex-col overflow-y-scroll px-2 ${
+                selectedTab == "group" ? "h-full" : "hidden"
+              }`}
+            >
+              {selectedTab == "group" &&
+                groups
+                  .filter((group) =>
+                    (group.roomName ?? "").includes(searchFriend)
+                  )
+                  .map((group, index) => (
+                    <div key={group.id}>
+                      <GroupCard group={group} />
+                      <div className="border-b-[1px] border-b-base-300/50"></div>
+                    </div>
+                  ))}
             </div>
           </div>
           {isAddFriendOpen ? (

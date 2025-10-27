@@ -13,5 +13,5 @@ export interface FriendRequest {
   friendId: string;
   friendUsername: string;
   mutualFriendCount?: number;
-  createdAt: string;
+  createdAt?: string;
 }

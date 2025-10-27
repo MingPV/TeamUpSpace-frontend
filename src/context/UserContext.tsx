@@ -13,7 +13,10 @@ import {
   deleteFriend,
   getAllFriendRequests,
   getAllFriendsByUserId,
+  getRecommendedFriend,
+  addFriend,
 } from "@/app/api/friend";
+import { useChatroom } from "./ChatroomContext";
 
 type UserContextType = {
   user: User | undefined;
@@ -23,8 +26,12 @@ type UserContextType = {
   //friend
   friends: Friend[];
   acceptFriend: (id: string) => Promise<void>;
-  denyFriend: (id: string) => Promise<void>;
+  denyFriend: (friend: string) => Promise<void>;
   friendRequests: FriendRequest[];
+
+  recommemdFriends: Friend[];
+  setRecommendFriends: React.Dispatch<React.SetStateAction<Friend[]>>;
+  addFriendFromRecommend: (username: string) => Promise<void>;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -33,6 +40,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User>();
   const [friends, setFriends] = useState<Friend[]>([]);
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
+  const [recommemdFriends, setRecommendFriends] = useState<Friend[]>([]);
 
   const logout = () => {
     setUser(undefined);
@@ -42,7 +50,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const refreshFriends = async (): Promise<void> => {
     const res = await getAllFriendsByUserId(user);
     setFriends(res);
-    console.log("friends", res);
   };
 
   const acceptFriend = async (id: string): Promise<void> => {
@@ -52,7 +59,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   };
 
   const denyFriend = async (id: string): Promise<void> => {
-    await deleteFriend(id);
+    await deleteFriend(id, friends);
     refreshFriends();
     refreshFriendRequests();
   };
@@ -60,13 +67,24 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const refreshFriendRequests = async (): Promise<void> => {
     const res = await getAllFriendRequests(user);
     setFriendRequests(res);
-    console.log("friend request", res);
   };
 
+  const refreshRecommendFriends = async (): Promise<void> => {
+    const res = await getRecommendedFriend(user);
+    setRecommendFriends(res);
+  };
+
+  const addFriendFromRecommend = async (username: string): Promise<void> => {
+    await addFriend(username, user?.id ?? "Unkown User");
+    refreshRecommendFriends();
+  };
+
+  // const addFriends =
   useEffect(() => {
     if (user?.id) {
       refreshFriends();
       refreshFriendRequests();
+      refreshRecommendFriends();
     }
   }, [user?.id]);
 
@@ -80,6 +98,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
         acceptFriend,
         denyFriend,
         friendRequests,
+        recommemdFriends,
+        setRecommendFriends,
+        addFriendFromRecommend,
       }}
     >
       {children}
