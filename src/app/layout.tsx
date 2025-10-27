@@ -33,8 +33,11 @@ export default function RootLayout({
       >
         <UserProvider>
           <ChatroomProvider>
-            <Navbar />
-            {children}
+            <ChatProvider>
+              {/* <GlobalTracker /> */}
+              <Navbar />
+              {children}
+            </ChatProvider>
           </ChatroomProvider>
         </UserProvider>
       </body>

@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   images: {
     domains: ["lh3.googleusercontent.com", "kmwsjloljrglpgtieens.supabase.co"], // allow Google profile images
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;

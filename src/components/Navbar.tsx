@@ -101,7 +101,13 @@ export default function Navbar() {
         <div className="flex gap-2 items-center px-2 ">
           <div
             className="p-2 font-bold text-base-400 rounded-md cursor-pointer"
-            onClick={() => router.push("/admin-manage")}
+            onClick={() => {
+              if (user?.is_admin) {
+                router.push("/admin-manage");
+              } else {
+                router.push("/");
+              }
+            }}
           >
             TeamUp-Space
           </div>
@@ -115,16 +121,16 @@ export default function Navbar() {
           </div>
         </div>
         <div className="flex flex-row justify-center items-center">
-          <div
-            className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
-            onClick={() => router.push("/admin-manage")}
-          >
-            <IoHomeSharp className="text-xl " />
-            {/* make this text can't select */}
-            <div className="text-sm select-none">Home</div>
-          </div>
           {user?.is_admin ? (
             <>
+              <div
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
+                onClick={() => router.push("/admin-manage")}
+              >
+                <IoHomeSharp className="text-xl " />
+                {/* make this text can't select */}
+                <div className="text-sm select-none">Home</div>
+              </div>
               <div
                 className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
                 onClick={() => router.push("/admin-manage/report")}
@@ -184,6 +190,14 @@ export default function Navbar() {
             </>
           ) : (
             <>
+              <div
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
+                onClick={() => router.push("/")}
+              >
+                <IoHomeSharp className="text-xl " />
+                {/* make this text can't select */}
+                <div className="text-sm select-none">Home</div>
+              </div>
               <div
                 className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
                 onClick={() => router.push("/friend-group")}

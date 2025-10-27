@@ -234,7 +234,7 @@ export default function ProfileTop({
       <div className="w-full flex flex-col items-center gap-2">
         <div className="flex flex-col w-full rounded-lg bg-white">
           <Image
-            src={"/golang.webp"}
+            src={user?.profile?.background_url || "/golang.webp"}
             width={300}
             height={300}
             alt="bg-profile-pic"
