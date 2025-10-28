@@ -8,11 +8,13 @@ import IncomingEventCard from "./IncomingEventCard";
 import { fetchAllEvents } from "@/app/api/event";
 import { Event } from "@/app/types/event";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/context/UserContext";
 
 export default function HomeRight() {
   const [inCommingEvents, setIncomingEvents] = useState<Event[]>([]);
 
   const router = useRouter();
+  const { recommemdFriends } = useUser();
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -33,9 +35,14 @@ export default function HomeRight() {
             <div className="font-bold">Recommended for you</div>
             <BsFillInfoSquareFill className="text-xs" />
           </div>
-          <RecommendedFriendCard />
-          <RecommendedFriendCard />
-          <div className="my-1 flex gap-2 items-center cursor-pointer py-1 px-2 hover:bg-black/10 rounded-lg w-fit transition-all duration-300">
+          {/* for loop only first 2 of recommemdFriends */}
+          {recommemdFriends?.slice(0, 2).map((friend, index) => (
+            <RecommendedFriendCard key={index} friend={friend} />
+          ))}
+          <div
+            className="my-1 flex gap-2 items-center cursor-pointer py-1 px-2 hover:bg-black/10 rounded-lg w-fit transition-all duration-300"
+            onClick={() => router.push("/recommended")}
+          >
             <div className="text-sm text-base-400 font-bold">
               View all recommendations
             </div>

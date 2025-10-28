@@ -353,7 +353,7 @@ export default function PostCreateBox({
           />
           <div className="flex flex-col">
             <div className="font-bold text-2xl">
-              {user?.profile.display_name}
+              {user?.profile?.display_name}
             </div>
             <div className="text-sm">Post to Anyone</div>
           </div>

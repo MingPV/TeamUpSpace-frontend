@@ -227,9 +227,9 @@ export default function Navbar() {
                     setIsNotificationOpen(false);
                   }}
                 >
-                  <div className="absolute -top-1 -right-2 bg-amber-800 text-white font-bold rounded-full h-5 w-5 flex items-center justify-center text-xs">
+                  {/* <div className="absolute -top-1 -right-2 bg-amber-800 text-white font-bold rounded-full h-5 w-5 flex items-center justify-center text-xs">
                     1
-                  </div>
+                  </div> */}
                   <BsChatDotsFill className="text-xl " />
                   {/* <div className="text-sm select-none">Messages</div> */}
                 </div>
@@ -272,7 +272,7 @@ export default function Navbar() {
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
                   <Image
-                    src={user.profile.profile_url || "/golang.webp"}
+                    src={user?.profile?.profile_url || "/golang.webp"}
                     width={100}
                     height={100}
                     alt="profile-pic"

@@ -3,9 +3,43 @@ import Image from "next/image";
 import { Friend } from "@/app/types/friend";
 import { addFriend } from "@/app/api/friend";
 import { useUser } from "@/context/UserContext";
+import { UserFollow } from "@/app/types/user";
+import {
+  followUser,
+  getFollowers,
+  getFollowing,
+  unfollowUser,
+} from "@/app/api/user";
 
 export default function RecommendedFriendCard2({ friend }: { friend: Friend }) {
   const { user, addFriendFromRecommend } = useUser();
+
+  const [isFollowed, setIsFollowed] = React.useState<boolean>(false);
+  const [userFollowings, setUserFollowings] = React.useState<UserFollow[]>([]);
+  const handleFollow = () => {
+    if (!user) return;
+    if (isFollowed) {
+      // if already follow, do unfollow
+      unfollowUser(user.id, friend.userInfo.id);
+      setUserFollowings(
+        userFollowings.filter((f) => f.userId !== friend.userInfo.id)
+      );
+      setIsFollowed(false);
+    } else {
+      // if already follow, do nothing
+      if (userFollowings.find((f) => f.followTo === friend.userInfo.id)) return;
+      followUser(user.id, friend.userInfo.id);
+      setUserFollowings([
+        ...userFollowings,
+        {
+          userId: user.id,
+          followTo: friend.userInfo.id,
+          createdAt: new Date().toISOString(),
+        },
+      ]);
+      setIsFollowed(true);
+    }
+  };
 
   const handleClickAddFriend = async () => {
     if (user) {
@@ -13,6 +47,28 @@ export default function RecommendedFriendCard2({ friend }: { friend: Friend }) {
       console.log("here");
     }
   };
+
+  useEffect(() => {
+    const loadFollowers = async () => {
+      if (!user || !user.id) {
+        return;
+      }
+      const res = await getFollowing(user.id);
+      setUserFollowings(res);
+      console.log("followers", res);
+      if (friend) {
+        setIsFollowed(
+          res.some(
+            (f: UserFollow) =>
+              f.userId === user.id && f.followTo === friend.userInfo.id
+          )
+        );
+      }
+    };
+
+    loadFollowers();
+  }, [friend, user]);
+
   return (
     <div className="flex gap-4">
       <Image
@@ -32,11 +88,25 @@ export default function RecommendedFriendCard2({ friend }: { friend: Friend }) {
           {friend.mutualFriends} mutual friend(s)
         </div>
         <div className="flex flex-row gap-2">
-          <div className="px-4 py-1 border border-base-300 rounded-full w-fit h-fit mt-2  cursor-pointer hover:bg-black/10 hover:border-base-400">
-            <div className="flex flex-row gap-2 justify-center items-center font-bold text-base-400">
+          <div
+            className="px-4 py-1 border border-base-300 rounded-full w-fit h-fit mt-2  cursor-pointer hover:bg-black/10 hover:border-base-400"
+            onClick={handleFollow}
+          >
+            {/* <div className="flex flex-row gap-2 justify-center items-center font-bold text-base-400">
               <div>+</div>
               <div>Follow</div>
-            </div>
+            </div> */}
+            {isFollowed ? (
+              <div className="flex flex-row gap-2 justify-center items-center font-bold">
+                <div>✓</div>
+                <div>Following</div>
+              </div>
+            ) : (
+              <div className="flex flex-row gap-2 justify-center items-center font-bold">
+                <div>+</div>
+                <div>Follow</div>
+              </div>
+            )}
           </div>
           <div className="px-4 py-1 rounded-full w-fit h-fit mt-2  cursor-pointer bg-base-200 hover:bg-base-300">
             <div className="flex flex-row gap-2 justify-center items-center font-bold text-base-400">
