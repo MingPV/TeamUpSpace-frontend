@@ -52,10 +52,11 @@ export default function ChatDisplayMini({ chatroom }: { chatroom: Chatroom }) {
   useEffect(() => {
     setEvents((prev) =>
       prev.filter(
-        (ev) => ev.Payload.Delivered.room_id.toString() !== chatroom.id
+        (ev) =>
+          ev.Payload.Delivered.room_id.toString() !== chatroom.id.toString()
       )
     );
-  }, [displayMessages]);
+  }, [chatroom.id, displayMessages, setEvents]);
 
   useEffect(() => {
     if (user) {
@@ -86,16 +87,22 @@ export default function ChatDisplayMini({ chatroom }: { chatroom: Chatroom }) {
   //   }
   // }, [events]);
   useEffect(() => {
+    console.log("events changed in mini chat");
     if (events.length > 0) {
+      console.log("checking last event for mini chat");
       const last = events[events.length - 1];
-      if (last.Payload.Delivered.room_id.toString() !== chatroom.id) return;
+      console.log("last event:", last);
+      console.log("chatroom id:", chatroom.id);
+      if (last.Payload.Delivered.room_id.toString() !== chatroom.id.toString())
+        return;
+      console.log("last event is for this chatroom mini");
       const msg = mapPayloadToMessage(last);
       console.log(events);
       if (msg) {
         setDisplayMessages((prev) => [...prev, msg]);
       }
     }
-  }, [events]);
+  }, [chatroom.id, events]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

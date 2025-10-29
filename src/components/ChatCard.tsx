@@ -107,7 +107,14 @@ export default function ChatCard(chatList: ChatCardProps) {
 
     if (chatList.setChatDisplays && chatList.chatDisplays) {
       console.log("here");
-      if (!chatList.chatDisplays.includes(chatList.chatInfo)) {
+      // if (!chatList.chatDisplays.includes(chatList.chatInfo)) {
+      let exists = false;
+      chatList.chatDisplays.forEach((chatDisplay) => {
+        if (chatDisplay.id === chatList.chatInfo.id) {
+          exists = true;
+        }
+      });
+      if (exists === false) {
         console.log("here2");
         let newChatDisplays: Chatroom[] = [];
         // check that chatDisplays can contain only 3 Chat
@@ -137,8 +144,11 @@ export default function ChatCard(chatList: ChatCardProps) {
         console.log("timestamp last visit response: new mini", res);
 
         // remove chat from chatDisplays
+        // const newChatDisplays = chatList.chatDisplays.filter(
+        //   (c) => c !== chatList.chatInfo
+        // );
         const newChatDisplays = chatList.chatDisplays.filter(
-          (c) => c !== chatList.chatInfo
+          (c) => c.id !== chatList.chatInfo.id
         );
         chatList.setChatDisplays(newChatDisplays);
       }
