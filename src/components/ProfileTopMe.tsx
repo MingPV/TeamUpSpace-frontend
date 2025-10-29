@@ -10,6 +10,7 @@ import { UNIVERSITYS } from "@/constants/universitys";
 import { getFollowers, updateUserProfile } from "@/app/api/user";
 import { Friend } from "@/app/types/friend";
 import { getAllFriendsByUserId } from "@/app/api/friend";
+import { useRouter } from "next/navigation";
 
 export default function ProfileTopMe({
   user,
@@ -53,6 +54,8 @@ export default function ProfileTopMe({
   const [previewResumeUrl, setPreviewResumeUrl] = useState<string | null>(null);
 
   const [fileUploadError, setFileUploadError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   const [filteredUniversitys, setFilteredUniversitys] =
     useState<string[]>(UNIVERSITYS);
@@ -324,7 +327,7 @@ export default function ProfileTopMe({
               ) : profile?.university ? (
                 <div className="flex flex-row gap-1 items-center relative top-1 mt-2">
                   <Image
-                    src={"/golang.webp"}
+                    src={"/U.jpg"}
                     width={50}
                     height={50}
                     alt="profile-pic"
@@ -420,7 +423,10 @@ export default function ProfileTopMe({
                 >
                   Get Resume {profile?.resume ? "" : "(not set)"}
                 </a>
-                <div className="px-4 py-1 text-amber-800/90 font-bold rounded-full border-[1px] border-amber-800/90 hover:bg-amber-800/20 cursor-pointer">
+                <div
+                  className="px-4 py-1 text-amber-800/90 font-bold rounded-full border-[1px] border-amber-800/90 hover:bg-amber-800/20 cursor-pointer"
+                  onClick={() => router.push("/request")}
+                >
                   Check Team Requests
                 </div>
               </div>
@@ -510,6 +516,9 @@ export default function ProfileTopMe({
                     <div
                       key={friend.id}
                       className="flex flex-col gap-1 items-center hover:bg-black/10 rounded-md cursor-pointer p-1"
+                      onClick={() => {
+                        router.push(`/profile/${friend.userInfo.username}`);
+                      }}
                     >
                       <Image
                         src={

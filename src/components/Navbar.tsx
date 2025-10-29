@@ -111,11 +111,12 @@ export default function Navbar() {
           >
             TeamUp-Space
           </div>
-          <div className="hidden sm:flex gap-2 px-2 w-72 border border-base-300 rounded-full py-1.5 items-center">
+          <div className="hidden sm:flex gap-2 px-2 w-72 border border-base-300 rounded-full py-1.5 items-center opacity-0 cursor-none">
             <IoMdSearch />
             <input
               type="text"
               placeholder="Search"
+              disabled
               className="bg-transparent focus:outline-none w-full text-sm"
             />
           </div>
@@ -214,7 +215,7 @@ export default function Navbar() {
               </div>
               <div
                 className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
-                onClick={() => router.push("/event")}
+                onClick={() => router.push("/request")}
               >
                 <MdLocalPostOffice className="text-xl" />
                 <div className="text-sm select-none">Team Request</div>

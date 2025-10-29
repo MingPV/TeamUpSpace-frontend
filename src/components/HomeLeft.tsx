@@ -129,7 +129,7 @@ export default function HomeLeft() {
             {user?.profile?.university ? (
               <div className="flex flex-row gap-1 items-center relative top-1">
                 <Image
-                  src={"/golang.webp"}
+                  src={"/U.jpg"}
                   width={16}
                   height={16}
                   alt="profile-pic"

@@ -6,12 +6,14 @@ import { Friend } from "@/app/types/friend";
 import { useUser } from "@/context/UserContext";
 import { UserFollow } from "@/app/types/user";
 import { followUser, getFollowing, unfollowUser } from "@/app/api/user";
+import { useRouter } from "next/navigation";
 
 export default function RecommendedFriendCard({ friend }: { friend?: Friend }) {
   const { user } = useUser();
 
   const [isFollowed, setIsFollowed] = React.useState<boolean>(false);
   const [userFollowings, setUserFollowings] = React.useState<UserFollow[]>([]);
+  const router = useRouter();
   const handleFollow = () => {
     if (!user) return;
     if (!friend) return;
@@ -68,9 +70,21 @@ export default function RecommendedFriendCard({ friend }: { friend?: Friend }) {
         alt="profile-pic"
         style={{ objectFit: "cover" }}
         className="rounded-full h-14 w-14 hover:opacity-80 cursor-pointer"
+        onClick={() => {
+          if (friend) {
+            router.push(`/profile/${friend.userInfo.username}`);
+          }
+        }}
       />
       <div className="flex flex-1 flex-col">
-        <div className="font-bold hover:underline underline-offset-2 cursor-pointer">
+        <div
+          className="font-bold hover:underline underline-offset-2 cursor-pointer"
+          onClick={() => {
+            if (friend) {
+              router.push(`/profile/${friend.userInfo.username}`);
+            }
+          }}
+        >
           {friend?.userInfo?.profile?.display_name || "Example Name"}
         </div>
         <div className="text-xs">{friend?.userInfo?.profile?.major}</div>

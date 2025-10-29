@@ -10,9 +10,12 @@ import {
   getFollowing,
   unfollowUser,
 } from "@/app/api/user";
+import { useRouter } from "next/navigation";
 
 export default function RecommendedFriendCard2({ friend }: { friend: Friend }) {
   const { user, addFriendFromRecommend } = useUser();
+
+  const router = useRouter();
 
   const [isFollowed, setIsFollowed] = React.useState<boolean>(false);
   const [userFollowings, setUserFollowings] = React.useState<UserFollow[]>([]);
@@ -72,15 +75,27 @@ export default function RecommendedFriendCard2({ friend }: { friend: Friend }) {
   return (
     <div className="flex gap-4">
       <Image
-        src={"/golang.webp"}
+        src={friend?.userInfo?.profile?.profile_url || "/golang.webp"}
         width={100}
         height={100}
         alt="profile-pic"
         style={{ objectFit: "cover" }}
         className="rounded-full h-14 w-14 hover:opacity-80 cursor-pointer"
+        onClick={() => {
+          if (friend) {
+            router.push(`/profile/${friend.userInfo.username}`);
+          }
+        }}
       />
       <div className="flex flex-1 flex-col">
-        <div className="font-bold hover:underline underline-offset-2 cursor-pointer">
+        <div
+          className="font-bold hover:underline underline-offset-2 cursor-pointer"
+          onClick={() => {
+            if (friend) {
+              router.push(`/profile/${friend.userInfo.username}`);
+            }
+          }}
+        >
           {friend.userInfo.profile.display_name}
         </div>
         <div className="text-xs">{friend.userInfo.profile.university}</div>

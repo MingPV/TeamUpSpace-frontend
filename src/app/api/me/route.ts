@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const token = req.cookies.get("token")?.value; // <-- this works for HttpOnly cookies
-  console.log("Token:", token);
 
   if (!token) {
     return NextResponse.json({ error: "No token" }, { status: 401 });

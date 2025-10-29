@@ -402,7 +402,7 @@ export default function ProfileTop({
                 {user?.profile?.university ? (
                   <div className="flex flex-row gap-1 items-center relative top-1">
                     <Image
-                      src={"/golang.webp"}
+                      src={"/U.jpg"}
                       width={50}
                       height={50}
                       alt="profile-pic"
@@ -490,6 +490,9 @@ export default function ProfileTop({
                       <div
                         key={friend.id}
                         className="flex flex-col gap-1 items-center hover:bg-black/10 rounded-md cursor-pointer p-1"
+                        onClick={() =>
+                          router.push(`/profile/${friend.userInfo.username}`)
+                        }
                       >
                         <Image
                           src={
