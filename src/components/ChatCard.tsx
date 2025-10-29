@@ -196,9 +196,6 @@ export default function ChatCard(chatList: ChatCardProps) {
                   return (
                     <p className="text-sm text-center bg-base-200/60 text-base-300 rounded-lg p-1">
                       {unread + unreadMessages.length}
-                      {"ming"}
-                      {unread}
-                      {unreadMessages.length}
                     </p>
                   );
                 }
