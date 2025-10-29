@@ -186,7 +186,19 @@ export async function fetchAnswerByPostId(postId: number) {
 
 export async function fetchAnswerByUserId(userId: string) {
   const res = await fetchApi(`/api/v1/answers/user/${userId}`);
-  return res.answers;
+
+  const answers = res.answers;
+  // let allAnswers: Answer[] = [];
+  for (const answer of answers) {
+    const post = await fetchPostByID(answer.postId.toString());
+    const postEvent = (await fetchEventByID(post.eventId)) as Event;
+    if (!postEvent) continue;
+    // add post detail to each answer
+    (answer as Answer).event_name = postEvent.eventName;
+    // allAnswers.push(answer);
+  }
+
+  return answers;
 }
 
 export async function fetchAnswersByPostOnwerId(userId: string) {

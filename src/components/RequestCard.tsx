@@ -8,6 +8,8 @@ import { Answer, TeamRequest } from "@/app/types/answer";
 import { User } from "@/app/types/user";
 import { getUserById } from "@/app/api/auth";
 import { deleteAnswerByPostIdAndUserId } from "@/app/api/post";
+import { createNotification } from "@/app/api/notification";
+import { useUser } from "@/context/UserContext";
 
 export default function RequestCard({
   request,
@@ -23,6 +25,8 @@ export default function RequestCard({
   const [requester, setRequester] = useState<User>();
   const [isDeleted, setIsDeleted] = useState(false);
 
+  const { user } = useUser();
+
   useEffect(() => {
     const loadRequester = async () => {
       if (!request.answers[0]) return;
@@ -36,12 +40,21 @@ export default function RequestCard({
   console.log("Rendering RequestCard with request:", request);
 
   const handleAccept = () => {
+    if (!user) return;
     deleteAnswerByPostIdAndUserId(
       request.answers[0].postId,
       request.answers[0].userId
     ).then(() => {
       console.log("Request accepted and removed from the list");
       // Optionally, you can add logic to remove the request from the UI
+    });
+
+    createNotification(
+      request.answers[0].userId,
+      `Your request for ${request.event_name} has been accepted. Please contact ${user.username} to proceed.`,
+      "team_reuqest"
+    ).then(() => {
+      console.log("Notification created for accepted request");
     });
     setIsDeleted(true);
     setIsOpen(false);

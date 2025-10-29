@@ -15,3 +15,18 @@ export async function markNotificationAsRead(userID: string) {
     body: JSON.stringify({}),
   });
 }
+
+export async function createNotification(
+  send_to: string,
+  message: string,
+  type: string
+) {
+  return fetchApi("/api/v1/notifications", {
+    method: "POST",
+    body: JSON.stringify({
+      send_to: send_to,
+      type: type,
+      message: message,
+    }),
+  });
+}

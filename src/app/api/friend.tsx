@@ -50,6 +50,12 @@ export async function addFriend(username: string, userId: string) {
     isFriend.friend.status === "not friend" ||
     isFriend.friend.status === "meet"
   ) {
+    // delete old record if exist
+    if (isFriend.friend.status === "meet") {
+      await fetchApi(`${BASE_URL}/friends/${isFriend.friend.id}`, {
+        method: "DELETE",
+      });
+    }
     return await fetchApi(`${BASE_URL}/friends`, {
       method: "POST",
       body: JSON.stringify({
@@ -229,3 +235,14 @@ export async function createFriendToSendMessage(user: any, username: string) {
 
   return;
 }
+
+// export async function getFriendsByUserID(userId: string) {
+//   const res = await fetchApi(`${BASE_URL}/friends/user/${userId}`, {
+//     method: "GET",
+//   });
+
+//   // filter out res.friends that status is meet
+//   const filteredFriends = res.friends.filter((f: Friend) => f. !== "meet");
+
+//   return res.friends as Friend[];
+// }

@@ -644,7 +644,7 @@ export default function PostBox({ post }: PostProps) {
           <div className="flex-1 border-b border-base-300 my-1"></div>
           <div
             className={`grid ${
-              post.eventId != 0 ? "grid-cols-5" : "grid-cols-3"
+              post.eventId != 0 ? "grid-cols-4" : "grid-cols-2"
             } select-none`}
           >
             <div
@@ -670,14 +670,14 @@ export default function PostBox({ post }: PostProps) {
                 Comment
               </div>
             </div>
-            <div
+            {/* <div
               className={`flex justify-center items-center font-bold text-base-400 text-xs md:text-sm cursor-pointer hover:bg-base-300/20 rounded-md py-2`}
             >
               <div className="flex gap-1">
                 <IoIosSend className="text-xl" />
                 Send
               </div>
-            </div>
+            </div> */}
             {post.eventId != 0 && (
               <div
                 className={`flex justify-center items-center font-bold text-base-400 text-xs md:text-sm ${

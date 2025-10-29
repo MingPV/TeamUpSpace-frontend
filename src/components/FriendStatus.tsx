@@ -70,6 +70,8 @@ export const FriendStatusButton = ({
         case "meet": {
           if (!action || action === "send") {
             await addFriend(user.username, currentUser.id);
+            buttonText = "Pending";
+            dropdownOptions = [{ label: "Un Request", action: "unrequest" }];
           }
           break;
         }
