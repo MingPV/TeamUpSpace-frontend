@@ -185,7 +185,7 @@ export default function Home() {
               </div>
             ))}
             <div
-              className="border-[1px] border-base-300 rounded-full px-2 py-1 text-sm font-bold text-base-400 cursor-pointer hover:bg-black/10 select-none"
+              className="border-[1px] border-base-300 rounded-full px-2 py-1 text-sm font-bold text-base-400 dark:text-base-100 cursor-pointer hover:bg-black/10 select-none"
               onClick={() => setIsFilterOpen(!isFilterOpen)}
             >
               + Filter by
@@ -194,8 +194,8 @@ export default function Home() {
           {/* Filter*/}
           {isFilterOpen && (
             <>
-              <div className="flex flex-col gap-2 mb-4 mt-2 bg-white px-2 py-3 pl-6 rounded-lg">
-                <div className="text-xl font-rollingStone text-amber-900 ml-1">
+              <div className="flex flex-col gap-2 mb-4 mt-2 bg-white dark:bg-base-400 px-2 py-3 pl-6 rounded-lg">
+                <div className="text-xl font-rollingStone text-amber-900 dark:text-amber-800 ml-1">
                   Select filters
                 </div>
                 <div className="flex flex-row gap-2">
@@ -203,7 +203,7 @@ export default function Home() {
                     {tags.map((tag, index) =>
                       tag.id ? (
                         <div
-                          className={`border border-base-300 rounded-full font-bold text-base-400/50 px-2 py-1 text-sm cursor-default select-none flex gap-2 items-center ${
+                          className={`border border-base-300 rounded-full font-bold text-base-400/50 dark:text-base-100 px-2 py-1 text-sm cursor-default select-none flex gap-2 items-center ${
                             filters.includes(tag.id)
                               ? "bg-amber-800 text-white border-amber-800"
                               : "hover:bg-black/10"
@@ -234,7 +234,7 @@ export default function Home() {
                   </div>
                   <div className="flex justify-end items-end">
                     <div
-                      className="px-4 py-1.5 rounded-full border-[1px] border-base-300/30 font-bold text-base-400 mr-4 h-fit cursor-pointer select-none hover:bg-black/5"
+                      className="px-4 py-1.5 rounded-full border-[1px] border-base-300/30 font-bold text-base-400 dark:text-base-100 mr-4 h-fit cursor-pointer select-none hover:bg-black/5"
                       onClick={() => {
                         setFilters([]);
                         setFilterNames([]);

@@ -148,7 +148,7 @@ export default function PostCreateBox({
         ></div>
       )}
       <div
-        className={`fixed w-[32vw] h-[75vh] bg-white z-49 top-[5vh] right-[1vw] flex flex-col rounded-xl overflow-scroll ${
+        className={`fixed w-[32vw] h-[75vh] bg-white dark:bg-base-400 z-49 top-[5vh] right-[1vw] flex flex-col rounded-xl overflow-scroll ${
           isPostBoxOpen && isEnableTeamRequest ? "block" : "hidden"
         }`}
       >
@@ -158,7 +158,7 @@ export default function PostCreateBox({
         {/* Create drop down to select event */}
         <div className="w-full px-6 mb-6 relative">
           <label
-            className="block text-base-400 font-semibold mb-2"
+            className="block text-base-400 dark:text-base-100 font-semibold mb-2"
             htmlFor="event-dropdown"
           >
             Choose an event
@@ -168,14 +168,14 @@ export default function PostCreateBox({
           <div className="relative" id="event-dropdown">
             <button
               type="button"
-              className="w-full p-3 pr-10 border border-base-300 rounded-xl bg-base-100 text-base-400 flex justify-between items-center"
+              className="w-full p-3 pr-10 border border-base-300 rounded-xl bg-base-100 dark:bg-base-500 dark:text-base-100 text-base-400 flex justify-between items-center"
               onClick={() => setOpen((prev) => !prev)}
             >
               {selectedEvent ? selectedEvent.eventName : "Select an event..."}
               <span className="ml-2">&#9662;</span>
             </button>
             {open && (
-              <ul className="absolute left-0 top-full w-full bg-white border border-base-300 rounded-xl shadow-lg mt-1 z-10">
+              <ul className="absolute left-0 top-full w-full bg-white dark:bg-base-400 border border-base-300 rounded-xl shadow-lg mt-1 z-10">
                 {/* Search input (This is only for test, Need to change)*/}
                 <textarea
                   className="w-full p-2 border-b border-base-300 outline-none resize-none"
@@ -196,7 +196,7 @@ export default function PostCreateBox({
                 {filteredEvents.map((event) => (
                   <li
                     key={event.eventName}
-                    className={`p-3 cursor-pointer hover:bg-base-100 ${
+                    className={`p-3 cursor-pointer hover:bg-base-100 dark:hover:bg-base-500 ${
                       selectedEvent?.eventName === event.eventName
                         ? "bg-base-200"
                         : ""
@@ -215,10 +215,10 @@ export default function PostCreateBox({
         </div>
 
         <div className="w-full flex flex-col gap-1">
-          <div className="text-lg font-bold text-base-400 my-2 ml-6">
+          <div className="text-lg font-bold text-base-400 dark:text-base-100 my-2 ml-6">
             Question 1
           </div>
-          <div className="bg-base-100 p-4 mx-4">
+          <div className="bg-base-100 dark:bg-base-500 p-4 mx-4">
             <textarea
               className="w-full ring-0 focus:outline-none resize-none leading-relaxed overflow-hidden"
               placeholder="Anything you want to ask"
@@ -238,11 +238,11 @@ export default function PostCreateBox({
           {isShowQuestion2 && (
             <>
               <div className="flex flex-row justify-between my-2 ml-6 items-center">
-                <div className="text-lg font-bold text-base-400 ">
+                <div className="text-lg font-bold text-base-400 dark:text-base-100 ">
                   Question 2
                 </div>
                 <div
-                  className="font-bold text-sm text-base-400 mr-8 border hover:text-white border-base-300/50 rounded-md p-1 cursor-pointer hover:bg-red-700"
+                  className="font-bold text-sm text-base-400 dark:text-base-100 mr-8 border hover:text-white border-base-300/50 rounded-md p-1 cursor-pointer hover:bg-red-700"
                   onClick={() => {
                     if (isShowQuestion3) {
                       setValue2(value3);
@@ -257,7 +257,7 @@ export default function PostCreateBox({
                   Remove
                 </div>
               </div>
-              <div className="bg-base-100 p-4 mx-4">
+              <div className="bg-base-100 dark:bg-base-500 p-4 mx-4">
                 <textarea
                   className="w-full ring-0 focus:outline-none resize-none leading-relaxed overflow-hidden"
                   placeholder="Anything you want to ask"
@@ -279,11 +279,11 @@ export default function PostCreateBox({
           {isShowQuestion3 ? (
             <>
               <div className="flex flex-row justify-between my-2 ml-6 items-center">
-                <div className="text-lg font-bold text-base-400 ">
+                <div className="text-lg font-bold text-base-400 dark:text-base-100">
                   Question 3
                 </div>
                 <div
-                  className="font-bold text-sm text-base-400 mr-8 border hover:text-white border-base-300/50 rounded-md p-1 cursor-pointer hover:bg-red-700"
+                  className="font-bold text-sm text-base-400 dark:text-base-100 mr-8 border hover:text-white border-base-300/50 rounded-md p-1 cursor-pointer hover:bg-red-700"
                   onClick={() => {
                     setIsShowQuestion3(false);
                     setValue3("");
@@ -292,7 +292,7 @@ export default function PostCreateBox({
                   Remove
                 </div>
               </div>
-              <div className="bg-base-100 p-4 mx-4">
+              <div className="bg-base-100 dark:bg-base-500 p-4 mx-4">
                 <textarea
                   className="w-full ring-0 focus:outline-none resize-none leading-relaxed overflow-hidden"
                   placeholder="Anything you want to ask"
@@ -317,7 +317,7 @@ export default function PostCreateBox({
           }`}
         >
           <div
-            className="text-xl text-base-400 py-1 mx-4 rounded-md w-full border-[1px] border-base-300/50 cursor-pointer hover:bg-base-200 text-center"
+            className="text-xl text-base-400 dark:text-base-100 py-1 mx-4 rounded-md w-full border-[1px] border-base-300/50 cursor-pointer hover:bg-base-200 dark:hover:bg-base-500 text-center"
             onClick={() => {
               if (!isShowQuestion2) {
                 setIsShowQuestion2(true);
@@ -331,7 +331,7 @@ export default function PostCreateBox({
         </div>
       </div>
       <div
-        className={`fixed h-[75vh] bg-white z-50 top-[5vh] left-[20vw] flex flex-col rounded-xl  ${
+        className={`fixed h-[75vh] bg-white dark:bg-base-400 z-50 top-[5vh] left-[20vw] flex flex-col rounded-xl  ${
           isPostBoxOpen ? "block" : "hidden"
         } ${isEnableTeamRequest ? "w-[46vw]" : "w-[60vw]"}`}
       >
@@ -342,7 +342,7 @@ export default function PostCreateBox({
               setIsPostBoxOpen(false);
             }}
           >
-            <RxCross2 className="text-xl font-bold" />
+            <RxCross2 className="text-xl font-bold dark:text-base-100" />
           </span>
         </div>
         <div className="flex gap-4 ml-12 mt-8">
@@ -419,9 +419,9 @@ export default function PostCreateBox({
                   setIsEnableTeamRequest(!isEnableTeamRequest);
                 }}
               />{" "}
-              <div className="relative w-16 h-8 bg-white peer-checked:bg-base-300 peer-checked:border-base-400/60 rounded-full after:absolute after:content-[''] after:w-5 after:h-5 after:bg-gradient-to-r border-[1px] border-base-300  from-orange-500 to-yellow-400 peer-checked:after:from-base-400/80 peer-checked:after:to-base-400/80 after:border-[1px] after:border-base-400/80 after:rounded-full after:top-[5px] after:left-[5px] active:after:w-4 peer-checked:after:left-14 peer-checked:after:translate-x-[-100%] duration-300 after:duration-300 after:shadow-lg" />
+              <div className="relative w-16 h-8 bg-white dark:bg-base-400 peer-checked:bg-base-300 peer-checked:border-base-400/60 rounded-full after:absolute after:content-[''] after:w-5 after:h-5 after:bg-gradient-to-r border-[1px] border-base-300  from-orange-500 to-yellow-400 peer-checked:after:from-base-400/80 peer-checked:after:to-base-400/80 after:border-[1px] after:border-base-400/80 after:rounded-full after:top-[5px] after:left-[5px] active:after:w-4 peer-checked:after:left-14 peer-checked:after:translate-x-[-100%] duration-300 after:duration-300 after:shadow-lg" />
             </label>
-            <div className="font-bold text-base-400 text-sm">
+            <div className="font-bold text-base-400 dark:text-base-100 text-sm">
               Enable team requests
             </div>
             <div
@@ -460,7 +460,7 @@ export default function PostCreateBox({
           </div>
         </div>
       </div>
-      <div className="bg-white p-4 flex flex-col w-full rounded-lg">
+      <div className="bg-white dark:bg-base-400 p-4 flex flex-col w-full rounded-lg">
         <div className="flex gap-4">
           <Image
             src={user?.profile?.profile_url || "/golang.webp"}
@@ -471,7 +471,7 @@ export default function PostCreateBox({
             className="rounded-full h-14 w-14"
           />
           <div
-            className="border border-base-300 text-base-400 hover:bg-base-100 cursor-pointer text-sm font-bold rounded-full flex items-center pl-6 flex-1"
+            className="dark:bg-base-500 border border-base-300 dark:border-base-400 text-base-400 dark:text-base-100 hover:bg-base-100 dark:hover:bg-base-500/80 cursor-pointer text-sm font-bold rounded-full flex items-center pl-6 flex-1"
             onClick={() => {
               if (!user) {
                 router.push("/sign-in");
@@ -482,7 +482,7 @@ export default function PostCreateBox({
             Start a post
           </div>
         </div>
-        <div className="text-xs text-base-400 mt-2">
+        <div className="text-xs text-base-400 dark:text-base-100 mt-2">
           {`Tip: Don't forget to put event tags on your post to make it easier for others at the event to find
         you.`}
         </div>

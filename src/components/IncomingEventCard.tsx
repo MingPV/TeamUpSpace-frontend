@@ -34,7 +34,9 @@ export default function IncomingEventCard({ event }: EventProps) {
             : event.eventDescription}
         </div>
         <div className="flex gap-1 mt-1">
-          <div className="text-xs font-bold text-base-400">Closes in</div>
+          <div className="text-xs font-bold text-base-400 dark:text-base-100">
+            Closes in
+          </div>
           <div className="text-xs font-bold text-red-700">
             {(() => {
               if (!event.registerCloseDt) return "N/A";

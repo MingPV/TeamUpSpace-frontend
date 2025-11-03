@@ -183,7 +183,7 @@ export default function ChatCard(chatList: ChatCardProps) {
       <div className="flex-1 flex flex-col mr-2">
         <div className="flex flex-row justify-between items-center">
           <div className="flex flex-col gap-0">
-            <div className="font-bold text-sm text-base-400">
+            <div className="font-bold text-sm text-base-400 dark:text-base-100">
               {chatList.chatInfo?.roomName ?? "null"}
             </div>
             <div className="text-sm text-base-300 truncate w-48">
@@ -191,7 +191,7 @@ export default function ChatCard(chatList: ChatCardProps) {
             </div>
           </div>
           <div className="flex flex-col">
-            <div className="text-base-400 text-xs text-right">
+            <div className="text-base-400 dark:text-base-100 text-xs text-right">
               {formatDate(chatList.chatInfo.latestMessageTimestamp ?? "")}
             </div>
             {selectedChatroom?.id !== chatList.chatInfo.id &&
@@ -204,7 +204,7 @@ export default function ChatCard(chatList: ChatCardProps) {
 
                 if (unread > 0 || unreadMessages.length > 0) {
                   return (
-                    <p className="text-sm text-center bg-base-200/60 text-base-300 rounded-lg p-1">
+                    <p className="text-sm text-center bg-base-200/60 dark:bg-base-500 text-base-300 rounded-lg p-1">
                       {unread + unreadMessages.length}
                     </p>
                   );

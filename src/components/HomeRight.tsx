@@ -29,7 +29,7 @@ export default function HomeRight() {
 
   return (
     <div className="w-full flex flex-col gap-2 md:mb-4 md:mt-2 lg:mb-0 lg:mt-0">
-      <div className="hidden lg:flex w-4/5 flex-col rounded-lg bg-white">
+      <div className="hidden lg:flex w-4/5 flex-col rounded-lg bg-white dark:bg-base-400">
         <div className="flex flex-col mx-5 my-3 gap-5">
           <div className="flex justify-between items-center">
             <div className="font-bold">Recommended for you</div>
@@ -43,14 +43,14 @@ export default function HomeRight() {
             className="my-1 flex gap-2 items-center cursor-pointer py-1 px-2 hover:bg-black/10 rounded-lg w-fit transition-all duration-300"
             onClick={() => router.push("/recommended")}
           >
-            <div className="text-sm text-base-400 font-bold">
+            <div className="text-sm text-base-400 font-bold dark:text-base-100">
               View all recommendations
             </div>
             <FaRightLong />
           </div>
         </div>
       </div>
-      <div className="md:w-full lg:w-4/5 flex flex-col rounded-lg bg-white sticky top-20 overflow-hidden">
+      <div className="md:w-full lg:w-4/5 flex flex-col rounded-lg bg-white dark:bg-base-400 sticky top-20 overflow-hidden">
         <div className="flex flex-col mx-5 my-3 gap-2">
           <div className="flex justify-between items-center">
             <div className="font-bold">Incoming Events</div>
@@ -66,7 +66,9 @@ export default function HomeRight() {
             className="my-1 flex gap-2 items-center cursor-pointer py-1 px-2 hover:bg-black/10 rounded-lg w-fit transition-all duration-300"
             onClick={() => router.push("/event")}
           >
-            <div className="text-sm text-base-400 font-bold">View all</div>
+            <div className="text-sm text-base-400 dark:text-base-100 font-bold">
+              View all
+            </div>
             <FaRightLong />
           </div>
         </div>

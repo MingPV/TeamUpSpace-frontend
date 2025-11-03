@@ -137,7 +137,7 @@ export default function ChatDisplayMini({ chatroom }: { chatroom: Chatroom }) {
     }
   };
   return (
-    <div className=" h-full flex flex-col justify-between">
+    <div className=" h-full flex flex-col justify-between dark:bg-base-400">
       <div className="flex-1 flex flex-col gap-3 px-1  h-full">
         <div className="overflow-y-scroll h-72 py-1">
           {displayMessages.length > 0 &&
@@ -148,7 +148,7 @@ export default function ChatDisplayMini({ chatroom }: { chatroom: Chatroom }) {
                   key={`${index}_get`}
                   className="flex flex-row-reverse gap-2 items-end"
                 >
-                  <div className="text-base-400 flex flex-col justify-end">
+                  <div className="text-base-400 dark:text-base-100 flex flex-col justify-end">
                     <div className="flex flex-row gap-2 ">
                       <span className="text-[0.5rem] flex items-end opacity-70">
                         {new Date(msg.timestamp).toLocaleTimeString([], {
@@ -178,7 +178,7 @@ export default function ChatDisplayMini({ chatroom }: { chatroom: Chatroom }) {
                       className="rounded-full h-10 w-10 cursor-pointer hover:opacity-90"
                     />
                   </div>
-                  <div className="text-base-400 flex flex-col">
+                  <div className="text-base-400 dark:text-base-100 flex flex-col">
                     <div className="text-xs ml-2 text-base-400 cursor-default">
                       {members.get(msg.sender)?.profile.display_name || "User"}{" "}
                       {/* Replace with sender name */}
@@ -204,7 +204,7 @@ export default function ChatDisplayMini({ chatroom }: { chatroom: Chatroom }) {
 
       <div className="w-full p-2 justify-end  border-t-[1px] border-base-300/30 flex flex-row gap-2 items-start">
         <textarea
-          className="flex-1 h-full max-h-full pl-3 py-1 ring-0 focus:outline-none resize-none leading-relaxed overflow-hidden border-[1px] border-base-300/40 rounded-xl bg-base-200/30 placeholder:text-base-300 text-base-400 overflow-y-scroll"
+          className="flex-1 h-full max-h-full pl-3 py-1 ring-0 focus:outline-none resize-none leading-relaxed overflow-hidden border-[1px] border-base-300/40 rounded-xl bg-base-200/30 dark:bg-base-500 placeholder:text-base-300 text-base-400 dark:text-base-100 overflow-y-scroll"
           placeholder="Write a message..."
           value={inputMessage}
           onKeyPress={handleKeyPress}
@@ -223,7 +223,7 @@ export default function ChatDisplayMini({ chatroom }: { chatroom: Chatroom }) {
           className="mt-1.5 cursor-pointer"
           onClick={() => handleSend(inputMessage)}
         >
-          <IoSend className="text-xl text-amber-800" />
+          <IoSend className="text-xl text-amber-800 dark:text-amber-700" />
         </button>
       </div>
     </div>

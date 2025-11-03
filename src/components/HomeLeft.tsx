@@ -76,7 +76,7 @@ export default function HomeLeft() {
 
   return (
     <div className="w-full flex flex-col items-end gap-2">
-      <div className="w-2/3 flex flex-col rounded-lg bg-white">
+      <div className="w-2/3 flex flex-col rounded-lg bg-white dark:bg-base-400">
         <Image
           src={user?.profile?.background_url || "/golang.webp"}
           width={100}
@@ -93,7 +93,7 @@ export default function HomeLeft() {
               height={200}
               alt="profile-pic"
               style={{ objectFit: "cover" }}
-              className="rounded-full h-[86px] w-[86px] border-3 border-white"
+              className="rounded-full h-[86px] w-[86px] border-3 border-white dark:border-base-300"
             />
             <div className="relative top-2 left-2">
               <FaPencilAlt
@@ -123,11 +123,11 @@ export default function HomeLeft() {
               <div className="text-sm opacity-50">major not set</div>
             )}
             {user?.profile?.location ? (
-              <div className="text-sm text-base-400">
+              <div className="text-sm text-base-400 dark:text-base-100">
                 {user.profile.location}
               </div>
             ) : (
-              <div className="text-sm text-base-400 opacity-50">
+              <div className="text-sm text-base-400 dark:text-base-100 opacity-50">
                 location not set
               </div>
             )}
@@ -149,7 +149,7 @@ export default function HomeLeft() {
           </div>
         </div>
       </div>
-      <div className="w-2/3 flex flex-col rounded-lg bg-white">
+      <div className="w-2/3 flex flex-col rounded-lg bg-white dark:bg-base-400">
         <div className="flex flex-col m-5 gap-5">
           <div className="flex gap-2 items-center">
             <FaBookmark />

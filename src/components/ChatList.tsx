@@ -26,7 +26,7 @@ export default function ChatList({
           {chatDisplays.map((chatroom, index) => (
             <div
               key={index}
-              className="w-1/3 bg-white h-full flex flex-col rounded-t-md shadow-md shadow-base-400/30 border-[1px] border-base-300/50"
+              className="w-1/3 bg-white dark:bg-base-400 h-full flex flex-col rounded-t-md shadow-md shadow-base-400/30 border-[1px] border-base-300/50"
             >
               <div className="w-full flex flex-row justify-between items-center py-2 px-3 border-b-[1px] border-b-base-300/30">
                 <div className="flex flex-row gap-3 items-center cursor-pointer hover:bg-black/5 p-1 rounded-md">
@@ -38,7 +38,7 @@ export default function ChatList({
                     style={{ objectFit: "cover" }}
                     className="rounded-full h-9 w-9"
                   />
-                  <div className="font-bold text-sm text-base-400">
+                  <div className="font-bold text-sm text-base-400 dark:text-base-100">
                     {chatroom.roomName}
                   </div>
                 </div>
@@ -56,7 +56,7 @@ export default function ChatList({
                   <RxCross2 className="text-xl" />
                 </div>
               </div>
-              <div className="flex-1 flex flex-col gap-3  px-2">
+              <div className="flex-1 flex flex-col gap-3  px-2 dark:bg-base-400">
                 <ChatDisplayMini chatroom={chatroom} />
                 {/* <div className="w-full flex items-center justify-center text-xs text-base-300">
                   Aug 12

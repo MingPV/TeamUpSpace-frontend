@@ -95,12 +95,12 @@ export default function Navbar() {
       <nav
         className={`
         fixed top-0 left-0 w-full z-40 bg-white dark:bg-base-500 shadow-md
-        dark:text-base-100 text-base-500 flex justify-between sm:justify-center items-center gap-20 select-none
+        dark:text-white text-base-500 flex justify-between sm:justify-center items-center gap-20 select-none
       `}
       >
         <div className="flex gap-2 items-center px-2 ">
           <div
-            className="p-2 font-bold text-base-400 rounded-md cursor-pointer"
+            className="p-2 font-bold text-base-400 rounded-md dark:text-base-100 cursor-pointer"
             onClick={() => {
               if (user?.is_admin) {
                 router.push("/admin-manage");
@@ -125,30 +125,36 @@ export default function Navbar() {
           {user?.is_admin ? (
             <>
               <div
-                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 dark:hover:border-b-base-100 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
                 onClick={() => router.push("/admin-manage")}
               >
-                <IoHomeSharp className="text-xl " />
+                <IoHomeSharp className="text-xl dark:text-base-100 " />
                 {/* make this text can't select */}
-                <div className="text-sm select-none">Home</div>
+                <div className="text-sm select-none dark:text-base-100">
+                  Home
+                </div>
               </div>
               <div
-                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 dark:hover:border-b-base-100 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
                 onClick={() => router.push("/admin-manage/report")}
               >
-                <FaUserFriends className="text-xl" />
-                <div className="text-sm select-none">Manage Report</div>
+                <FaUserFriends className="text-xl dark:text-base-100" />
+                <div className="text-sm select-none dark:text-base-100">
+                  Manage Report
+                </div>
               </div>
               <div
-                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 dark:hover:border-b-base-100 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
                 onClick={() => router.push("/admin-manage/event")}
               >
-                <MdEmojiEvents className="text-xl" />
-                <div className="text-sm select-none">Manage Event</div>
+                <MdEmojiEvents className="text-xl dark:text-base-100" />
+                <div className="text-sm select-none dark:text-base-100">
+                  Manage Event
+                </div>
               </div>
               {user && (
                 <div
-                  className="hidden lg:flex flex-col p-3 rounded-full bg-black/10 hover:bg-black/20 cursor-pointer items-center text-base-400/70 hover:text-base-500 mx-1 ml-10 relative"
+                  className="hidden lg:flex flex-col p-3 rounded-full bg-black/10 hover:bg-black/20 cursor-pointer items-center text-base-400/70 hover:text-base-500 mx-1 ml-10  relative"
                   onClick={() => {
                     setIsChatOpen(!isChatOpen);
                     setIsNotificationOpen(false);
@@ -157,8 +163,8 @@ export default function Navbar() {
                   <div className="absolute -top-1 -right-2 bg-amber-800 text-white font-bold rounded-full h-5 w-5 flex items-center justify-center text-xs">
                     1
                   </div>
-                  <BsChatDotsFill className="text-xl " />
-                  {/* <div className="text-sm select-none">Messages</div> */}
+                  <BsChatDotsFill className="text-xl dark:text-base-100 " />
+                  {/* <div className="text-sm select-none dark:text-base-100">Messages</div> */}
                 </div>
               )}
 
@@ -184,45 +190,53 @@ export default function Navbar() {
                     </div>
                   )}
 
-                  <IoNotifications className="text-xl " />
-                  {/* <div className="text-sm select-none">Notification</div> */}
+                  <IoNotifications className="text-xl dark:text-base-100 " />
+                  {/* <div className="text-sm select-none dark:text-base-100">Notification</div> */}
                 </div>
               )}
             </>
           ) : (
             <>
               <div
-                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 dark:hover:border-b-base-100 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
                 onClick={() => router.push("/")}
               >
-                <IoHomeSharp className="text-xl " />
+                <IoHomeSharp className="text-xl dark:text-base-100 " />
                 {/* make this text can't select */}
-                <div className="text-sm select-none">Home</div>
+                <div className="text-sm select-none dark:text-base-100">
+                  Home
+                </div>
               </div>
               <div
-                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 dark:hover:border-b-base-100 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
                 onClick={() => router.push("/friend-group")}
               >
-                <FaUserFriends className="text-xl" />
-                <div className="text-sm select-none">Friend</div>
+                <FaUserFriends className="text-xl dark:text-base-100" />
+                <div className="text-sm select-none dark:text-base-100">
+                  Friend
+                </div>
               </div>
               <div
-                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 dark:hover:border-b-base-100 cursor-pointer items-center px-6 text-base-400/70 hover:text-base-500"
                 onClick={() => router.push("/event")}
               >
-                <MdEmojiEvents className="text-xl" />
-                <div className="text-sm select-none">Event</div>
+                <MdEmojiEvents className="text-xl dark:text-base-100" />
+                <div className="text-sm select-none dark:text-base-100">
+                  Event
+                </div>
               </div>
               <div
-                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
+                className="hidden lg:flex flex-col py-2 border-b-2 border-b-transparent hover:border-b-base-500 dark:hover:border-b-base-100 cursor-pointer items-center px-2 text-base-400/70 hover:text-base-500"
                 onClick={() => router.push("/request")}
               >
-                <MdLocalPostOffice className="text-xl" />
-                <div className="text-sm select-none">Team Request</div>
+                <MdLocalPostOffice className="text-xl dark:text-base-100" />
+                <div className="text-sm select-none dark:text-base-100">
+                  Team Request
+                </div>
               </div>
               {user && (
                 <div
-                  className="hidden lg:flex flex-col p-3 rounded-full bg-black/10 hover:bg-black/20 cursor-pointer items-center text-base-400/70 hover:text-base-500 mx-1 ml-10 relative"
+                  className="hidden lg:flex flex-col p-3 rounded-full bg-black/10 hover:bg-black/20 cursor-pointer items-center text-base-400/70 hover:text-base-500 mx-1 ml-10  relative"
                   onClick={() => {
                     setIsChatOpen(!isChatOpen);
                     setIsNotificationOpen(false);
@@ -231,8 +245,8 @@ export default function Navbar() {
                   {/* <div className="absolute -top-1 -right-2 bg-amber-800 text-white font-bold rounded-full h-5 w-5 flex items-center justify-center text-xs">
                     1
                   </div> */}
-                  <BsChatDotsFill className="text-xl " />
-                  {/* <div className="text-sm select-none">Messages</div> */}
+                  <BsChatDotsFill className="text-xl dark:text-base-100 " />
+                  {/* <div className="text-sm select-none dark:text-base-100">Messages</div> */}
                 </div>
               )}
 
@@ -258,18 +272,18 @@ export default function Navbar() {
                     </div>
                   )}
 
-                  <IoNotifications className="text-xl " />
-                  {/* <div className="text-sm select-none">Notification</div> */}
+                  <IoNotifications className="text-xl dark:text-base-100 " />
+                  {/* <div className="text-sm select-none dark:text-base-100">Notification</div> */}
                 </div>
               )}
             </>
           )}
 
-          <div className="hidden lg:flex flex-col border-b-2 border-b-white items-center pl-2 pr-8 border-r border-r-base-200 relative">
+          <div className="hidden lg:flex flex-col border-b-2 border-b-white items-center pl-2 pr-8 border-r border-r-base-200 dark:border-base-500 relative">
             {user ? (
               <div className="flex flex-col px-0 md:px-4 items-center rounded-md">
                 <div
-                  className="flex flex-col items-center px-4 pt-1 rounded-md hover:bg-black/10 cursor-pointer"
+                  className="flex flex-col items-center px-4 pt-1 rounded-md hover:bg-black/10 dark:hover:bg-white/10 dark:text-base-100 cursor-pointer"
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
                   <Image
@@ -281,8 +295,10 @@ export default function Navbar() {
                     className="rounded-full h-7 w-7"
                   />
                   <div className="flex items-center">
-                    <div className="text-sm text-base-400">Me</div>
-                    <FaCaretDown className="text-base-400 ml-1" />
+                    <div className="text-sm text-base-400 dark:text-base-100">
+                      Me
+                    </div>
+                    <FaCaretDown className="text-base-400 ml-1 dark:text-base-100" />
                   </div>
                 </div>
                 {/* Dropdown */}
@@ -328,7 +344,7 @@ export default function Navbar() {
         </div>
       </nav>
       <div
-        className={`fixed w-[25%] h-[90%] right-3 bottom-0 bg-white z-40 rounded-t-md border-[1px] border-base-300/50  transition-all duration-300 flex flex-col shadow-lg shadow-base-400/30 ${
+        className={`fixed w-[25%] h-[90%] right-3 bottom-0 bg-white dark:bg-base-400 z-40 rounded-t-md border-[1px] border-base-300/50  transition-all duration-300 flex flex-col shadow-lg shadow-base-400/30 ${
           isChatOpen ? "max-h-full" : "max-h-14"
         } ${path == "/chat" ? "hidden" : ""}  `}
       >
@@ -348,25 +364,26 @@ export default function Navbar() {
               style={{ objectFit: "cover" }}
               className="rounded-full h-7 w-7"
             />
-            <div className="text-base-400 ">Messaging</div>
+            <div className="text-base-400 dark:text-base-100">Messaging</div>
             <div
-              className="p-1 border border-base-300/30 text-base-400 rounded-md hover:bg-amber-800 hover:text-white flex items-center gap-1 z-41"
+              className="p-1 border border-base-300/30 text-base-400 dark:text-base-100 rounded-md hover:bg-amber-800 hover:text-white flex items-center gap-1 z-41"
               onClick={(e) => {
                 e.stopPropagation();
                 router.push("/chat");
               }}
             >
-              Full screen <GoScreenFull className="font-bold" />
+              Full screen{" "}
+              <GoScreenFull className="font-bold dark:text-base-400" />
             </div>
           </div>
-          <div className="text-lg text-base-400 mr-4">
+          <div className="text-lg text-base-400 mr-4 dark:text-base-100">
             <FaChevronUp />
           </div>
         </div>
         <div className="flex flex-col w-full">
           <div className="w-full flex px-2 items-center justify-center mb-2">
-            <div className="flex flex-row bg-base-100/50 w-full items-center rounded-md">
-              <IoMdSearch className="text-base-400 ml-4 text-lg" />
+            <div className="flex flex-row bg-base-100/50 dark:bg-base-500 w-full items-center rounded-md">
+              <IoMdSearch className="text-base-400 dark:text-base-100 ml-4 text-lg" />
               <input
                 type="text"
                 placeholder="search messages"
@@ -380,7 +397,7 @@ export default function Navbar() {
             <div
               className={`flex-1 py-1 flex items-center justify-center border-b-2 ${
                 selectedTab == "chat"
-                  ? "border-b-lime-700 text-lime-700"
+                  ? "border-b-lime-700 dark:border-b-lime-600 text-lime-700 dark:text-lime-600"
                   : "text-base-300 border-b-transparent hover:text-base-400 hover:bg-black/5"
               }  cursor-pointer font-bold select-none`}
               onClick={() => setSelectedTab("chat")}
@@ -390,7 +407,7 @@ export default function Navbar() {
             <div
               className={`flex-1 py-1 flex items-center justify-center border-b-2 ${
                 selectedTab == "friend"
-                  ? "border-b-lime-700 text-lime-700"
+                  ? "border-b-lime-700 dark:border-b-lime-600 text-lime-700 dark:text-lime-600"
                   : "text-base-300 border-b-transparent hover:text-base-400 hover:bg-black/5"
               }  cursor-pointer font-bold select-none`}
               onClick={() => setSelectedTab("friend")}
@@ -400,7 +417,7 @@ export default function Navbar() {
             <div
               className={`flex-1 py-1 flex items-center justify-center border-b-2 ${
                 selectedTab == "group"
-                  ? "border-b-lime-700 text-lime-700"
+                  ? "border-b-lime-700 dark:border-b-lime-600 text-lime-700 dark:text-lime-600"
                   : "text-base-300 border-b-transparent hover:text-base-400 hover:bg-black/5"
               }  cursor-pointer font-bold select-none`}
               onClick={() => setSelectedTab("group")}

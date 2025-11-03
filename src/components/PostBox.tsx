@@ -544,7 +544,7 @@ export default function PostBox({ post }: PostProps) {
         comments={comments}
       >
         <div
-          className={`bg-white px-4 pt-4 pb-1 flex flex-col w-full rounded-lg ${
+          className={`bg-white dark:bg-base-400 px-4 pt-4 pb-1 flex flex-col w-full rounded-lg ${
             isPostDeleted ? "hidden" : ""
           }`}
         >
@@ -636,14 +636,16 @@ export default function PostBox({ post }: PostProps) {
           <div className="flex flex-row gap-2 items-center my-1 text-sm text-base-400 mt-2">
             <div className="flex gap-1">
               {/* Draw icons and use them instead of these icons */}
-              <FcLike className="" />
-              <AiOutlineLike className="" />
+              <FcLike className="dark:text-base-100" />
+              <AiOutlineLike className="dark:text-base-100" />
             </div>
             {/* <div className="flex-1">Pavee Jeungtanasirikul and 18 others</div> */}
-            <div className="flex-1">{likeCount} people like this</div>
+            <div className="flex-1 dark:text-base-100">
+              {likeCount} people like this
+            </div>
             {/* <div className="flex-1">Liked by {likeCount} people</div> */}
             <div
-              className="cursor-pointer hover:underline underline-offset-2"
+              className="cursor-pointer hover:underline underline-offset-2 dark:text-base-100"
               onClick={() => setIsOpenComment(true)}
             >
               {comments.length} comments
@@ -659,12 +661,14 @@ export default function PostBox({ post }: PostProps) {
               className="flex justify-center items-center font-bold text-base-400 text-xs md:text-sm cursor-pointer hover:bg-base-300/20 rounded-md py-2"
               onClick={handleLike}
             >
-              <div className="flex gap-1">
+              <div className="flex gap-1 dark:text-base-100">
                 <AiOutlineLike
-                  className={`text-xl ${isLiked ? "hidden" : ""}`}
+                  className={`text-xl dark:text-base-100 ${
+                    isLiked ? "hidden" : ""
+                  }`}
                 />
                 <AiFillLike
-                  className={`text-xl text-sky-600 ${isLiked ? "" : "hidden"}`}
+                  className={`text-xl text-sky-500 ${isLiked ? "" : "hidden"}`}
                 />
                 Like
               </div>
@@ -673,7 +677,7 @@ export default function PostBox({ post }: PostProps) {
               className="flex justify-center items-center font-bold text-base-400 text-xs md:text-sm cursor-pointer hover:bg-base-300/20 rounded-md py-2"
               onClick={() => setIsOpenComment(true)}
             >
-              <div className="flex gap-1">
+              <div className="flex gap-1 dark:text-base-100">
                 <FaRegComment className="text-xl" />
                 Comment
               </div>
@@ -706,12 +710,12 @@ export default function PostBox({ post }: PostProps) {
               >
                 {!isAnswered ? (
                   post.postBy == user?.id ? (
-                    <div className="flex gap-1 text-base-400/50">
+                    <div className="flex gap-1 text-base-400/50 dark:text-base-100/50">
                       <FaPersonWalkingArrowRight className="text-xl" />
                       Request to join team
                     </div>
                   ) : (
-                    <div className="flex gap-1">
+                    <div className="flex gap-1 dark:text-base-100">
                       <FaPersonWalkingArrowRight className="text-xl" />
                       Request to join team
                     </div>
