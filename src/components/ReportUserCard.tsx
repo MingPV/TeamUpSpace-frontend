@@ -134,7 +134,7 @@ export default function ReportUserCard({ report }: { report?: UserReport }) {
                           {reportee?.profile.major || "No Major"}
                         </div>
                       </div>
-                      <div className="flex flex-row gap-2 items-center">
+                      {/* <div className="flex flex-row gap-2 items-center">
                         <div className="font-bold text-sm text-base-400">
                           Year:
                         </div>
@@ -147,7 +147,7 @@ export default function ReportUserCard({ report }: { report?: UserReport }) {
                         <div className="text-amber-800 font-bold text-sm">
                           {reportee?.profile.age || "No Age"}
                         </div>
-                      </div>
+                      </div> */}
                       <div className="flex flex-row gap-2 items-center">
                         <div className="font-bold text-sm text-base-400">
                           Location:

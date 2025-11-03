@@ -1,8 +1,7 @@
 import { Profile } from "../types/profile";
 import { fetchApi } from "./utils";
 
-const API_GATEWAY_URL =
-  process.env.NEXT_PUBLIC_API_GATEWAY_URL || "http://localhost:8080"; // Set your URL
+const API_GATEWAY_URL = process.env.API_GATEWAY_URL || "http://localhost:8080"; // Set your URL
 
 // Sign In
 export async function signIn(emailOrUsername: string, password: string) {

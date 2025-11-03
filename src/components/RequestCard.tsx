@@ -10,6 +10,7 @@ import { getUserById } from "@/app/api/auth";
 import { deleteAnswerByPostIdAndUserId } from "@/app/api/post";
 import { createNotification } from "@/app/api/notification";
 import { useUser } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
 
 export default function RequestCard({
   request,
@@ -24,6 +25,8 @@ export default function RequestCard({
   const [answerSelected, setAnswerSelected] = useState<string | null>(null);
   const [requester, setRequester] = useState<User>();
   const [isDeleted, setIsDeleted] = useState(false);
+
+  const router = useRouter();
 
   const { user } = useUser();
 
@@ -102,6 +105,9 @@ export default function RequestCard({
                     alt="profile-pic"
                     style={{ objectFit: "cover" }}
                     className=" h-32 w-full rounded-t-md cursor-pointer hover:opacity-80"
+                    onClick={() =>
+                      router.push(`/profile/${requester?.username}`)
+                    }
                   />
                   <Image
                     src={requester?.profile.profile_url || "/golang.webp"}
@@ -110,11 +116,19 @@ export default function RequestCard({
                     alt="profile-pic"
                     style={{ objectFit: "cover" }}
                     className="rounded-full h-28 w-28 relative -top-16 cursor-pointer border-2 border-transparent hover:border-base-200"
+                    onClick={() =>
+                      router.push(`/profile/${requester?.username}`)
+                    }
                   />
                 </div>
                 <div className="relative -top-14 h-full flex flex-col px-3">
                   <div className="w-full flex justify-center text-lg font-bold mb-2">
-                    <div className="p-2 rounded-md hover:bg-black/5 cursor-pointer">
+                    <div
+                      className="p-2 rounded-md hover:bg-black/5 cursor-pointer"
+                      onClick={() =>
+                        router.push(`/profile/${requester?.username}`)
+                      }
+                    >
                       {requester?.profile.display_name || "Loading..."}
                     </div>
                   </div>

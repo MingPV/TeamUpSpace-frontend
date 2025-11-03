@@ -12,6 +12,8 @@ import { useChatroom } from "./ChatroomContext";
 import { useUser } from "./UserContext";
 // import { getAllMessagesUnread } from "@/app/api/chatroom";
 
+const API_GATEWAY_URL = process.env.API_GATEWAY_URL_NO_HTTP || "localhost:8080"; // Set your URL
+
 interface ChatEvent {
   type: string;
   room_id: number;
@@ -70,7 +72,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     console.log("user", user);
-    const ws = new WebSocket(`ws://localhost:8080/api/v1/ws/rooms/`);
+    const ws = new WebSocket(`ws://${API_GATEWAY_URL}/api/v1/ws/rooms/`);
     wsRef.current = ws;
 
     ws.onopen = () => {

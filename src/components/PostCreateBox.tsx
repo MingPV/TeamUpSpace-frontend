@@ -9,6 +9,7 @@ import { Post } from "@/app/types/post";
 import { fetchAllEvents } from "@/app/api/event";
 import { Event } from "@/app/types/event";
 import { set } from "date-fns";
+import { useRouter } from "next/navigation";
 
 export default function PostCreateBox({
   user,
@@ -35,6 +36,8 @@ export default function PostCreateBox({
   const [events, setEvents] = useState<Event[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
+
+  const router = useRouter();
 
   const TemplateText = [
     "Looking for teammates! If you’re interested, please comment or send me a message.",
@@ -470,6 +473,9 @@ export default function PostCreateBox({
           <div
             className="border border-base-300 text-base-400 hover:bg-base-100 cursor-pointer text-sm font-bold rounded-full flex items-center pl-6 flex-1"
             onClick={() => {
+              if (!user) {
+                router.push("/sign-in");
+              }
               setIsPostBoxOpen(!isPostBoxOpen);
             }}
           >

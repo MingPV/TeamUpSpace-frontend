@@ -380,15 +380,20 @@ export default function ProfileTop({
             <div className="flex flex-col xl:flex-row gap-4">
               <div className="flex flex-col relative top-1 gap-2 ml-4">
                 {user?.username ? (
-                  <div className="">username: {user.username}</div>
+                  <div className="flex flex-row gap-2 items-end">
+                    <div className="">username: {user.username}</div>
+                    {user?.is_ban && (
+                      <div className="text-red-600 font-bold">(Banned)</div>
+                    )}
+                  </div>
                 ) : (
                   <div>username: unknown</div>
                 )}
 
-                {user?.profile?.faculty ? (
-                  <div className="text-xl">{user.profile.faculty}</div>
+                {user?.profile?.major ? (
+                  <div className="text-xl">{user.profile.major}</div>
                 ) : (
-                  <div className="text-xl opacity-50">faculty not set</div>
+                  <div className="text-xl opacity-50">major not set</div>
                 )}
                 {user?.profile?.location ? (
                   <div className="text-xl text-base-400">

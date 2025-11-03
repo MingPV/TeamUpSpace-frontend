@@ -40,5 +40,11 @@ export async function middleware(req: NextRequest) {
 // Optionally, specify paths to apply middleware
 export const config = {
   // matcher: ["/profile/:path*"], // protect these routes
-  matcher: ["/admin-manage", "/admin-manage/:path*", "/profile", "/request"], // protect these routes
+  matcher: [
+    "/admin-manage",
+    "/admin-manage/:path*",
+    "/profile",
+    "/request",
+    "/friend-group",
+  ], // protect these routes
 };

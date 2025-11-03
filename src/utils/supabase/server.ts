@@ -33,8 +33,8 @@ import { createClient as CreateClient } from "@supabase/supabase-js";
 
 export const createClient = async () => {
   return CreateClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!,
     {
       auth: {
         persistSession: false,

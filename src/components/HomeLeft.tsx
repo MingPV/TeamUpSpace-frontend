@@ -106,8 +106,13 @@ export default function HomeLeft() {
           </div>
           <div className="flex flex-col relative top-1 gap-1">
             {user?.profile?.display_name ? (
-              <div className="text-xl font-bold">
-                {user.profile.display_name}
+              <div className="flex flex-row gap-2 items-center">
+                <div className="text-xl font-bold">
+                  {user.profile.display_name}
+                </div>
+                {user?.is_ban && (
+                  <div className="text-red-600 font-bold">(Banned)</div>
+                )}
               </div>
             ) : (
               <div className="text-xl font-bold opacity-50">Unknown</div>

@@ -153,7 +153,12 @@ export default function PostBox({ post }: PostProps) {
   }, [post, user]);
 
   const handleLike = () => {
-    if (!user || !post || !post.id) {
+    if (!user) {
+      router.push("/sign-in");
+      return;
+    }
+
+    if (!post || !post.id) {
       return;
     }
     if (!isLiked) {
@@ -557,12 +562,15 @@ export default function PostBox({ post }: PostProps) {
             />
             <div className="flex flex-1 flex-col">
               <div
-                className="font-bold cursor-pointer hover:underline underline-offset-2 w-fit"
+                className="font-bold cursor-pointer hover:underline underline-offset-2 w-fit flex flex-row gap-2"
                 onClick={() => {
                   router.push(`/profile/${poster?.username}`);
                 }}
               >
                 {poster?.profile?.display_name || "Unknown"}
+                {poster?.is_ban && (
+                  <div className="text-red-600 font-bold">(Banned)</div>
+                )}
               </div>
               {/* <div className="text-xs">4 hours ago</div> */}
 
@@ -686,6 +694,10 @@ export default function PostBox({ post }: PostProps) {
                     : "cursor-pointer hover:bg-base-300/20"
                 }  rounded-md py-2 col-span-2`}
                 onClick={() => {
+                  if (!user) {
+                    router.push("/sign-in");
+                    return;
+                  }
                   if (isAnswered || post.postBy == user?.id) {
                     return;
                   }

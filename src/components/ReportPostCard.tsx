@@ -102,6 +102,9 @@ export default function ReportPostCard({ report }: { report?: PostReport }) {
                     alt="bg-pic"
                     style={{ objectFit: "cover" }}
                     className=" h-32 w-full rounded-t-md cursor-pointer hover:opacity-80"
+                    onClick={() => {
+                      router.push(`/profile/${reportee?.username}`);
+                    }}
                   />
                   <Image
                     src={reportee?.profile.profile_url || "/golang.webp"}
@@ -110,11 +113,19 @@ export default function ReportPostCard({ report }: { report?: PostReport }) {
                     alt="profile-pic"
                     style={{ objectFit: "cover" }}
                     className="rounded-full h-28 w-28 relative -top-16 cursor-pointer border-2 border-transparent hover:border-base-200"
+                    onClick={() => {
+                      router.push(`/profile/${reportee?.username}`);
+                    }}
                   />
                 </div>
                 <div className="relative -top-14 h-full flex flex-col px-3">
                   <div className="w-full flex justify-center text-lg font-bold mb-2 items-center">
-                    <div className="p-2 rounded-md hover:bg-black/5 cursor-pointer">
+                    <div
+                      className="p-2 rounded-md hover:bg-black/5 cursor-pointer"
+                      onClick={() => {
+                        router.push(`/profile/${reportee?.username}`);
+                      }}
+                    >
                       {reportee?.profile.display_name || "Unknown"}
                     </div>
                     {(reportee?.is_ban || isBanned) && (
@@ -139,7 +150,7 @@ export default function ReportPostCard({ report }: { report?: PostReport }) {
                           {reportee?.profile.major || "No Major"}
                         </div>
                       </div>
-                      <div className="flex flex-row gap-2 items-center">
+                      {/* <div className="flex flex-row gap-2 items-center">
                         <div className="font-bold text-sm text-base-400">
                           Year:
                         </div>
@@ -152,7 +163,7 @@ export default function ReportPostCard({ report }: { report?: PostReport }) {
                         <div className="text-amber-800 font-bold text-sm">
                           {reportee?.profile.age || "No Age"}
                         </div>
-                      </div>
+                      </div> */}
                       <div className="flex flex-row gap-2 items-center">
                         <div className="font-bold text-sm text-base-400">
                           Location:
