@@ -305,7 +305,7 @@ export default function RequestCard({
                 style={{ objectFit: "cover" }}
                 className="rounded-full h-10 w-10 cursor-pointer hover:opacity-90"
               />
-              MingPV
+              {requester?.profile.display_name || "MingPV"}
             </div>
             <div className="w-full flex justify-center items-center py-2 text-base-400/80 font-bold">
               {request.event_name}
